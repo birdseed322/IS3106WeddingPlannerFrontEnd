@@ -4,7 +4,7 @@ import HeartyNavbar from "./components/HeartyNavbar/HeartyNavbar";
 import EndPoints from "./routes/EndPoints.jsx";
 import Container from "react-bootstrap/esm/Container";
 import Footer from "./components/Footer/footer";
-
+import Sample from "./Sample.jsx";
 import "./App.css"
 //Main App component
 
@@ -34,8 +34,8 @@ function App() {
                 {/* <EndPoints /> */}
                 
                 <Footer id="footer" /> 
-                
             </Container>
+            <Sample></Sample>
         </Container>
     );
 }
