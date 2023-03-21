@@ -1,11 +1,12 @@
 import Container from "react-bootstrap/esm/Container";
-import Footer from "../Footer/Footer";
+import Footer from "../Footer/footer.jsx";
 import Sample from "../../Sample.jsx";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar"
 
 
 export default function FrontPage() {
     return (
+        <>
         <Container id="appContainer" fluid>
             <Container
                 id="mainContainer"
@@ -57,7 +58,8 @@ export default function FrontPage() {
 
                 <Footer id="footer" />
             </Container>
-            <Sample></Sample>
         </Container>
+        <Sample></Sample>
+        </>
     );
 }
