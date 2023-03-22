@@ -58,8 +58,8 @@ export default function FrontPage() {
 
                 <Footer id="footer" />
             </Container>
+            <Sample></Sample>
         </Container>
-        <Sample></Sample>
         </>
     );
 }
