@@ -1,16 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Login from '../components/Login Page/Login.jsx';
 import FrontPage from '../components/FrontPage/FrontPage.jsx';
+import Sample from '../Sample.jsx';
 
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example. 
 
 function EndPoints(){
+    // FOR IMPLEMENTING LOGIN: work in progress!!
+    // const [token, setToken] = useState();
+
+    // if(!token) {
+    //     return( 
+    //     <BrowserRouter>
+    //         <Routes>
+    //             <Route exact path="/"  element={<FrontPage />}/>
+    //             <Route exact path="/login" element={<Login setToken={setToken} />} />
+    //         </Routes>
+    //     </BrowserRouter>)
+    //   }
+    
     return (
         <BrowserRouter>
             <Routes>
                 <Route exact path="/"  element={<FrontPage />}/>
                 <Route exact path="/login" element={<Login />} />
+                <Route exact path="/sample" element={<Sample />}/>
             </Routes>
         </BrowserRouter>
     )
