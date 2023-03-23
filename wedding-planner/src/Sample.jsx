@@ -232,8 +232,6 @@ const [customers, setCustomers] = useState([]);
         return (
             <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
                  <h4 className="m-0"> Customers </h4>
-                 
-
             </div>
         );
     };
