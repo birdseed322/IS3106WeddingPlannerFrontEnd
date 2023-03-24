@@ -325,7 +325,6 @@ const [customers, setCustomers] = useState([]);
     const header = renderHeader();
 
         <Button icon="pi pi-heart" rounded size="large" style={{ backgroundColor: '#f561b0',  border: '#f561b0'}} /> 
-        </div>;
       return (
     <div className="App">
         <HeartyNavbar />

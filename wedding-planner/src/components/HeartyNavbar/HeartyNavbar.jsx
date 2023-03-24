@@ -13,13 +13,26 @@ export default function HeartyNavbar(props) {
     // see https://www.primefaces.org/primereact-v8/menumodel/
     const items = [
         {
-            label: "Sample DataTable",
-            icon: "pi pi-table",
+            label: "Vendor Management",
+            icon: "pi pi-fw pi-file",
             url: "/sample",
             className: "menuItemStyle"
         },
+        {
+            label: "Guest Management",
+            icon: "pi pi-fw pi-users",
+            className: "menuItemStyle"   ,     
+            items: [{label: 'Guest List', icon: 'pi pi-fw pi-cog', url: "/sample"},
+            {label: 'Table Planner', icon: 'pi pi-fw pi-power-off', url: "/sample"} ]
+        },
+        {
+            label: "Logistics Management",
+            icon: "pi pi-table",
+            url: "/sample",
+            className: "menuItemStyle"
+        }
+        
     ];
-
     const end = (
         
         // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
@@ -37,12 +50,14 @@ export default function HeartyNavbar(props) {
     const start = (
         <>
             <Link to="/" className="noUnderline">
+                <span>
                 <Button
                     icon="pi pi-heart"
                     rounded
                     size="large"
                     style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
                 />
+                </span>
             </Link>
         </>
     );
