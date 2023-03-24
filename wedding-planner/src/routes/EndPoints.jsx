@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Login from '../components/Login Page/Login.jsx';
 import FrontPage from '../components/FrontPage/FrontPage.jsx';
 import Sample from '../Sample.jsx';
+import SearchPage from '../components/VendorManagement/SearchPage.jsx';
 
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example. 
 
@@ -26,6 +27,7 @@ function EndPoints(){
                 <Route exact path="/"  element={<FrontPage />}/>
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/sample" element={<Sample />}/>
+                <Route exact path="/VendorSearchPage" element={<SearchPage/>}/>
             </Routes>
         </BrowserRouter>
     )
