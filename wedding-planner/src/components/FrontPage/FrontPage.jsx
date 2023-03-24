@@ -1,6 +1,6 @@
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import Container from "react-bootstrap/esm/Container";
-import Footer from "../Footer/footer.jsx";
+import Footer from "../Footer/Footer.jsx";
 import Sample from "../../Sample.jsx";
 
 
