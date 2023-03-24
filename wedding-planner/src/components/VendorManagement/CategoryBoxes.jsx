@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";        
 
 
 
@@ -12,9 +12,9 @@ const CategoryBoxes = () => {
     function handleClick(category){
         setSelectedCategory(category);
         console.log("Selected category: " + category);
-        navigate(`${category}`);
+        navigate(`Category/${category}`);
     }
-
+    // use https://primereact.org/dataview/
     return (
         <div>
             <h2>Click a box to go to a different page:</h2>

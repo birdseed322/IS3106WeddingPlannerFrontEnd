@@ -30,8 +30,8 @@ function EndPoints(){
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/sample" element={<Sample />}/>
                 <Route exact path="/VendorSearchPage" element={<SearchPage/>}/>
-                <Route path="/VendorSearchPage/:vendorName" element={<VendorDetailpage/>}/>
-                <Route path="/VendorSearchPage/:vendorCategory" element={<CategoryDisplayPage/>}/>
+                <Route path="/VendorSearchPage/VendorName/:vendorName" element={<VendorDetailpage/>}/>
+                <Route path="/VendorSearchPage/Category/:vendorCategory" element={<CategoryDisplayPage/>}/>
             </Routes>
         </BrowserRouter>
     )
