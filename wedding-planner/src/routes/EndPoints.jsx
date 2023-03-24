@@ -14,16 +14,6 @@ function EndPoints(){
     // FOR IMPLEMENTING LOGIN: work in progress!!
     // const [token, setToken] = useState();
 
-
-    // if(!token) {
-    //     return( 
-    //     <BrowserRouter>
-    //         <Routes>
-    //             <Route exact path="/"  element={<FrontPage />}/>
-    //             <Route exact path="/login" element={<Login setToken={setToken} />} />
-    //         </Routes>
-    //     </BrowserRouter>)
-    //   } 
     // if(!token) {
     //     return( 
     //     <BrowserRouter>
