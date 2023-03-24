@@ -37,7 +37,7 @@ p {
 
 #navbar {
     /* background-color: orange; */
-    background: pink;
+    background: white;
     min-height: var(--navbar-height);
 }
 
@@ -57,5 +57,5 @@ p {
 }
 
 .menuItemStyle {
-    color: red !important;
+    color: black;
 }
