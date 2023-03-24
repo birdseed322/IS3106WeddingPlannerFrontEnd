@@ -15,23 +15,30 @@ const SearchBar = () => {
     const searchCriteriaOptions = ["Categories","Vendor Name"]
 
     function checkIfVendorExists(){
-
+        return true;
     }
     function checkIfCategoryExists(){
-
+        return true;
     }
     //handles the search and will redirect to the vendor's profile should 
     function HandleSearch(){
         console.log("Criteria length = "+ searchCriteria.length);
+
+        //search shouldnt be 0 cos by default it will have 'categories' selected
         if(searchCriteria.length == 0 ){
             alert("Please select");
         }
+        //handles 'vendor name' selection
         if(searchCriteria.toLowerCase() == "vendor name"){
             console.log("handling search for vendor! = " + search);
-            //history.push(`${searchCriteria}`);
-            navigate(`${search}`); //adds on to the current endpoint
-        }else if(searchCriteria.toLowerCase() == "categories"){
+            navigate(`VendorName/${search}`); //adds on to the current endpoint
+        }
+        //handles 'categories' selection 
+        else if(searchCriteria.toLowerCase() == "categories"){
             console.log("handling search for categories! = " + search);
+            if(checkIfCategoryExists()){
+                navigate(`Category/${search}`);
+            }
             //navigate(search); //adds on to the current endpoint eg http://localhost:3000/VendorSearchPage/search
         }else{
             console.log("search criteria failed");
