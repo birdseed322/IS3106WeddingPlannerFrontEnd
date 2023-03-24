@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.css"; // loads the default bootstrap CSS
 import EndPoints from "./routes/EndPoints.jsx";
 
-import "./App.css"
+import "./App.css";
 //Main App component
 
 function App() {
