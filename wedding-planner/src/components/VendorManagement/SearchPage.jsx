@@ -1,4 +1,5 @@
 import React from 'react';
+import CategoryBoxes from './CategoryBoxes';
 import SearchBar from './SearchBar';
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page. 
@@ -8,6 +9,7 @@ function SearchPage(){
     return (
         <div>
             <SearchBar/>
+            <CategoryBoxes/>
         </div>
     )
 }

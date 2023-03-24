@@ -4,6 +4,8 @@ import Login from '../components/Login Page/Login.jsx';
 import FrontPage from '../components/FrontPage/FrontPage.jsx';
 import Sample from '../Sample.jsx';
 import SearchPage from '../components/VendorManagement/SearchPage.jsx';
+import VendorDetailpage from '../components/VendorManagement/VendorDetailPage.jsx';
+import CategoryDisplayPage from '../components/VendorManagement/CategoryDisplayPage.jsx';
 
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example. 
 
@@ -28,6 +30,8 @@ function EndPoints(){
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/sample" element={<Sample />}/>
                 <Route exact path="/VendorSearchPage" element={<SearchPage/>}/>
+                <Route path="/VendorSearchPage/:vendorName" element={<VendorDetailpage/>}/>
+                <Route path="/VendorSearchPage/:vendorCategory" element={<CategoryDisplayPage/>}/>
             </Routes>
         </BrowserRouter>
     )
