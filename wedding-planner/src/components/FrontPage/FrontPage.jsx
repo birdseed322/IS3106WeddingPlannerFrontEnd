@@ -1,10 +1,11 @@
+import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import Container from "react-bootstrap/esm/Container";
-import Footer from "../Footer/Footer";
+import Footer from "../Footer/footer.jsx";
 import Sample from "../../Sample.jsx";
-import HeartyNavbar from "../HeartyNavbar/HeartyNavbar"
 
 
 export default function FrontPage() {
+    // note that HeartyNavbar has an id specified in its component jsx file
     return (
         <Container id="appContainer" fluid>
             <Container
@@ -12,48 +13,52 @@ export default function FrontPage() {
                 style={{ padding: 0, background: "var(--bs-gray)", "min-height": "100vh" }}
             >
                 <HeartyNavbar id="navbar" />
-                <Container id="bodyContainer">
-                    <p>foobar</p>
-                    <br /> <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br /> <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <p>foobar</p>
-                </Container>
+                    <Container id="bodyContainer">
+                        <p>foobar</p>
+                        <br /> <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br /> <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <p>foobar</p>
+                    </Container>
+
+            <div id="footer">
+                <h2> some text</h2>
+            </div>
 
                 <Footer id="footer" />
             </Container>

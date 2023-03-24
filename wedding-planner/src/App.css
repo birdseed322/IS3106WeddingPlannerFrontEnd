@@ -1,10 +1,12 @@
 :root {
-    --navbar-height: 100px;
-    --footer-height: 60px;
+    --navbar-height: 64px; /* this is the lowest it can go */
+    --footer-height: 40px;
 }
 
 * {
     /* idk we may not want this to be global, but nothing is fking up for now */
+    margin-top: 0;
+    margin-bottom: 0;
     box-sizing: border-box; 
 }
 
@@ -16,16 +18,20 @@ p {
 #appContainer { /* Reminder to come back to this later, to stop bg image from repeating
                     when body text grows too long*/
     box-sizing: border-box;
-    background: red;
+    background: white;
     background-image: url("./images/background-pexels-photo-961402.jpeg");
     background-size:cover;
     min-height: 100vh;
+    /* max-width: 1000px; */
+    margin: auto;
+
 }
 
 #bodyContainer {
     box-sizing: border-box;
     border: 2px solid black;
-    background: var(--bs-gray-100);
+    background: white;
+    margin: auto;
     min-height: calc(100vh - var(--footer-height) - var(--navbar-height));
 }
 
@@ -39,4 +45,17 @@ p {
     color: white;
     background: black;
     min-height: var(--footer-height);
+}
+
+.bodyTextColumn { /* for a more centre "column"-y main body text style */
+    max-width: 768px; 
+    margin: auto;
+}
+
+.noUnderline { /* for removing underline from links */
+    text-decoration: none;
+}
+
+.menuItemStyle {
+    color: red !important;
 }

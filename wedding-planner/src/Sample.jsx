@@ -18,6 +18,7 @@ import { Slider } from 'primereact/slider';
 import { Tag } from 'primereact/tag';
 import { CustomerService } from './CustomerService';
 import 'primeicons/primeicons.css';
+import HeartyNavbar from './components/HeartyNavbar/HeartyNavbar';
 function Sample() {
   const items = [
     
@@ -231,8 +232,6 @@ const [customers, setCustomers] = useState([]);
         return (
             <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
                  <h4 className="m-0"> Customers </h4>
-                 
-
             </div>
         );
     };
@@ -325,17 +324,11 @@ const [customers, setCustomers] = useState([]);
 
     const header = renderHeader();
 
-    const end = <div class="container">  
-                    <Button label="Logout" style={{ backgroundColor: '#f561b0',  border: '#f561b0'}} />  <Button icon="pi pi-user" rounded style={{ backgroundColor: '#f561b0', border: '#f561b0'}} />
-                </div>;
-    const start =   <div class="container"> 
-    
         <Button icon="pi pi-heart" rounded size="large" style={{ backgroundColor: '#f561b0',  border: '#f561b0'}} /> 
-        </div>;
       return (
     <div className="App">
-      <Menubar model={items} style={{backgroundColor:'#FFFFFF', color:'white'}} start={start} end={end}/>
-      <div className="card">
+        <HeartyNavbar />
+<div className="card">
             <DataTable value={customers} paginator header={header} rows={10}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     rowsPerPageOptions={[10, 25, 50]} dataKey="id" selectionMode="checkbox" selection={selectedCustomers} onSelectionChange={(e) => setSelectedCustomers(e.value)}
