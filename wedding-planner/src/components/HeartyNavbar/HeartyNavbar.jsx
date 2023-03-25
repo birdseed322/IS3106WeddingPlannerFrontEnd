@@ -22,8 +22,8 @@ export default function HeartyNavbar(props) {
             label: "Guest Management",
             icon: "pi pi-fw pi-users",
             className: "menuItemStyle"   ,     
-            items: [{label: 'Guest List', icon: 'pi pi-fw pi-cog', url: "/sample"},
-            {label: 'Table Planner', icon: 'pi pi-fw pi-power-off', url: "/sample"} ]
+            items: [{label: 'Guest List', icon: 'pi pi-fw pi-cog', url: "/guestlist"},
+            {label: 'Table Planner', icon: 'pi pi-fw pi-power-off', url: "/guestlist"} ]
         },
         {
             label: "Logistics Management",

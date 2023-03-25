@@ -2,13 +2,14 @@
     --navbar-height: 64px; /* this is the lowest it can go */
     --footer-height: 40px;
 }
-
+/*
 * {
-    /* idk we may not want this to be global, but nothing is fking up for now */
+    /* idk we may not want this to be global, but nothing is fking up for now 
     margin-top: 0;
     margin-bottom: 0;
     box-sizing: border-box; 
 }
+*/
 
 
 p {
