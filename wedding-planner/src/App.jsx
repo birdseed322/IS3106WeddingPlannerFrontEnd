@@ -10,7 +10,6 @@ import "primeflex/primeflex.css"
 function App() {
 
     return (
-        
         <EndPoints />
     );
 }
