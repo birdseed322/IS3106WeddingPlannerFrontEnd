@@ -16,6 +16,7 @@ import { InputText } from 'primereact/inputtext';
 import { Tag } from 'primereact/tag';
 import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
+import './Guest.css'
 export default function GuestList() {
     let emptyGuest = {
         id: null,

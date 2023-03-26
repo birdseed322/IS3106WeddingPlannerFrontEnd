@@ -1,26 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { classNames } from 'primereact/utils';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { ProductService } from './ProductService';
-import { Toast } from 'primereact/toast';
-import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
-import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputNumber } from 'primereact/inputnumber';
-import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
-import { Tag } from 'primereact/tag';
-import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
-
-
-export default function TabelLayout() {
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo, FC} from "react";
+import HeartyNavbar from "../HeartyNavbar/HeartyNavbar.jsx";
+import ReactFlow, { MiniMap, Background, Controls, applyEdgeChanges, applyNodeChanges } from "reactflow";
+import 'reactflow/dist/style.css';
+import Table from './Table.jsx';
+import GuestListPanel from './OptionsPanel.jsx';
+import { Panel } from 'primereact/panel';
+import { Ripple } from 'primereact/ripple';
+import OptionsPanel from "./OptionsPanel.jsx";
+import {Button} from 'primereact/button';
+export default function TableLayout() {
+    const initialNodes = [
+        { id: 'node-1', type: 'table', position: { x: 0, y: 0 }, data: { tableNumber: 10, currOccupancy : 9,  capacity : 10} },
+      ];
+    const [nodes, setNodes] = useState(initialNodes);
+    const onNodesChange = useCallback((changes) => setNodes((nds) => applyNodeChanges(changes, nds)), []);
+    const nodeTypes = useMemo(() => ({ table: Table }), []);
+    
     return (
-        <> 
-        <HeartyNavbar></HeartyNavbar>
-        
-        </>);
+        <>
+            <HeartyNavbar></HeartyNavbar>
+            <OptionsPanel></OptionsPanel>
+            <div style={{ height: '675px', width: '100%', position: "fixed" }}>
+                <ReactFlow
+                    nodeTypes={nodeTypes}
+                    nodes={nodes}
+                    onNodesChange={onNodesChange}
+                    minZoom={0.3}
+                    maxZoom={2}
+                    fitView
+                >                    
+                <Background />
+                    <Controls />
+                </ReactFlow>
+            </div>
+        </>
+    );
 }
