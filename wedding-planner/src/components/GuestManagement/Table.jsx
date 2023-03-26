@@ -13,9 +13,6 @@ import '@reactflow/node-resizer/dist/style.css';
         return (
             <>
             <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} keepAspectRatio={true} />
-            <NodeToolbar isVisible={data.toolbarVisible} position={data.toolbarPosition}>
-                <Button size="small" label="Manage Guests" icon="pi pi-users" style={{ backgroundColor: "#f561b0", border: "#f561b0"} }/>
-            </NodeToolbar>
             <div className="tableNode">
 `                <svg width="100%" height="auto" viewBox="0 0 200 200">
                         <circle
@@ -24,8 +21,10 @@ import '@reactflow/node-resizer/dist/style.css';
                             r="80"
                             fill="#FBE3E8"
                         />
-                        <text class="label1" x="65" y="90" fill="black" font-family="Optima" font-size="20px" font-weight="bold" > Table {data.tableNumber}</text>
-                        <text class="label1" x="77" y="130" fill="black" font-family="Optima" font-size="20px">{data.currOccupancy}/{data.capacity}</text>
+                        <text class="label1" x="65" y="80" fill="black" font-family="Optima" font-size="20px" font-weight="bold" > Table {data.tableNumber}</text>
+                        <text class="label1" x="80" y="125" fill="black" font-family="Optima" font-size="20px">{data.currOccupancy}/{data.capacity} </text>
+                        <text class="label1" x="73" y="150" fill="black" font-family="Optima" font-size="15px"> occupied </text>
+
                 </svg>`
             </div>
 
