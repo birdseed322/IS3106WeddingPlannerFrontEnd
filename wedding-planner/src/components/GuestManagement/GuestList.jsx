@@ -23,7 +23,7 @@ export default function GuestList() {
         email: '',
         attendingSide: null,
         numPax: 1,
-        rsvpStatus: 'NOT SENT'
+        rsvp: 'NOTSENT'
     };
 
     const [guests, setGuests] = useState([]);
@@ -84,11 +84,12 @@ export default function GuestList() {
                 
                 //_guest.id = createId();
                 if (validateGuest(_guest)) {
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest ???', life: 3000 });
                     Api.createGuest(_guest, 1).then((response) => {
                         console.log(response.status);
-                        if ( (response.status === 204)) {
-                            //_guests.push(_guest);
+                        if ( (response.status === 200)) {
+                            let object = response.json();
+                            _guest.id = object.GUESTID;
+                            _guests.push(_guest);
                             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Created', life: 3000 });
                         } else {
                             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });      
@@ -96,7 +97,6 @@ export default function GuestList() {
                     });
                 }
             }
-            _guests.push(_guest);
 
             setGuests(_guests);
             setGuestDialog(false);
@@ -217,7 +217,7 @@ export default function GuestList() {
     };
 
     const statusBodyTemplate = (rowData) => {
-        return <Tag value={rowData.rsvpStatus} severity={getSeverity(rowData)}></Tag>;
+        return <Tag value={rowData.rsvp} severity={getSeverity(rowData)}></Tag>;
     };
 
     const actionBodyTemplate = (rowData) => {
@@ -230,14 +230,14 @@ export default function GuestList() {
     };
 
     const getSeverity = (guest) => {
-        switch (guest.rsvpStatus) {
+        switch (guest.rsvp) {
             case 'CONFIRMED':
                 return 'success';
 
             case 'PENDING':
                 return 'warning';
 
-            case 'NOT ATTENDING':
+            case 'NOTATTENDING':
                 return 'danger';
 
             default:
@@ -296,7 +296,7 @@ export default function GuestList() {
                     <Column field="email" header="Email" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="attendingSide" header="Attending Side" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="numPax" header="Number of Pax" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="rsvpStatus" header="RSVP Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="rsvp" header="RSVP Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </div>
@@ -321,11 +321,11 @@ export default function GuestList() {
                     <label className="mb-3 font-bold">Attendee Side</label>
                     <div className="formgrid grid">
                         <div className="field-radiobutton col-6">
-                            <RadioButton inputId="bride" name="side" value="Bride" onChange={onCategoryChange} checked={guest.attendingSide === 'Bride'} required />
+                            <RadioButton inputId="bride" name="side" value="BRIDE" onChange={onCategoryChange} checked={guest.attendingSide === 'BRIDE'} required />
                             <label htmlFor="bride">Bride</label>
                         </div>
                         <div className="field-radiobutton col-6">
-                            <RadioButton inputId="groom" name="side" value="Groom" onChange={onCategoryChange} checked={guest.attendingSide === 'Groom'} required />
+                            <RadioButton inputId="groom" name="side" value="GROOM" onChange={onCategoryChange} checked={guest.attendingSide === 'GROOM'} required />
                             <label htmlFor="groom">Groom</label>
                         </div>
                     </div>
