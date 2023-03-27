@@ -1,7 +1,11 @@
 const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/guestmanagement";
 const Api = {
-        createGuest(data, wId) {
-            return fetch(`${SERVER_PREFIX}/${wId}`, {
+           createGuest(data, wId) {
+                const controller = new AbortController();
+                const signal = controller.signal;
+                const timer = setTimeout(controller.abort(), 5000);  //timer abort credits to chatgpt
+                
+           return fetch(`${SERVER_PREFIX}/${wId}`, {
                     headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
@@ -17,7 +21,14 @@ const Api = {
                         attendingSide : "BRIDE"
                     }
                     */
-                    });
+                    signal
+                    }).then(response => {
+                        clearTimeout(timer);                    
+                        return response;
+                    }).catch(error => {
+                        clearTimeout(timer);
+                        throw error;
+                    })
         },
         updateGuest(data, wId) {
                 return fetch(`${SERVER_PREFIX}/${wId}`, {

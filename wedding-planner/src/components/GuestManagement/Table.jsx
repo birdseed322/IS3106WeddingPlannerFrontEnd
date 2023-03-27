@@ -18,7 +18,7 @@ import '@reactflow/node-resizer/dist/style.css';
                         <circle
                             cx="100"
                             cy="100"
-                            r="80"
+                            r="100"
                             fill="#FBE3E8"
                         />
                         <text class="label1" x="65" y="80" fill="black" font-family="Optima" font-size="20px" font-weight="bold" > Table {data.tableNumber}</text>

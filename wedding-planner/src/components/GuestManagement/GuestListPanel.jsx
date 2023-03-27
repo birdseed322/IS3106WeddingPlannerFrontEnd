@@ -26,11 +26,11 @@ export default function GuestListPanel() {
 
     return (
         <Panel headerTemplate={template} style={{maxWidth:"50%", float:"right"}} toggleable>
-            <Button label="Add Guest" style={{ backgroundColor: "#f561b0", border: "#f561b0", margin:"1%"}} />{" "}
+            <Button label="Add Guest" style={{ backgroundColor: "#f561b0", border: "#f561b0"}} />{" "}
             <DataTable value={products} showGridlines tableStyle={{ minWidth: '50rem' }}>
-                <Column field="code" header="Code"></Column>
                 <Column field="name" header="Name"></Column>
-                <Column field="category" header="Category"></Column>
+                <Column field="numPax" header="Number of Pax."></Column>
+                <Column field="rsvp" header="RSVP status"></Column>
                 <Column field="quantity" header="Quantity"></Column>
             </DataTable>
          

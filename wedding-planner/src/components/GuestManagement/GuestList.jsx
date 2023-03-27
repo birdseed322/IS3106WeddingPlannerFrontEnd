@@ -16,7 +16,6 @@ import { InputText } from 'primereact/inputtext';
 import { Tag } from 'primereact/tag';
 import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
-import './Guest.css'
 export default function GuestList() {
     let emptyGuest = {
         id: null,
@@ -95,7 +94,9 @@ export default function GuestList() {
                         } else {
                             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });      
                         }
-                    });
+                    }).catch(error => {                        
+                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });   
+                    }); 
                 }
             }
 

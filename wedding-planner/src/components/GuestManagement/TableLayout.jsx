@@ -11,7 +11,8 @@ import GuestListPanel from './GuestListPanel.jsx';
 export default function TableLayout() {
     const [clickedNode, setClickedNode] = useState(null);
     const initialNodes = [
-        { id: 'node-1', type: 'table', position: { x: 0, y: 0 }, data: { tableNumber: 10, currOccupancy : 9,  capacity : 10} },
+        { id: 'node-1', type: 'table', position: { x: 0, y: 0 },  selected: true,
+        style: { width: 200, height: 200 }, data: { tableNumber: 10, currOccupancy : 9,  capacity : 10} },
       ];
     const [nodes, setNodes] = useState(initialNodes);
     const onNodesChange = useCallback((changes) => setNodes((nds) => applyNodeChanges(changes, nds)), []);
