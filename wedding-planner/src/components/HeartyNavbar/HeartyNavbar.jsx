@@ -9,64 +9,72 @@ import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 
 export default function HeartyNavbar(props) {
-    // array of MenuItems
-    // see https://www.primefaces.org/primereact-v8/menumodel/
-    const items = [
+  // array of MenuItems
+  // see https://www.primefaces.org/primereact-v8/menumodel/
+  const items = [
+    {
+      label: "Vendor Management",
+      icon: "pi pi-fw pi-file",
+      url: "/sample",
+      className: "menuItemStyle",
+    },
+    {
+      label: "Guest Management",
+      icon: "pi pi-fw pi-users",
+      className: "menuItemStyle",
+      items: [
+        { label: "Guest List", icon: "pi pi-fw pi-cog", url: "/sample" },
         {
-            label: "Vendor Management",
-            icon: "pi pi-fw pi-file",
-            url: "/sample",
-            className: "menuItemStyle"
+          label: "Table Planner",
+          icon: "pi pi-fw pi-power-off",
+          url: "/sample",
         },
-        {
-            label: "Guest Management",
-            icon: "pi pi-fw pi-users",
-            className: "menuItemStyle"   ,     
-            items: [{label: 'Guest List', icon: 'pi pi-fw pi-cog', url: "/sample"},
-            {label: 'Table Planner', icon: 'pi pi-fw pi-power-off', url: "/sample"} ]
-        },
-        {
-            label: "Logistics Management",
-            icon: "pi pi-table",
-            url: "/sample",
-            className: "menuItemStyle"
-        }
-        
-    ];
-    const end = (
-        
-        // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
-        <>
-            <Link to="/login" className="noUnderline">
-                <Button label="Logout" style={{ backgroundColor: "#f561b0", border: "#f561b0"}} />{" "}
-            </Link>
-            <Button
-                icon="pi pi-user"
-                rounded
-                style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-            />
-        </>
-    );
-    const start = (
-        <>
-            <Link to="/" className="noUnderline">
-                <span>
-                <Button
-                    icon="pi pi-heart"
-                    rounded
-                    size="large"
-                    style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-                />
-                </span>
-            </Link>
-        </>
-    );
-    // height="40" className="mr-2"
+      ],
+    },
+    {
+      label: "Logistics Management",
+      icon: "pi pi-table",
+      url: "/sample",
+      className: "menuItemStyle",
+    },
+  ];
+  const end = (
+    // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
+    <>
+      <Link to="/login" className="noUnderline">
+        <Button
+          label="Logout"
+          style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+        />{" "}
+      </Link>
+      <Button
+        icon="pi pi-user"
+        rounded
+        style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+      />
+    </>
+  );
+  const start = (
+    <>
+      <Link to="/" className="noUnderline">
+        <span className="flex m-4 align-items-center">
+          <Button
+            icon="pi pi-heart"
+            rounded
+            size="large"
+            className="mr-2"
+            style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+          />
+          <h1 className="inline h-min">Hearty</h1>
+        </span>
+      </Link>
+    </>
+  );
+  // height="40" className="mr-2"
 
-    // since we're only returning Menubar anyway, no need to wrap around a div or <>
-    return <Menubar id="navbar" model={items} start={start} end={end} />;
+  // since we're only returning Menubar anyway, no need to wrap around a div or <>
+  return <Menubar id="navbar" model={items} start={start} end={end} />;
 }
-
 
 // example items
 // const items = [
