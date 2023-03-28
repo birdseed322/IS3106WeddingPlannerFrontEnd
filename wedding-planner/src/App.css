@@ -1,61 +1,63 @@
 :root {
-    --navbar-height: 64px; /* this is the lowest it can go */
-    --footer-height: 40px;
+  --navbar-height: 64px; /* this is the lowest it can go */
+  --footer-height: 40px;
 }
-
+/*
 * {
-    /* idk we may not want this to be global, but nothing is fking up for now */
+    /* idk we may not want this to be global, but nothing is fking up for now 
     margin-top: 0;
     margin-bottom: 0;
     box-sizing: border-box; 
 }
-
+*/
 
 p {
-    margin: 0;
+  margin: 0;
 }
 
-#appContainer { /* Reminder to come back to this later, to stop bg image from repeating
+#appContainer {
+  /* Reminder to come back to this later, to stop bg image from repeating
                     when body text grows too long*/
-    box-sizing: border-box;
-    background: white;
-    background-image: url("./images/background-pexels-photo-961402.jpeg");
-    background-size:cover;
-    min-height: 100vh;
-    /* max-width: 1000px; */
-    margin: auto;
-
+  box-sizing: border-box;
+  background: white;
+  background-image: url("./images/background-pexels-photo-961402.jpeg");
+  background-size: cover;
+  min-height: 100vh;
+  /* max-width: 1000px; */
+  margin: auto;
 }
 
 #bodyContainer {
-    box-sizing: border-box;
-    border: 2px solid black;
-    background: white;
-    margin: auto;
-    min-height: calc(100vh - var(--footer-height) - var(--navbar-height));
+  box-sizing: border-box;
+  border: 2px solid black;
+  background: white;
+  margin: auto;
+  min-height: calc(100vh - var(--footer-height) - var(--navbar-height));
 }
 
 #navbar {
-    /* background-color: orange; */
-    background: white;
-    min-height: var(--navbar-height);
+  /* background-color: orange; */
+  background: white;
+  min-height: var(--navbar-height);
 }
 
 #footer {
-    color: white;
-    background: black;
-    min-height: var(--footer-height);
+  color: white;
+  background: black;
+  min-height: var(--footer-height);
 }
 
-.bodyTextColumn { /* for a more centre "column"-y main body text style */
-    max-width: 768px; 
-    margin: auto;
+.bodyTextColumn {
+  /* for a more centre "column"-y main body text style */
+  max-width: 768px;
+  margin: auto;
 }
 
-.noUnderline { /* for removing underline from links */
-    text-decoration: none;
+.noUnderline {
+  /* for removing underline from links */
+  text-decoration: none;
 }
 
 .menuItemStyle {
-    color: black;
+  color: black;
 }
