@@ -12,19 +12,18 @@ import '@reactflow/node-resizer/dist/style.css';
     const Table = ({data, selected}) => {
         return (
             <>
-            <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} keepAspectRatio={true} />
             <div className="tableNode">
-`                <svg width="100%" height="auto" viewBox="0 0 200 200">
+                <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} keepAspectRatio={true} />
+`                <svg width="100%" height="100%" viewBox="-11.5 0 220 250">
                         <circle
                             cx="100"
                             cy="100"
                             r="100"
                             fill="#FBE3E8"
                         />
-                        <text class="label1" x="65" y="80" fill="black" font-family="Optima" font-size="20px" font-weight="bold" > Table {data.tableNumber}</text>
+                        <text class="label1" x="47" y="80" fill="black" font-family="Optima" font-size="30px" font-weight="bold" > Table {data.tableNumber}</text>
                         <text class="label1" x="80" y="125" fill="black" font-family="Optima" font-size="20px">{data.currOccupancy}/{data.capacity} </text>
                         <text class="label1" x="73" y="150" fill="black" font-family="Optima" font-size="15px"> occupied </text>
-
                 </svg>`
             </div>
 
