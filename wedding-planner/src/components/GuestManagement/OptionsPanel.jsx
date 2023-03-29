@@ -12,18 +12,19 @@ export default function OptionsPanel() {
         {label: 'New Table', icon: 'pi pi-fw pi-circle'},
         {label: 'New Stage', icon: 'pi pi-fw pi-box'}
     ];
+    const [tableSize, setTableSize] = useState(10);
     return (
         <>
         <div className="card flex justify-content-center align-items-center">
             <Sidebar visible={visible} onHide={() => setVisible(false)}>
-                <div className="card flex">
-                    <span className="p-inputgroup-addon"> Table Capacity </span>
-                    <InputText placeholder="Enter Pax (max. 25)" /> 
+                <h3 className="m-0 mb-3">Options: New Table/Stage</h3>
+                <div className="card flex text-align-center">
+                    <span className="p-inputgroup-addon max-w-30rem text-align-center"> Table Capacity </span>
+                    <InputText className="max-w-10rem" placeholder="Enter Pax (max. 25)" value={tableSize} onChange={(e) => setTableSize(e.target.value)}/> 
                 </div>
                 <div className="card flex justify-content-center text-align-center mt-3">
                     <Button className="pinkButton"  label="Add Table" icon="pi pi-plus" onClick={() => setVisible(true)  } style={{ minWidth: '7rem' }} />
                 </div>
-
                 <div className="card flex justify-content-center text-align-center mt-8">
                     <Button className="pinkButton"  label="Add Stage" icon="pi pi-plus" onClick={() => setVisible(true)  } style={{ minWidth: '7rem' }} />
                 </div> 

@@ -5,14 +5,13 @@ import {DataTable} from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 
-export default function GuestListPanel() {
-    const products = []
+export default function GuestListPanel({guests}) {
+    const products = [];
     const template = (options) => {
         const toggleIcon = options.collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up';
         const className = `${options.className} justify-content-start`;
         const titleClassName = `${options.titleClassName} ml-2 text-primary`;
         const style = { fontSize: '1.25rem' };
-
         return (
             <div className={className}>
                 <button className={options.togglerClassName} onClick={options.onTogglerClick}>
