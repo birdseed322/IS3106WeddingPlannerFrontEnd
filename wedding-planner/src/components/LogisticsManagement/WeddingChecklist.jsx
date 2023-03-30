@@ -1,5 +1,7 @@
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import WeddingChecklistAPI from "./WeddingChecklistAPI";
 import "./WeddingChecklist.css";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -8,14 +10,24 @@ import { InputText } from "primereact/inputtext";
 import classNames from "classnames";
 
 export default function WeddingChecklist() {
+    // 0 for create, 1 for edit
+    // const { id = 0 } = useParams();
     const [showDialog, setShowDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
     const [taskName, setTaskName] = useState("");
+    const [subTasks, setSubTasks] = useState([""]);
 
-    const createTaskDialog = () => {
-        setShowDialog(true);
-    };
+    // const navigate  = useNavigate();
+
+    // // load for the edit case
+    // useEffect(() => {
+    //     if (id) {
+    //         WeddingChecklistAPI.getWeddingChecklist(id).then((res) => res.json()).then((weddingChecklist) => {
+    //             const {}
+    //         })
+    //     }
+    // })
 
     const onHide = () => {
         setShowDialog(!showDialog);
@@ -23,7 +35,7 @@ export default function WeddingChecklist() {
         setSubmitted(false);
     };
 
-    const onInputChange = (e) => {
+    const onInputTaskChange = (e) => {
         setTaskName(e.target.value);
     };
 
@@ -33,11 +45,35 @@ export default function WeddingChecklist() {
 
         // reset the form and hide the dialog
         if (taskName) {
+            setSubTasks(subTaskList);
             setTaskName("");
+            setSubTasks([]);
             setSubmitted(false);
             setShowDialog(false);
         }
     };
+
+    const [subTaskList, setSubTaskList] = useState([]);
+
+    const repetitiveInputText = subTasks.map((subTask, index) => (
+        <>
+            <br />
+            <InputText
+                key={index}
+                value={subTask}
+                onChange={(e) => {
+                    const newSubTasks = [...subTasks];
+                    newSubTasks[index] = e.target.value;
+                    setSubTasks(newSubTasks);
+                }}
+                required
+                autoFocus={index === 0}
+                className={classNames({
+                    "p-invalid": submitted && !subTask,
+                })}
+            />
+        </>
+    ));
 
     return (
         <div id="appContainer">
@@ -51,7 +87,7 @@ export default function WeddingChecklist() {
                             height: "2em",
                             margin: "auto",
                         }}
-                        onClick={createTaskDialog}
+                        // onClick={createTaskDialog}
                     >
                         Add Task
                     </Button>
@@ -81,7 +117,7 @@ export default function WeddingChecklist() {
                         <InputText
                             id="taskName"
                             value={taskName}
-                            onChange={onInputChange}
+                            onChange={onInputTaskChange}
                             required
                             autoFocus
                             className={classNames({
@@ -93,6 +129,16 @@ export default function WeddingChecklist() {
                                 Task Name is required.
                             </small>
                         )}
+                    </div>
+                    <div className="field">
+                        <label htmlFor="subTasks" className="font-bold">
+                            SubTasks
+                        </label>
+                        {repetitiveInputText}
+                        <Button
+                            icon="pi pi-plus"
+                            onClick={() => setSubTasks([...subTasks, ""])}
+                        ></Button>
                     </div>
                     <Button type="submit" label="Create Task" />
                 </form>
