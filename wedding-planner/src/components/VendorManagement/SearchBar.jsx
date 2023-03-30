@@ -46,22 +46,27 @@ const SearchBar = () => {
     }
 
     return (
-        <span className="p-input-icon-left">
-            <Dropdown placeholder="Search Criteria" 
-                value={searchCriteria}
-                defaultValue="Categories"
-                onChange={(e) => setSearchCriteria(e.value)}
-                options= {searchCriteriaOptions}
-                className="w-full md:w-14rem"
-                filter   
-            />
+        <div class="card">
+                <div class="flex flex-wrap align-items-center justify-content-center card-container blue-container">
+
             <span className="p-input-icon-left">
-                <InputText value={search} onChange={(e) => setSearch(e.target.value)} />
-                <i className="pi pi-search" />
-            </span>
-            {console.log("Search is = " + search)}
-            <Button label="Search" onClick={HandleSearch}/>
-        </span>      
+                <Dropdown placeholder="Search Criteria" 
+                    value={searchCriteria}
+                    defaultValue="Categories"
+                    onChange={(e) => setSearchCriteria(e.value)}
+                    options= {searchCriteriaOptions}
+                    className="w-full md:w-14rem"
+                    filter   
+                />
+                <span className="p-input-icon-left" >
+                    <InputText value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <i className="pi pi-search" />
+                </span>
+                {console.log("Search is = " + search)}
+                <Button label="Search" onClick={HandleSearch}/>
+            </span>    
+            </div>
+        </div>  
     )
 }
 

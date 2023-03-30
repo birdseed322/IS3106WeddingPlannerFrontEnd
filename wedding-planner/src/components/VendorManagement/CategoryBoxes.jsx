@@ -1,10 +1,14 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from "react";        
+import { useEffect, useState } from "react";     
+import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 
 
 
-const CategoryBoxes = () => {
+const product = ["Entertainment", "Food", "Lighting", "Decoration", "Clothes", "Venue"];
+
+
+const GridItem = (product) => {
 
     const [selectedCategory, setSelectedCategory] = useState("")
     const navigate = useNavigate();
@@ -14,25 +18,29 @@ const CategoryBoxes = () => {
         console.log("Selected category: " + category);
         navigate(`Category/${category}`);
     }
-    // use https://primereact.org/dataview/
     return (
-        <div>
-            <h2>Click a box to go to a different page:</h2>
-        <div>
-            <div className="box" onClick={(e) => handleClick("Entertainment")}> Entertainment </div>
-
-            <div className="box" onClick={(e) => handleClick("Food")}> Food </div>
-            
-            <div className="box" onClick={(e) => handleClick("Lighting")}> Lighting </div>
-            
-            <div className="box" onClick={(e) => handleClick("Decoration")}> Decoration </div>
-
-            <div className="box" onClick={(e) => handleClick("Dresses&Suits")}> Dresses & Suits </div>
-
-            <div className="box" onClick={(e) => handleClick("Venue")}> Venue </div>
+        <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
+            <div className="p-4 border-1 surface-border surface-card border-round">
+                <div className="flex flex-column align-items-center gap-3 py-5">
+                    <div className="text-2xl font-bold" onClick={(e) => handleClick(product)}> {product}</div>
+                </div>
+            </div>
         </div>
+    );
+};
+
+const itemTemplate = (product) => {
+     return GridItem(product);
+};
+
+const CategoryBoxes = () => {
+
+    return(
+        <div className="card">
+            <DataView value={product} itemTemplate={itemTemplate} />
         </div>
     )
+
 }
 
 export default CategoryBoxes
