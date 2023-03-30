@@ -10,24 +10,15 @@ import { InputText } from "primereact/inputtext";
 import classNames from "classnames";
 
 export default function WeddingChecklist() {
-    // 0 for create, 1 for edit
-    // const { id = 0 } = useParams();
     const [showDialog, setShowDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
     const [taskName, setTaskName] = useState("");
     const [subTasks, setSubTasks] = useState([""]);
 
-    // const navigate  = useNavigate();
-
-    // // load for the edit case
-    // useEffect(() => {
-    //     if (id) {
-    //         WeddingChecklistAPI.getWeddingChecklist(id).then((res) => res.json()).then((weddingChecklist) => {
-    //             const {}
-    //         })
-    //     }
-    // })
+    const createTaskDialog = () => {
+        setShowDialog(true);
+    };
 
     const onHide = () => {
         setShowDialog(!showDialog);
@@ -87,7 +78,7 @@ export default function WeddingChecklist() {
                             height: "2em",
                             margin: "auto",
                         }}
-                        // onClick={createTaskDialog}
+                        onClick={createTaskDialog}
                     >
                         Add Task
                     </Button>
@@ -134,6 +125,7 @@ export default function WeddingChecklist() {
                         <label htmlFor="subTasks" className="font-bold">
                             SubTasks
                         </label>
+                        <br />
                         {repetitiveInputText}
                         <Button
                             icon="pi pi-plus"
