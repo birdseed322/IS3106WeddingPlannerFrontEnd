@@ -12,6 +12,7 @@ import GuestList from "../components/GuestManagement/GuestList.jsx";
 import TableLayout from "../components/GuestManagement/TableLayout.jsx";
 import WeddingChecklist from "../components/LogisticsManagement/WeddingChecklist.jsx";
 import WeddingBudgetPlanner from "../components/LogisticsManagement/WeddingBudgetPlanner.jsx";
+import WeddingItinerary from "../components/LogisticsManagement/WeddingItinerary.jsx";
 import Homepage from "../components/UnregisteredVIew/Homepage.js";
 import AboutUs from "../components/UnregisteredVIew/AboutUs.js";
 import Contact from "../components/UnregisteredVIew/Contact.js";
@@ -58,6 +59,11 @@ function EndPoints() {
                         exact
                         path="/LogisticsManagement/WeddingBudgetPlanner"
                         element={<WeddingBudgetPlanner />}
+                    />
+                    <Route
+                        exact
+                        path="/LogisticsManagement/WeddingItinerary"
+                        element={<WeddingItinerary />}
                     />
                     <Route
                         exact
