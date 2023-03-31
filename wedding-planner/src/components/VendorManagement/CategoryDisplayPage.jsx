@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
 import { DataView, DataViewLayoutOptions } from "primereact/dataview";
+import SearchBar from './SearchBar';
 
 //import Api from './VendorAPI';
 
@@ -58,6 +59,9 @@ const CategoryDisplayPage = () => {
   return (
     <div>
       <PublicHeartyNavbar />
+      <br/>
+      <br/>
+      <SearchBar/>
       <div className="card">
         <h1> CategoryDisplayPage, category name = {vendorCategory} </h1>
 

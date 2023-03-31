@@ -31,13 +31,13 @@ const SearchBar = () => {
         //handles 'vendor name' selection
         if(searchCriteria.toLowerCase() == "vendor name"){
             console.log("handling search for vendor! = " + search);
-            navigate(`VendorName/${search}`); //adds on to the current endpoint
+            navigate(`/VendorSearchPage/VendorName/${search}`); //adds on to the current endpoint
         }
         //handles 'categories' selection 
         else if(searchCriteria.toLowerCase() == "categories"){
             console.log("handling search for categories! = " + search);
             if(checkIfCategoryExists()){
-                navigate(`Category/${search}`);
+                navigate(`/VendorSearchPage/Category/${search}`);
             }
             //navigate(search); //adds on to the current endpoint eg http://localhost:3000/VendorSearchPage/search
         }else{
