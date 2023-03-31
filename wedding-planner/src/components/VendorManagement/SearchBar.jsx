@@ -5,8 +5,6 @@ import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
 import { Dropdown } from 'primereact/dropdown';
 
-
-
 const SearchBar = () => {
     const [search, setSearch] = useState("");
     const [searchCriteria, setSearchCriteria] = useState("categories")
