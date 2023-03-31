@@ -23,7 +23,11 @@ export default function HeartyNavbar(props) {
       icon: 'pi pi-fw pi-users',
       className: 'menuItemStyle',
       items: [
-        { label: 'Guest List', icon: 'pi pi-fw pi-cog', url: '/guestlist' },
+        {
+          label: 'Guest List',
+          icon: 'pi pi-fw pi-cog',
+          url: '/guestlist',
+        },
         {
           label: 'Table Planner',
           icon: 'pi pi-fw pi-power-off',
@@ -34,8 +38,24 @@ export default function HeartyNavbar(props) {
     {
       label: 'Logistics Management',
       icon: 'pi pi-table',
-      url: '/sample',
       className: 'menuItemStyle',
+      items: [
+        {
+          label: 'Wedding Checklist',
+          icon: 'pi pi-check',
+          url: '/LogisticsManagement/WeddingChecklist',
+        },
+        {
+          label: 'Budget Planner',
+          icon: 'pi pi-money-bill',
+          url: '/LogisticsManagement/WeddingBudgetPlanner',
+        },
+        {
+          label: 'Wedding Itinerary',
+          icon: 'pi pi-calendar',
+          url: '/LogisticsManagement/WeddingItinerary',
+        },
+      ],
     },
   ]
   const end = (
@@ -64,7 +84,10 @@ export default function HeartyNavbar(props) {
             icon="pi pi-heart"
             rounded
             size="large"
-            style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+            style={{
+              backgroundColor: '#f561b0',
+              border: '#f561b0',
+            }}
           />
         </span>
       </Link>

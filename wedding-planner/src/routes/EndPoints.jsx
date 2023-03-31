@@ -11,6 +11,8 @@ import AdminUserManagement from '../components/AdminUserManagement/AdminUserMana
 import GuestList from '../components/GuestManagement/GuestList.jsx'
 import TableLayout from '../components/GuestManagement/TableLayout.jsx'
 import WeddingChecklist from '../components/LogisticsManagement/WeddingChecklist.jsx'
+import WeddingBudgetPlanner from '../components/LogisticsManagement/WeddingBudgetPlanner.jsx'
+import WeddingItinerary from '../components/LogisticsManagement/WeddingItinerary.jsx'
 import Homepage from '../components/UnregisteredVIew/Homepage.jsx'
 import AboutUs from '../components/UnregisteredVIew/AboutUs.jsx'
 import Contact from '../components/UnregisteredVIew/Contact.jsx'
@@ -18,7 +20,6 @@ import SignUp from '../components/UnregisteredVIew/SignUp.jsx'
 import VendorLogin from '../components/Login Page/VendorLogin.jsx'
 import ViewProfile from '../components/Profiles/ViewProfile.jsx'
 import EditProfile from '../components/Profiles/EditProfile.jsx'
-
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -53,6 +54,16 @@ function EndPoints() {
             exact
             path="/LogisticsManagement/WeddingChecklist"
             element={<WeddingChecklist />}
+          />
+          <Route
+            exact
+            path="/LogisticsManagement/WeddingBudgetPlanner"
+            element={<WeddingBudgetPlanner />}
+          />
+          <Route
+            exact
+            path="/LogisticsManagement/WeddingItinerary"
+            element={<WeddingItinerary />}
           />
           <Route exact path="/VendorSearchPage" element={<SearchPage />} />
           <Route
