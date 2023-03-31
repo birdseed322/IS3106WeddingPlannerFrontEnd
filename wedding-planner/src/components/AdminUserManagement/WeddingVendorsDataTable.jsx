@@ -528,7 +528,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
                     value={userObjects}
                     selection={selectedUsers}
                     onSelectionChange={(e) => setSelectedUsers(e.value)}
-                    dataKey="id"
+                    dataKey="userId"
                     paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
@@ -539,7 +539,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
                 >
                     <Column selectionMode="multiple" exportable={false}></Column>
 
-                    <Column field="id" header="ID" sortable style={{ minWidth: "12rem" }}></Column>
+                    <Column field="userId" header="ID" sortable style={{ minWidth: "12rem" }}></Column>
                     <Column
                         field="username"
                         header="Username"
