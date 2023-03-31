@@ -13,13 +13,14 @@ import TableLayout from '../components/GuestManagement/TableLayout.jsx'
 import WeddingChecklist from '../components/LogisticsManagement/WeddingChecklist.jsx'
 import WeddingBudgetPlanner from '../components/LogisticsManagement/WeddingBudgetPlanner.jsx'
 import WeddingItinerary from '../components/LogisticsManagement/WeddingItinerary.jsx'
-import Homepage from '../components/UnregisteredVIew/Homepage.jsx'
-import AboutUs from '../components/UnregisteredVIew/AboutUs.jsx'
-import Contact from '../components/UnregisteredVIew/Contact.jsx'
-import SignUp from '../components/UnregisteredVIew/SignUp.jsx'
+import Homepage from '../components/UnregisteredView/Homepage.jsx'
+import Contact from '../components/UnregisteredView/Contact.jsx'
+import SignUp from '../components/UnregisteredView/SignUp.jsx'
+import AboutUs from '../components/UnregisteredView/AboutUs.jsx'
 import VendorLogin from '../components/Login Page/VendorLogin.jsx'
 import ViewProfile from '../components/Profiles/ViewProfile.jsx'
 import EditProfile from '../components/Profiles/EditProfile.jsx'
+import ProjectDashboard from '../components/ProjectDashboard/ProjectDashboard.jsx'
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -40,7 +41,7 @@ function EndPoints() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<FrontPage />} />
+          <Route exact path="/" element={<ProjectDashboard />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/vendorlogin" element={<VendorLogin />} />
           <Route exact path="/sample" element={<Sample />} />
