@@ -11,10 +11,14 @@ import AdminUserManagement from '../components/AdminUserManagement/AdminUserMana
 import GuestList from '../components/GuestManagement/GuestList.jsx'
 import TableLayout from '../components/GuestManagement/TableLayout.jsx'
 import WeddingChecklist from '../components/LogisticsManagement/WeddingChecklist.jsx'
-import Homepage from '../components/UnregisteredVIew/Homepage.js'
-import AboutUs from '../components/UnregisteredVIew/AboutUs.js'
-import Contact from '../components/UnregisteredVIew/Contact.js'
-import SignUp from '../components/UnregisteredVIew/SignUp.js'
+import Homepage from '../components/UnregisteredVIew/Homepage.jsx'
+import AboutUs from '../components/UnregisteredVIew/AboutUs.jsx'
+import Contact from '../components/UnregisteredVIew/Contact.jsx'
+import SignUp from '../components/UnregisteredVIew/SignUp.jsx'
+import VendorLogin from '../components/Login Page/VendorLogin.jsx'
+import ViewProfile from '../components/Profiles/ViewProfile.jsx'
+import EditProfile from '../components/Profiles/EditProfile.jsx'
+
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -37,6 +41,7 @@ function EndPoints() {
         <Routes>
           <Route exact path="/" element={<FrontPage />} />
           <Route exact path="/login" element={<Login />} />
+          <Route exact path="/vendorlogin" element={<VendorLogin />} />
           <Route exact path="/sample" element={<Sample />} />
           <Route exact path="/vendor/request" element={<VendorRequest />} />
           <Route
@@ -64,6 +69,8 @@ function EndPoints() {
           <Route exact path="/aboutuspage" element={<AboutUs />} />
           <Route exact path="/contactpage" element={<Contact />} />
           <Route exact path="/signup" element={<SignUp />} />
+          <Route exact path="/viewprofile" element={<ViewProfile />} />
+          <Route exact path="/editprofile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
     </>
