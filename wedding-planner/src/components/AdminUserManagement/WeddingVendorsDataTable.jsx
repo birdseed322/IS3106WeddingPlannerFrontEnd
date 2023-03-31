@@ -11,8 +11,9 @@ import { InputNumber } from "primereact/inputnumber";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
+import userApi from "./AdminUserManagementAPI";
 
-export default function WeddingVendorsDataTable({fetchedData}) {
+export default function WeddingVendorsDataTable({ fetchedData }) {
     let emptyProduct = {
         id: null,
         name: "",
@@ -193,9 +194,10 @@ export default function WeddingVendorsDataTable({fetchedData}) {
     const banUser = () => {
         // for each product item inside products, filter out the selected product (which is just called product)
         let _products = userObjects.map((user) => {
-            if (user.id === currentUser.id) {
+            if (user.userId === currentUser.userId) {
                 // if the user in the list matches the selected user
                 user.isBanned = true;
+                userApi.updateOneVendor(user);
             }
             return user;
         });
@@ -219,6 +221,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
         let _users = userObjects.map((user) => {
             if (selectedUsers.includes(user)) {
                 user.isBanned = true;
+                userApi.updateOneVendor(user);
             }
             return user;
         });
@@ -242,9 +245,10 @@ export default function WeddingVendorsDataTable({fetchedData}) {
     const unbanUser = () => {
         // for each product item inside products, filter out the selected product (which is just called product)
         let _products = userObjects.map((user) => {
-            if (user.id === currentUser.id) {
+            if (user.userId === currentUser.userId) {
                 // if the user in the list matches the selected user
                 user.isBanned = false;
+                userApi.updateOneVendor(user);
             }
             return user;
         });
@@ -268,6 +272,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
         let _users = userObjects.map((user) => {
             if (selectedUsers.includes(user)) {
                 user.isBanned = false;
+                userApi.updateOneVendor(user);
             }
             return user;
         });
@@ -289,7 +294,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
         let index = -1;
 
         for (let i = 0; i < userObjects.length; i++) {
-            if (userObjects[i].id === id) {
+            if (userObjects[i].userId === id) {
                 index = i;
                 break;
             }
@@ -442,7 +447,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
 
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Manage Wedding Organisers</h4>
+            <h4 className="m-0">Manage Vendors</h4>
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText
@@ -530,6 +535,7 @@ export default function WeddingVendorsDataTable({fetchedData}) {
                     onSelectionChange={(e) => setSelectedUsers(e.value)}
                     dataKey="userId"
                     paginator
+                    
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -539,24 +545,41 @@ export default function WeddingVendorsDataTable({fetchedData}) {
                 >
                     <Column selectionMode="multiple" exportable={false}></Column>
 
-                    <Column field="userId" header="ID" sortable style={{ minWidth: "12rem" }}></Column>
+                    <Column
+                        field="userId"
+                        header="User ID"
+                        sortable
+                        style={{ minWidth: "1rem" }}
+                    ></Column>
                     <Column
                         field="username"
                         header="Username"
                         sortable
-                        style={{ minWidth: "12rem" }}
+                        style={{ minWidth: "1rem" }}
                     ></Column>
                     <Column
                         field="email"
                         header="Email"
                         sortable
-                        style={{ minWidth: "12rem" }}
+                        style={{ minWidth: "1rem" }}
                     ></Column>
                     <Column
-                        field="contact"
-                        header="Contact"
+                        field="category"
+                        header="Category"
                         sortable
-                        style={{ minWidth: "12rem" }}
+                        style={{ minWidth: "1rem" }}
+                    ></Column>
+                    <Column
+                        field="description"
+                        header="Description"
+                        sortable
+                        style={{ minWidth: "1rem" }}
+                    ></Column>
+                    <Column
+                        field="websiteUrl"
+                        header="Website URL"
+                        sortable
+                        style={{ minWidth: "1rem" }}
                     ></Column>
                     <Column
                         field="isBanned"

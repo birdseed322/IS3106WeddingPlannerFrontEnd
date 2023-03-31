@@ -11,6 +11,7 @@ import { InputNumber } from "primereact/inputnumber";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
+import userApi from "./AdminUserManagementAPI";
 
 export default function WeddingOrganisersDataTable({fetchedData}) {
     let emptyProduct = {
@@ -186,16 +187,17 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
     };
 
     // === Ban-related state setting functions ===
-    const confirmBanUser = (user) => {
-        setCurrentUser(user); // keeping the variable as setProduct. maybe later we need a User state to handle logged-in state
+    const confirmBanUser = (user) => { // this opens up the dialog confirming the ban
+        setCurrentUser(user);
         setBanUserDialog(true);
     };
     const banUser = () => {
         // for each product item inside products, filter out the selected product (which is just called product)
         let _products = userObjects.map((user) => {
-            if (user.id === currentUser.id) {
+            if (user.userId === currentUser.userId) {
                 // if the user in the list matches the selected user
                 user.isBanned = true;
+                userApi.updateOneWeddingOrganiser(user); // make the PUT request to backend
             }
             return user;
         });
@@ -219,6 +221,7 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
         let _users = userObjects.map((user) => {
             if (selectedUsers.includes(user)) {
                 user.isBanned = true;
+                userApi.updateOneWeddingOrganiser(user); 
             }
             return user;
         });
@@ -242,9 +245,10 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
     const unbanUser = () => {
         // for each product item inside products, filter out the selected product (which is just called product)
         let _products = userObjects.map((user) => {
-            if (user.id === currentUser.id) {
+            if (user.userId === currentUser.userId) {
                 // if the user in the list matches the selected user
                 user.isBanned = false;
+                userApi.updateOneWeddingOrganiser(user); 
             }
             return user;
         });
@@ -268,6 +272,7 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
         let _users = userObjects.map((user) => {
             if (selectedUsers.includes(user)) {
                 user.isBanned = false;
+                userApi.updateOneWeddingOrganiser(user); 
             }
             return user;
         });
@@ -289,7 +294,7 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
         let index = -1;
 
         for (let i = 0; i < userObjects.length; i++) {
-            if (userObjects[i].id === id) {
+            if (userObjects[i].userId === id) {
                 index = i;
                 break;
             }
@@ -539,7 +544,12 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
                 >
                     <Column selectionMode="multiple" exportable={false}></Column>
 
-                    <Column field="userId" header="ID" sortable style={{ minWidth: "12rem" }}></Column>
+                    <Column
+                        field="userId"
+                        header="User ID"
+                        sortable
+                        style={{ minWidth: "12rem" }}
+                    ></Column>
                     <Column
                         field="username"
                         header="Username"
@@ -549,12 +559,6 @@ export default function WeddingOrganisersDataTable({fetchedData}) {
                     <Column
                         field="email"
                         header="Email"
-                        sortable
-                        style={{ minWidth: "12rem" }}
-                    ></Column>
-                    <Column
-                        field="contact"
-                        header="Contact"
                         sortable
                         style={{ minWidth: "12rem" }}
                     ></Column>

@@ -16,20 +16,27 @@ export default function AdminUserManagement() {
     }, []);
 
     const [visibleTable, setVisibleTable] = useState("organisers");
+    const [finishedFetch, setFinishedFetch] = useState(false);
     const organisersData = useRef();
     const vendorsData = useRef();
 
     // fetches organisers & vendors data
     useEffect(() => {
         
-        userApi.getAllWeddingOrganisers()
+        const orgFutureFunction = () => { return userApi.getAllWeddingOrganisers()
         .then((response) => response.json()) // convert json string into obj
-        .then((organisers) => organisersData.current = organisers);
+        .then((organisers) => organisersData.current = organisers)}
         
-        userApi.getAllVendors()
+        const vendorFutureFunction = () => { return userApi.getAllVendors()
         .then((response) => response.json())
-        .then((vendors) => vendorsData.current = vendors);
-    }, []);
+        .then((vendors) => vendorsData.current = vendors)}
+
+        // https://stackoverflow.com/questions/35612428/call-async-await-functions-in-parallel
+        // waits for both fetch to finish, and then triggers rerender
+        Promise.all([orgFutureFunction(), vendorFutureFunction()]).then(() => setVisibleTable("vendors"));
+        // used the cheap way to rerender, should change
+        // maybe set the Data to useState instead of useRef, but may introduce complexity
+    }, []); 
     
 
     const toolbarButtons = (
