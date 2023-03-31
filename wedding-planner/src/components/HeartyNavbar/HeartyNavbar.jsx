@@ -2,99 +2,101 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React from "react";
-import { Menubar } from "primereact/menubar";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Menubar } from 'primereact/menubar'
+import { InputText } from 'primereact/inputtext'
+import { Button } from 'primereact/button'
+import { Link } from 'react-router-dom'
 
 export default function HeartyNavbar(props) {
-    // array of MenuItems
-    // see https://www.primefaces.org/primereact-v8/menumodel/
-    const items = [
+  // array of MenuItems
+  // see https://www.primefaces.org/primereact-v8/menumodel/
+  const items = [
+    {
+      label: 'Vendor Management',
+      icon: 'pi pi-fw pi-file',
+      url: '/sample',
+      className: 'menuItemStyle',
+    },
+    {
+      label: 'Guest Management',
+      icon: 'pi pi-fw pi-users',
+      className: 'menuItemStyle',
+      items: [
         {
-            label: "Vendor Management",
-            icon: "pi pi-fw pi-file",
-            url: "/sample",
-            className: "menuItemStyle",
+          label: 'Guest List',
+          icon: 'pi pi-fw pi-cog',
+          url: '/guestlist',
         },
         {
-            label: "Guest Management",
-            icon: "pi pi-fw pi-users",
-            className: "menuItemStyle",
-            items: [
-                {
-                    label: "Guest List",
-                    icon: "pi pi-fw pi-cog",
-                    url: "/guestlist",
-                },
-                {
-                    label: "Table Planner",
-                    icon: "pi pi-fw pi-power-off",
-                    url: "/guestlist",
-                },
-            ],
+          label: 'Table Planner',
+          icon: 'pi pi-fw pi-power-off',
+          url: '/guestlist',
+        },
+      ],
+    },
+    {
+      label: 'Logistics Management',
+      icon: 'pi pi-table',
+      className: 'menuItemStyle',
+      items: [
+        {
+          label: 'Wedding Checklist',
+          icon: 'pi pi-check',
+          url: '/LogisticsManagement/WeddingChecklist',
         },
         {
-            label: "Logistics Management",
-            icon: "pi pi-table",
-            className: "menuItemStyle",
-            items: [
-                {
-                    label: "Wedding Checklist",
-                    icon: "pi pi-check",
-                    url: "/LogisticsManagement/WeddingChecklist",
-                },
-                {
-                    label: "Budget Planner",
-                    icon: "pi pi-money-bill",
-                    url: "/LogisticsManagement/WeddingBudgetPlanner",
-                },
-                {
-                    label: "Wedding Itinerary",
-                    icon: "pi pi-calendar",
-                    url: "/LogisticsManagement/WeddingItinerary",
-                },
-            ],
+          label: 'Budget Planner',
+          icon: 'pi pi-money-bill',
+          url: '/LogisticsManagement/WeddingBudgetPlanner',
         },
-    ];
-    const end = (
-        // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
-        <>
-            <Link to="/login" className="noUnderline">
-                <Button
-                    label="Logout"
-                    style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-                />{" "}
-            </Link>
-            <Button
-                icon="pi pi-user"
-                rounded
-                style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-            />
-        </>
-    );
-    const start = (
-        <>
-            <Link to="/" className="noUnderline">
-                <span>
-                    <Button
-                        icon="pi pi-heart"
-                        rounded
-                        size="large"
-                        style={{
-                            backgroundColor: "#f561b0",
-                            border: "#f561b0",
-                        }}
-                    />
-                </span>
-            </Link>
-        </>
-    );
-    // height="40" className="mr-2"
+        {
+          label: 'Wedding Itinerary',
+          icon: 'pi pi-calendar',
+          url: '/LogisticsManagement/WeddingItinerary',
+        },
+      ],
+    },
+  ]
+  const end = (
+    // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
+    <>
+      <Link to="/login" className="noUnderline">
+        <Button
+          label="Logout"
+          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+        />{' '}
+      </Link>
+      <Link to="/viewprofile" className="noUnderline">
+        <Button
+          icon="pi pi-user"
+          rounded
+          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+        />
+      </Link>
+    </>
+  )
+  const start = (
+    <>
+      <Link to="/" className="noUnderline">
+        <span>
+          <Button
+            icon="pi pi-heart"
+            rounded
+            size="large"
+            style={{
+              backgroundColor: '#f561b0',
+              border: '#f561b0',
+            }}
+          />
+        </span>
+      </Link>
+    </>
+  )
+  // height="40" className="mr-2"
 
-    // since we're only returning Menubar anyway, no need to wrap around a div or <>
-    return <Menubar id="navbar" model={items} start={start} end={end} />;
+  // since we're only returning Menubar anyway, no need to wrap around a div or <>
+  return <Menubar id="navbar" model={items} start={start} end={end} />
 }
 
 // example items

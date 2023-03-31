@@ -1,34 +1,26 @@
-import { Button } from 'primereact/button'
 import React from 'react'
-import { Link } from 'react-router-dom'
-import PublicHeartyNavbar from '../HeartyNavbar/PublicHeartyNavbar'
+import HeartyNavbar from '../HeartyNavbar/HeartyNavbar'
 import { Card } from 'primereact/card'
+import { Button } from 'primereact/button'
+import { Link } from 'react-router-dom'
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
 const footer = (
   <span className="flex justify-content-center ">
-    <div>
-      <Link to="/" className="flex justify-content-center noUnderline">
-        <Button
-          label="Login"
-          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
-        />{' '}
-      </Link>
-      <div className="flex justify-content-center px-5">
-        <p className="px-1">Don't Have an Account ?</p>
-        <Link to="/signup" className="noUnderline">
-          <p style={{ color: '#f561b0' }}>Sign Up</p>
-        </Link>
-      </div>
-    </div>
+    <Link to="/editprofile" className=" noUnderline">
+      <Button
+        label="Edit Profile"
+        style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+      />{' '}
+    </Link>
   </span>
 )
 
-function Login() {
+function ViewProfile() {
   return (
     <div>
-      <PublicHeartyNavbar />
+      <HeartyNavbar />
       <div className="flex justify-content-center pt-5">
         <Card
           footer={footer}
@@ -39,11 +31,11 @@ function Login() {
             maxHeight: '700px',
           }}
         >
-          <h3 className="flex justify-content-center">Login</h3>
+          <h3 className="flex justify-content-center">Profile</h3>
         </Card>
       </div>
     </div>
   )
 }
 
-export default Login
+export default ViewProfile
