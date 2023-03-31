@@ -16,29 +16,56 @@ export default function HeartyNavbar(props) {
             label: "Vendor Management",
             icon: "pi pi-fw pi-file",
             url: "/sample",
-            className: "menuItemStyle"
+            className: "menuItemStyle",
         },
         {
             label: "Guest Management",
             icon: "pi pi-fw pi-users",
-            className: "menuItemStyle"   ,     
-            items: [{label: 'Guest List', icon: 'pi pi-fw pi-cog', url: "/guestlist"},
-            {label: 'Table Planner', icon: 'pi pi-fw pi-power-off', url: "/guestlist"} ]
+            className: "menuItemStyle",
+            items: [
+                {
+                    label: "Guest List",
+                    icon: "pi pi-fw pi-cog",
+                    url: "/guestlist",
+                },
+                {
+                    label: "Table Planner",
+                    icon: "pi pi-fw pi-power-off",
+                    url: "/guestlist",
+                },
+            ],
         },
         {
             label: "Logistics Management",
             icon: "pi pi-table",
-            url: "/sample",
-            className: "menuItemStyle"
-        }
-        
+            className: "menuItemStyle",
+            items: [
+                {
+                    label: "Wedding Checklist",
+                    icon: "pi pi-check",
+                    url: "/LogisticsManagement/WeddingChecklist",
+                },
+                {
+                    label: "Budget Planner",
+                    icon: "pi pi-money-bill",
+                    url: "/LogisticsManagement/WeddingBudgetPlanner",
+                },
+                {
+                    label: "Wedding Itinerary",
+                    icon: "pi pi-calendar",
+                    url: "/LogisticsManagement/WeddingItinerary",
+                },
+            ],
+        },
     ];
     const end = (
-        
         // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
         <>
             <Link to="/login" className="noUnderline">
-                <Button label="Logout" style={{ backgroundColor: "#f561b0", border: "#f561b0"}} />{" "}
+                <Button
+                    label="Logout"
+                    style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+                />{" "}
             </Link>
             <Button
                 icon="pi pi-user"
@@ -51,12 +78,15 @@ export default function HeartyNavbar(props) {
         <>
             <Link to="/" className="noUnderline">
                 <span>
-                <Button
-                    icon="pi pi-heart"
-                    rounded
-                    size="large"
-                    style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-                />
+                    <Button
+                        icon="pi pi-heart"
+                        rounded
+                        size="large"
+                        style={{
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
+                    />
                 </span>
             </Link>
         </>
@@ -66,7 +96,6 @@ export default function HeartyNavbar(props) {
     // since we're only returning Menubar anyway, no need to wrap around a div or <>
     return <Menubar id="navbar" model={items} start={start} end={end} />;
 }
-
 
 // example items
 // const items = [
