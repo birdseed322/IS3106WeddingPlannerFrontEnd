@@ -31,7 +31,7 @@ export default function HeartyNavbar(props) {
         {
           label: 'Table Planner',
           icon: 'pi pi-fw pi-power-off',
-          url: '/guestlist',
+          url: '/tablelayout',
         },
       ],
     },

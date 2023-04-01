@@ -46,7 +46,7 @@ function EndPoints() {
           <Route exact path="/vendorlogin" element={<VendorLogin />} />
           <Route exact path="/sample" element={<Sample />} />
           <Route exact path="/vendor/request" element={<VendorRequest />} />
-          <Route
+          <Route 
             exact
             path="/AdminUserManagement"
             element={<AdminUserManagement />}
@@ -75,7 +75,7 @@ function EndPoints() {
             path="/VendorSearchPage/Category/:vendorCategory"
             element={<CategoryDisplayPage />}
           />
-          <Route exact path="/guestlist" element={<TableLayout />} />
+          <Route exact path="/tablelayout" element={<TableLayout />} />
           <Route exact path="/guestlist" element={<GuestList />} />
           <Route exact path="/homepage" element={<Homepage />} />
           <Route exact path="/aboutuspage" element={<AboutUs />} />

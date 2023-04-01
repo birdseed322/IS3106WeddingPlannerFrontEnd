@@ -23,9 +23,10 @@ export default function GuestList() {
         email: '',
         attendingSide: null,
         numPax: 1,
-        rsvp: 'NOTSENT'
+        rsvp: 'NOTSENT',
+        guestTable : null,
     };
-
+    const [weddingId, setWeddingId] = useState(1);
     const [guests, setGuests] = useState([]);
     const [guestDialog, setGuestDialog] = useState(false);
     const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
@@ -37,11 +38,20 @@ export default function GuestList() {
     const [globalFilter, setGlobalFilter] = useState(null);
     const toast = useRef(null);
     const dt = useRef(null);
-    /*
+    
     useEffect(() => {
-        ProductService.getProducts().then((data) => setGuests(data));
+        const temp = [];
+        Api.getAllGuests(weddingId).then((response) => {
+            return response.json();
+        }).then((g) => {
+            setGuests(g);
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
+            console.log(error);
+        });
     }, []);
-    */
+    
+    
 
 
 
@@ -75,35 +85,45 @@ export default function GuestList() {
         if (guest.name.trim()) {
             let _guests = [...guests];
             let _guest = { ...guest };
-
-            if (guest.id) {
+            if (guest.id != null) {
                 const index = findIndexById(guest.id);
-                _guests[index] = _guest;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Updated', life: 3000 });
+                Api.updateGuest(_guest, weddingId).then((response) => {
+                    if (response.status === 204) {
+                        _guests[index] = _guest;
+                        setGuests(_guests);
+                        setGuestDialog(false);  
+                        setTimeout(200, () => setGuest(emptyGuest));  
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Updated', life: 3000 });
+                    } else {
+                        throw new Error();
+                    }
+                }).catch((error) => {
+                    setGuestDialog(false);  
+                    setTimeout(200, () => setGuest(emptyGuest));  
+                    toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Update Guest : ', life: 3000 });   
+                })
             } else {
-                
-                //_guest.id = createId();
                 if (validateGuest(_guest)) {
-                    Api.createGuest(_guest, 1).then((response) => {
-                        console.log(response.status);
+                    Api.createGuest(_guest, weddingId).then((response) => {
                         if ( (response.status === 200)) {
-                            let object = response.json();
-                            _guest.id = object.GUESTID;
-                            _guests.push(_guest);
+                            response.json().then((idObject) => {
+                                _guest.id = idObject.GUESTID;
+                                _guests.push(_guest);
+                                setGuests(_guests);
+                                setGuestDialog(false);  
+                                setTimeout(200, () => setGuest(emptyGuest));  
+                            });
                             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Created', life: 3000 });
                         } else {
-                            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });      
+                            throw new Error();    
                         }
-                    }).catch(error => {                        
+                    }).catch(error => {   
+                        setGuestDialog(false);  
+                        setTimeout(200, () => setGuest(emptyGuest));                   
                         toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });   
                     }); 
                 }
             }
-
-            setGuests(_guests);
-            setGuestDialog(false);
-            setTimeout(1000, () => setGuest(emptyGuest));
-            
         }
     };
 
@@ -119,11 +139,20 @@ export default function GuestList() {
 
     const deleteGuest = () => {
         let _guests = guests.filter((val) => val.id !== guest.id);
-
-        setGuests(_guests);
-        setDeleteGuestDialog(false);
-        setGuest(emptyGuest);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Deleted', life: 3000 });
+        Api.deleteGuest(guest.id).then(response => {
+            if (response.status == 204) {
+                setGuests(_guests);
+                setDeleteGuestDialog(false);
+                setGuest(emptyGuest);
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Deleted', life: 3000 });
+            } else {
+                throw new Error();
+            }
+        }).catch(error => {
+            setDeleteGuestDialog(false);
+            setGuest(emptyGuest);
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Delete Guest', life: 3000 });
+        })
     };
 
     const findIndexById = (id) => {
@@ -167,7 +196,6 @@ export default function GuestList() {
     }
     const deleteSelectedGuests = () => {
         let _guests = guests.filter((val) => !selectedGuests.includes(val));
-
         setGuests(_guests);
         setDeleteGuestsDialog(false);
         setSelectedGuests(null);
@@ -203,7 +231,7 @@ export default function GuestList() {
         return (
             <div className="flex flex-wrap gap-2">
                 <Button label="New" icon="pi pi-plus" style={{ backgroundColor: "#f561b0", border: "#f561b0"}} onClick={openNew} />
-                <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedGuests || !selectedGuests.length} />
+                {/*<Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedGuests || !selectedGuests.length} />*/}
             </div>
         );
     };
@@ -288,11 +316,10 @@ export default function GuestList() {
             <Toast ref={toast} />
             <div className="card">
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-
                 <DataTable ref={dt} value={guests} selection={selectedGuests} onSelectionChange={(e) => setSelectedGuests(e.value)}
                         dataKey="id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} guests" globalFilter={globalFilter} header={header}>
                     <Column selectionMode="multiple" exportable={false}></Column>
                     <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="email" header="Email" sortable style={{ minWidth: '16rem' }}></Column>
@@ -331,7 +358,7 @@ export default function GuestList() {
                             <label htmlFor="groom">Groom</label>
                         </div>
                     </div>
-                    {submitted && !guest.attendingSide && <small className="p-error">Attending Side is required.</small>}
+                    {submitted && !(guest.attendingSide == null) && <small className="p-error">Attending Side is required.</small>}
                 </div>
 
                 <div className="formgrid grid">
