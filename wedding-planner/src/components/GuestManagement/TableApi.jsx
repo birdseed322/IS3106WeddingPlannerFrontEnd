@@ -1,7 +1,22 @@
 const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/tablemanagement";
 const TableApi = {
+    createStage(data, wId) {
+        return fetch(`${SERVER_PREFIX}/stage/${wId}`, {
+                    headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify(data)
+                    }).then(response => {
+                        //clearTimeout(timer);                    
+                        return response;
+                    }).catch(error => {
+                        //clearTimeout(timer);
+                        throw error;
+                    })
+    },
     createTable(data, wId) {
-        
     return fetch(`${SERVER_PREFIX}/${wId}`, {
                 headers: {
                 Accept: "application/json",
@@ -41,6 +56,7 @@ const TableApi = {
         })
     },
     updateTables(tables, wId) {
+        //console.log("tables " + tables);
         fetch(`${SERVER_PREFIX}/saveTables/${wId}`, {
             headers: {
             Accept: "application/json",
@@ -50,7 +66,7 @@ const TableApi = {
             body: JSON.stringify(tables)
           
             }).then(response => {
-                console.log("success");
+                //console.log("success");
                 return response;
             }).catch(error => {
                 throw error;

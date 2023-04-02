@@ -11,7 +11,7 @@ import GuestListPanel from './GuestListPanel.jsx';
 import Api from './GuestListAPI.jsx';
 import { Toast } from 'primereact/toast';
 import TableApi from './TableApi.jsx';
-
+import Stage from './Stage.jsx';
 
 export default function TableLayout() {
     const toast = useRef(null);
@@ -24,17 +24,48 @@ export default function TableLayout() {
     const onNodesChange = useCallback((changes) => {
         setNodes((nds) => applyNodeChanges(changes, nds))
     }, []);
-    const nodeTypes = useMemo(() => ({ table: Table }), []);
+    const nodeTypes = useMemo(() => ({ table: Table, stage : Stage }), []);
     const onNodeClick = (event, node) => {
-        setSelectedNode(node);
-        setSelectedGuests(node.data.guests);
-        console.log(node.data.guests);
+        if (node.type === 'table') {
+            setSelectedNode(node);
+            setSelectedGuests(node.data.guests);
+        }
+        //console.log(node.data.guests);
     };
     const [r, setRerender] = useState(false);
     const rerender= () => {
         setRerender(true);
     }
     const weddingId = 1;
+    const deleteNodesAction = (deletedNodes) => {
+        const _nodes = [];
+        for (const node of nodes) {
+            if (!deletedNodes.includes(node)) {
+                _nodes.push(node);
+            }
+        }
+        setNodes((nds) => _nodes);
+        setSelectedNode(null);
+    };
+    const saveTables = () => {
+        const toSave = [];
+        for (const node of nodes) {
+            if (node.type === 'table') {
+                toSave.push({
+                    capacity : node.data.capacity,
+                    id : node.id,
+                    currOccupancy : (node.data.guests.length > 0 ? node.data.guests.map(x => x.numPax).reduce((x,y) => x + y) : 0),
+                    guests : node.data.guests,
+                    locationX : node.position.x,
+                    locationY : node.position.y,
+                    tableNumber : node.data.tableNumber,
+                    tableSize : node.style.height
+                });
+            }
+            //console.log("occupancy " + toSave[0].currOccupancy);
+        }
+        TableApi.updateTables(toSave, weddingId);
+    }
     useEffect(() => {     
         TableApi.getTables(weddingId).then((response) => {
             return response.json();
@@ -42,7 +73,6 @@ export default function TableLayout() {
             const temp = [];
             for (const unit of t) {
                 const {capacity, currOccupancy, guests, id, locationX, locationY, tableNumber, tableSize} = unit;
-                
                 temp.push({
                     id : '' + id,
                     type : 'table',
@@ -58,13 +88,22 @@ export default function TableLayout() {
             console.log(error);
         });
         
+        const testStage =  {   id : '100',
+                    type : 'stage',
+                    position: { x: 100, y: 100 },
+                    selected : false,
+                    style: { width: 600, height: 300, border:'1px solid black', background: '#fff'}, 
+        }
+        setNodes((nodes) => nodes.concat(testStage));
+        
     }, []); 
     return (
         <>
             <HeartyNavbar></HeartyNavbar>
             <ReactFlowProvider>
-                <OptionsPanel nodes={nodes} setTables={setNodes} changeFocus={changeFocus}></OptionsPanel>
-                <GuestListPanel guests={selectedGuests} setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode}></GuestListPanel>
+                <OptionsPanel nodes={nodes} setNodes={setNodes} changeFocus={changeFocus} saveTables={saveTables} setSelectedTable={setSelectedNode}></OptionsPanel>
+                <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>
+                
                 <div style={{ height: '90%', width: '100%', position: "absolute", top:"10%", zIndex:"-1"}}>
                     <Toast ref={toast} />
                         <ReactFlow
@@ -72,11 +111,12 @@ export default function TableLayout() {
                             nodes={nodes}
                             onNodesChange={onNodesChange}
                             minZoom={0.3}
-                            maxZoom={2}
+                            maxZoom={1.5}
                             onNodeClick={onNodeClick}
                             onNodeDragStart={onNodeClick}      
                             onSelectionDrag={onNodeClick}
                             onMouseMove={rerender}
+                            onNodesDelete={deleteNodesAction}
                             fitView
                         >                    
                         <Background />

@@ -12,21 +12,45 @@ import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
 import { Toast } from 'primereact/toast';
 
-export default function GuestListPanel({guests, setParentGuests, tables, setTables, selectedTable}) {
+export default function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable}) { //guests and the selectedTable props are related
     const weddingId = 1;
     const toast = useRef(null);
     const dt = useRef(null);
     const [globalFilter, setGlobalFilter] = useState(null);
-    const [fullGuests, setFullGuests] = useState([]);
+    const [fullGuests, setFullGuests] = useState([]); //guests to select from
     const [visible, setVisible] = useState(false);
-    const [selectedGuests, setSelectedGuests] = useState(null);
+    const [selectedGuests, setSelectedGuests] = useState(null); //guests selected to be added to table
+    const [toDelete, setToDelete] = useState(null); //guest to delete
+    const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
+    const deleteGuest = () => {
+        if (selectedTable != null) {
+            let _guests = [...selectedTable.data.guests];
+            _guests = _guests.filter((guest) => guest.id !== toDelete.id);
+            let _tables = [...tables];
+            _tables = _tables.filter(table => table.id != selectedTable.id);
+            let newUpdatedTable = {...selectedTable};
+            newUpdatedTable.data.guests = newUpdatedTable.data.guests.filter(guest => guest.id != toDelete.id);
+            newUpdatedTable.data.currOccupancy = newUpdatedTable.data.currOccupancy - toDelete.numPax;
+            setTables(tables => _tables.concat(newUpdatedTable));
+            setParentGuests((guests) => _guests);
+            setDeleteGuestDialog(false);
+            setSelectedTable(newUpdatedTable);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
+        } else {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
+
+        }
+    };
     const handleAddToTable = () => {
         console.log("selected table " + selectedTable);
         console.log("selected guest" + selectedGuests);
         if (selectedTable != null && selectedGuests != null) {
-            if (selectedTable.data.guests.length + selectedGuests.length > selectedTable.data.capacity) {
+            const temp = (selectedTable.data.guests.length > 0 ? selectedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0)
+                            + (selectedGuests.length > 0 ? selectedGuests.map(g => g.numPax).reduce((x,y) => x + y) : 0);
+            if (temp > selectedTable.data.capacity) {
                 setVisible(false);
                 toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Over capacity' , life: 3000 });
+                
             } else {
                 const nodes = [...tables];
                 const updatedTable = {... selectedTable};
@@ -36,7 +60,7 @@ export default function GuestListPanel({guests, setParentGuests, tables, setTabl
                     updatedTable.position.y = tempNode[0].position.y;
                 }
                 updatedTable.data.guests = updatedTable.data.guests.concat(selectedGuests);
-                updatedTable.data.currOccupancy = updatedTable.data.guests.length;
+                updatedTable.data.currOccupancy = (updatedTable.data.guests.length > 0) ? updatedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0;
                 let _tables = [...tables];
                 _tables = _tables.filter(x => x.id != selectedTable.id).concat(updatedTable);
                 setTables((tables) => {
@@ -51,7 +75,10 @@ export default function GuestListPanel({guests, setParentGuests, tables, setTabl
                 }
                 setSelectedGuests([]);
                 setParentGuests(g => updatedTable.data.guests);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guests Added' , life: 3000 });
+                setSelectedTable(updatedTable);
+                if (temp.length > 0) {
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guests Added' , life: 3000 });
+                }
                 setVisible(false);
             }
         }
@@ -70,7 +97,10 @@ export default function GuestListPanel({guests, setParentGuests, tables, setTabl
             </span>
         </div>
     );
-
+    const confirmDeleteGuest = (guest) => {
+        setToDelete(guest);
+        setDeleteGuestDialog(true);
+    };
     const statusBodyTemplate = (rowData) => {
         return <Tag value={rowData.rsvp} severity={getSeverity(rowData)}></Tag>;
     };
@@ -89,6 +119,16 @@ export default function GuestListPanel({guests, setParentGuests, tables, setTabl
                 return 'warning';
         }
     };
+    const hideDeleteGuestDialog = () => {
+        setDeleteGuestDialog(false);
+    };
+    const deleteGuestDialogFooter = (
+        <React.Fragment>
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteGuestDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteGuest} />
+        </React.Fragment>
+    );
+    
     useEffect(() => {
         Api.getAllGuests(weddingId).then((response) => {
             return response.json();
@@ -126,19 +166,21 @@ export default function GuestListPanel({guests, setParentGuests, tables, setTabl
             </div>
         );
     };
-    const doGuestSelection =() => setVisible(true);
-    
+    const doGuestSelection = () => setVisible(true);
+    const actionBodyTemplate = (rowData) => {
+        return <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteGuest(rowData)} />;
+    }
 
     return (
         <span>
         <Toast ref={toast} />
         <Panel headerTemplate={template} style={{maxWidth:"60%", float:"right"}} toggleable>
             <Button label="Add Guest" onClick={doGuestSelection} style={{ backgroundColor: "#f561b0", border: "#f561b0"}} />{" "}
-            <DataTable value={guests} showGridlines tableStyle={{ minWidth: '50rem' }}>
+            <DataTable value={selectedTable === null ? [] : selectedTable.data.guests} showGridlines tableStyle={{ minWidth: '50rem' }}>
                 <Column field="name" header="Name"></Column>
                 <Column field="numPax" header="Number of Pax."></Column>
                 <Column field="rsvp" header="RSVP status"></Column>
-                <Column field="quantity" header="Quantity"></Column>
+                <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
             </DataTable>
          
         </Panel>
@@ -152,6 +194,16 @@ export default function GuestListPanel({guests, setParentGuests, tables, setTabl
                     <Column field="numPax" header="Number of Pax" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="rsvp" header="RSVP Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
+            </Dialog>
+            <Dialog visible={deleteGuestDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteGuestDialogFooter} onHide={hideDeleteGuestDialog}>
+                <div className="confirmation-content">
+                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                    {toDelete && (
+                        <span>
+                            Are you sure you want to remove <b>{toDelete.name}</b>?
+                        </span>
+                    )}
+                </div>
             </Dialog>
             </span>
     )
