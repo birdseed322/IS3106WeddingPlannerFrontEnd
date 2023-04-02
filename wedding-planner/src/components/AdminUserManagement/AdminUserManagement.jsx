@@ -1,5 +1,5 @@
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext} from "react";
 // import { ProductService } from "./service/ProductService";
 import { Button } from "primereact/button";
 // import { FileUpload } from "primereact/fileupload";
@@ -7,6 +7,7 @@ import { Toolbar } from "primereact/toolbar";
 import WeddingOrganisersDataTable from "./WeddingOrganisersDataTable";
 import WeddingVendorsDataTable from "./WeddingVendorsDataTable";
 import userApi from "./AdminUserManagementAPI";
+import { LoginTokenContext } from "../../context/LoginTokenContext";
 
 export default function AdminUserManagement() {
     // empty array so useEffect to set doc title only runs once
@@ -15,6 +16,8 @@ export default function AdminUserManagement() {
         return;
     }, []);
 
+    const currentLoginToken = useContext(LoginTokenContext);
+    
     const [visibleTable, setVisibleTable] = useState("organisers");
     const [finishedFetch, setFinishedFetch] = useState(false);
     const organisersData = useRef();
@@ -57,6 +60,7 @@ export default function AdminUserManagement() {
                 <div className="bodyTextColumn">
                     <p>
                         Click on the corresponding button to view the corresponding group of users.
+                        LOGGED IN ADMIN IS {currentLoginToken.username}
                     </p>
                     <div>
                         <Toolbar start={toolbarButtons} />
