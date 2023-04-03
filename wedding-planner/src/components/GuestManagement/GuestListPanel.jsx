@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactFlow, { useNodes } from 'reactflow';
 import { Panel } from 'primereact/panel';
 import { Ripple } from 'primereact/ripple';
 import {DataTable} from 'primereact/datatable';
@@ -11,6 +10,7 @@ import { Tag } from 'primereact/tag';
 import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
 import { Toast } from 'primereact/toast';
+import 'reactflow/dist/style.css';
 
 export default function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable}) { //guests and the selectedTable props are related
     const weddingId = 1;
@@ -35,15 +35,15 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             setParentGuests((guests) => _guests);
             setDeleteGuestDialog(false);
             setSelectedTable(newUpdatedTable);
+            setFullGuests(fg => fg.concat(toDelete));
+            setToDelete(null);
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
         } else {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
-
         }
+
     };
     const handleAddToTable = () => {
-        console.log("selected table " + selectedTable);
-        console.log("selected guest" + selectedGuests);
         if (selectedTable != null && selectedGuests != null) {
             const temp = (selectedTable.data.guests.length > 0 ? selectedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0)
                             + (selectedGuests.length > 0 ? selectedGuests.map(g => g.numPax).reduce((x,y) => x + y) : 0);
@@ -135,11 +135,15 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
         }).then((g) => {
             const temp = new Set();
             const candidate = [];
+            console.log("table size " + tables.length);
             for (const table of tables) {
-                for (const guest of table.data.guests) {
-                    temp.add(guest.id);
+                if (table.type === 'table') {
+                    for (const guest of table.data.guests) {
+                        temp.add(guest.id);
+                    }
                 }
             }
+            console.log("final size " + temp.size);
             for (const x of g) {
                 if (!temp.has(x.id)) {
                     candidate.push(x);
@@ -150,7 +154,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
             console.log(error);
         });
-    }, []);
+    }, [tables]);
     const template = (options) => {
         const toggleIcon = options.collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up';
         const className = `${options.className} justify-content-start`;

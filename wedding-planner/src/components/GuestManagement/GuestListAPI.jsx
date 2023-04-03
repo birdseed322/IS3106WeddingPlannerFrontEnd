@@ -43,6 +43,21 @@ const Api = {
                         return error;
                 })
         },
+        updateGuestsRSVP(data) {
+                return fetch(`${SERVER_PREFIX}/changersvp`, {
+                headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                },
+                method: "PUT",
+                body: JSON.stringify(data)
+                }).then((response) => {
+                        return response;
+                }).catch((error) => {
+                        return error;
+                })
+        },
+
 getCustomer(cId) {
 return fetch(`${SERVER_PREFIX}/customers/${cId}`);
 },

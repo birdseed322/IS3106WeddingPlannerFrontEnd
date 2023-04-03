@@ -32,7 +32,7 @@ function EndPoints() {
     // localStorage.clear();
     const { token, setToken } = useToken();
 
-  console.log(token)  
+  console.log(token)  ;
     if (!token) {
         return (
             <BrowserRouter>
