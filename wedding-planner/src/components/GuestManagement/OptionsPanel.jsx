@@ -8,6 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import TableApi from './TableApi.jsx';
 import { Toast } from 'primereact/toast';
+import 'reactflow/dist/style.css';
 
 export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, setSelectedTable}) {
     const toast = useRef(null);
@@ -66,34 +67,24 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
         }); 
         
     };
-    const handleSave = () => {
-        saveTables();
-    }
-    /*
+
     const handleAddStage = () => {
         setVisible(true);
         let max = 0;
-        //console.log("node length" + nodes.length);
-        for (const node of nodes) { 
-            console.log(node.data.tableNumber);
+        for (const node of nodes) {
+            //console.log(table.data.tableNumber);
             if (max < node.data.tableNumber) {
                 max = node.data.tableNumber;
             }
         }
-        max = max + 1; /*
-        const testStage =  {   id : '100',
-        type : 'stage',
-        position: { x: 100, y: 100 },
-        selected : false,
-        style: { width: 600, height: 300, border:'1px solid black', background: '#fff'}, 
-        } 
+        max = max + 1;
         const _stage = 
         {
             locationX : 0,
             locationY : 0,
+            stageHeight : 200,
+            stageWidth : 600,
             tableNumber : max,
-            stageHeight : 300,
-            stageWidth : 600
         }
         TableApi.createStage(_stage, weddingId).then((response) => {
             if ( (response.status === 200)) {
@@ -103,8 +94,8 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                     const toAdd = {
                         id : '' + _stage.id,
                         type : 'stage',
-                        position: { x: _stage.locationX, y: _stage.locationY },
-                        style: { width: _stage.stageWidth, height: _stage.stageHeight }, 
+                        position: { x: _stage.locationX, y: _stage.locationY }, // backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"
+                        style: { width: _stage.stageWidth, height: _stage.stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, //www.makeuseof.com/css-background-gradients/#pink-fish
                         selected : true,
                         data: { tableNumber: _stage.tableNumber}
                     };
@@ -119,9 +110,13 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
             }
         }).catch(error => {   
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Stage', life: 3000 });   
-        });         
+        }); 
+        
+    };
+    const handleSave = () => {
+        saveTables();
     }
-    */
+   
     return (
         <>
         <div className="card flex justify-content-center align-items-center">
@@ -137,7 +132,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                     <Button className="pinkButton"  label="Add Table" icon="pi pi-plus" onClick={handleAddTable} style={{ minWidth: '7rem' }} />
                 </div>
                 <div className="card flex justify-content-center text-align-center mt-8">
-                    <Button className="pinkButton"  label="Add Stage" icon="pi pi-plus" style={{ minWidth: '7rem' }} />
+                    <Button className="pinkButton"  label="Add Stage" icon="pi pi-plus" onClick={handleAddStage} style={{ minWidth: '7rem' }} />
                 </div> 
                 <div className="card flex justify-content-center text-align-center">
                     <img src={image} style= {{maxWidth:"100%", maxHeight:"40%", marginTop:"10%"}}></img>

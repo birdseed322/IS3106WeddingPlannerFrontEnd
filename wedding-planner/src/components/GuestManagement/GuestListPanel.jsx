@@ -28,7 +28,6 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
         }).then((g) => {
             const temp = new Set();
             const candidate = [];
-            console.log("table size " + tables.length);
             for (const table of tables) {
                 if (table.type === 'table') {
                     for (const guest of table.data.guests) {
@@ -36,7 +35,6 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
                     }
                 }
             }
-            console.log("final size " + temp.size);
             for (const x of g) {
                 if (!temp.has(x.id)) {
                     candidate.push(x);
