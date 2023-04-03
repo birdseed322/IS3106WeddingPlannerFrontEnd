@@ -23,7 +23,7 @@ const LoginAPI = {
             "username": username,
             "password": password,
         }
-        return fetch(`${SERVER_PREFIX}/login/admin`, {
+        return fetch(`${SERVER_PREFIX}/login/wedding-organiser`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",

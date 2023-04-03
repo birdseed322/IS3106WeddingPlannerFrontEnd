@@ -1,11 +1,12 @@
 import { Button } from "primereact/button";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import LoginAPI from "./LoginAPI";
 import { Dropdown } from "primereact/dropdown";
+import { LoginTokenContext } from "../../context/LoginTokenContext";
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
@@ -19,7 +20,10 @@ const userTypeItems = [
     { label: "Wedding Organiser", value: "WEDDING-ORGANISER" },
     { label: "Vendor", value: "VENDOR" },
 ];
-function Login({ setToken }) {
+function Login() {
+  
+    const [token, setToken] = useContext(LoginTokenContext);
+  
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [userType, setUserType] = useState("ADMIN");
@@ -68,7 +72,7 @@ function Login({ setToken }) {
                 break;
         }
     }
-    
+
     const footer = (
         <span className="flex justify-content-center ">
             <div>
@@ -76,14 +80,7 @@ function Login({ setToken }) {
                     <Button
                         label="Login"
                         style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-                        onClick={() =>
-                            handleLoginSuccessOrFail(
-                                LoginAPI.loginSucceedOrNot(
-                                    LoginAPI.loginAdmin(username, password),
-                                    setToken
-                                )
-                            )
-                        }
+                        onClick={() => doLogin(userType, username, password, setToken)}
                     />{" "}
                 </Link>
                 <div className="flex justify-content-center px-5">
@@ -132,6 +129,7 @@ function Login({ setToken }) {
                             }}
                         />
                         {/* <Button label="log userType val" onClick={() => console.log(userType)}/> */}
+                        <Button label="log setToken val" onClick={() => console.log(setToken)} />
                     </div>
                 </Card>
             </div>

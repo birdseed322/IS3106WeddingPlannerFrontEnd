@@ -30,22 +30,27 @@ import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 function EndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
+
+    // note that the {} object syntax instead of the typical [] array is intended
+    // although we could just as easily use [] lol
     const { token, setToken } = useToken();
 
-  console.log(token)
+    console.log(token);
     if (!token) {
         return (
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/*" element={<Login setToken={setToken} />} />
-                </Routes>
-            </BrowserRouter>
+            <LoginTokenContext.Provider value={[token, setToken]}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/*" element={<Login />} />
+                    </Routes>
+                </BrowserRouter>
+            </LoginTokenContext.Provider>
         );
     }
 
     return (
         <>
-            {/* <LoginTokenContext.Provider value={token}> */}
+            <LoginTokenContext.Provider value={[token, setToken]}>
                 <BrowserRouter>
                     <Routes>
                         <Route exact path="/" element={<ProjectDashboard />} />
@@ -59,7 +64,7 @@ function EndPoints() {
                         />
                     </Routes>
                 </BrowserRouter>
-            {/* </LoginTokenContext.Provider> */}
+            </LoginTokenContext.Provider>
         </>
     );
     switch (token.userType) {

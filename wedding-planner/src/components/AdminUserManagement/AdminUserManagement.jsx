@@ -16,7 +16,7 @@ export default function AdminUserManagement() {
         return;
     }, []);
 
-    const currentLoginToken = useContext(LoginTokenContext);
+    const [token, setToken] = useContext(LoginTokenContext);
     
     const [visibleTable, setVisibleTable] = useState("organisers");
     const [finishedFetch, setFinishedFetch] = useState(false);
@@ -60,7 +60,7 @@ export default function AdminUserManagement() {
                 <div className="bodyTextColumn">
                     <p>
                         Click on the corresponding button to view the corresponding group of users.
-                        LOGGED IN ADMIN IS {currentLoginToken.username}
+                        LOGGED IN ADMIN IS {token.username}
                     </p>
                     <div>
                         <Toolbar start={toolbarButtons} />

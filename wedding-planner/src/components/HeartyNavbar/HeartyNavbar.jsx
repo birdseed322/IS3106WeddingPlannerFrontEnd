@@ -2,15 +2,18 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React from 'react'
+import React, { useContext } from 'react'
 import { Menubar } from 'primereact/menubar'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { Link } from 'react-router-dom'
+import { LoginTokenContext } from '../../context/LoginTokenContext'
 
 export default function HeartyNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
+  const [token, setToken] = useContext(LoginTokenContext)
+  
   const items = [
     {
       label: 'Vendor Management',
@@ -65,6 +68,7 @@ export default function HeartyNavbar(props) {
         <Button
           label="Logout"
           style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+          onClick={() => setToken("")}
         />{' '}
       </Link>
       <Link to="/viewprofile" className="noUnderline">
