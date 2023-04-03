@@ -39,8 +39,8 @@ function VendorNavbar(props) {
   const start = (
     <>
       <Link to="/" className="noUnderline">
-        <span className="flex m-4 align-items-center">
-          <img src={heartyLogo} className="mr-2"/>
+        <span className="flex my-1 mx-4 align-items-center">
+          <img src={heartyLogo} className="mr-2" alt="hearty logo"/>
           <h1 className="inline h-min text-3xl">
             Hearty
           </h1>

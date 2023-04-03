@@ -5,19 +5,75 @@ import VendorNavbar from "../VendorNavbar/VendorNavbar";
 
 function VendorRequest() {
   //Implement use effect to make call to api to retrieve vendor requests. Use the id from the session storage to maintain state
-  const [vendorRequests, setVendorRequests] = React.useState([]);
+  const [vendorPendingRequests, setVendorPendingRequests] = React.useState([]);
+  const [vendorConfirmedRequests, setVendorConfirmedRequests] = React.useState(
+    []
+  );
 
   React.useEffect(() => {
     //Pull vendorId from the sessionStorage
-    const vendorId = 3;
+    const vendorId = 12;
     const apiUrl =
       "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/vendorRequests/" +
       vendorId;
     fetch(apiUrl).then((res) => {
-      res.json().then(
-        (data) => setVendorRequests(data))
+      res.json().then((data) => {
+        let pendingReq = [];
+        let acceptedReq = [];
+        for (let req in data) {
+          if (!Object.keys(data[req]).includes("isAccepted")) {
+            pendingReq.push(data[req]);
+          } else if (data[req].isAccepted === true) {
+            acceptedReq.push(data[req]);
+          }
+        }
+
+        setVendorPendingRequests(pendingReq);
+        setVendorConfirmedRequests(acceptedReq);
+      });
     });
   }, []);
+
+  function handleAccept(id) {
+    const reqUrl =
+      "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/vendorRequests/" +
+      id;
+    fetch(reqUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isAccepted: true }),
+    }).then((response) => {
+      if (response.status === 204) {
+        let tempReq;
+        setVendorPendingRequests((prev) => {
+          tempReq = prev.find((req) => req.requestId === id);
+          setVendorConfirmedRequests([...vendorConfirmedRequests, tempReq]);
+          return prev.filter((req) => req.requestId !== id);
+        });
+      }
+    });
+  }
+
+  function handleReject(id) {
+    const reqUrl =
+      "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/vendorRequests/" +
+      id;
+    fetch(reqUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isAccepted: false }),
+    }).then((response) => {
+      if (response.status === 204) {
+        let newList = [...vendorPendingRequests];
+        newList = newList.filter(req => req.requestId !== id);
+        setVendorPendingRequests(newList);
+      }
+    });
+  }
   // const pendingRequests = [
   //   {
   //     requestId: 19,
@@ -59,15 +115,44 @@ function VendorRequest() {
     <div>
       <VendorNavbar />
       <div className="w-8 mx-auto">
-        {vendorRequests.length > 0 ? <h1>Pending Requests</h1> : null}
-        {vendorRequests.map((request) => (
+        {vendorPendingRequests.length > 0 ? <h1>Pending Requests</h1> : null}
+        {vendorPendingRequests.map((request) => (
           <Card
             title={request.requestId}
             className="w-full my-4"
-            footer={<RequestFooter reqId={request.requestId} />}
+            footer={
+              <RequestFooter
+                reqId={request.requestId}
+                handleAccept={handleAccept}
+                handleReject={handleReject}
+              />
+            }
+            key={request.requestId}
           >
             {request.requestDetails}
-            <p>Created On: {new Date(request.requestDate.replace('[UTC]', '')).toDateString()}</p>
+            <p>
+              Created On:{" "}
+              {new Date(
+                request.requestDate.replace("[UTC]", "")
+              ).toDateString()}
+            </p>
+          </Card>
+        ))}
+
+        {vendorConfirmedRequests.length > 0 ? <h1>Accepted Requests</h1> : null}
+        {vendorConfirmedRequests.map((request) => (
+          <Card
+            title={request.requestId}
+            className="w-full my-4"
+            key={request.requestId}
+          >
+            {request.requestDetails}
+            <p>
+              Created On:{" "}
+              {new Date(
+                request.requestDate.replace("[UTC]", "")
+              ).toDateString()}
+            </p>
           </Card>
         ))}
       </div>
