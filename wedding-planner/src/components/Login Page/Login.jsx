@@ -45,6 +45,30 @@ function Login({ setToken }) {
             }
         });
     }
+
+    function doLogin(userType, username, password, setToken) {
+        switch (userType) {
+            case "ADMIN":
+                handleLoginSuccessOrFail(
+                    LoginAPI.loginSucceedOrNot(LoginAPI.loginAdmin(username, password), setToken)
+                );
+                break;
+            case "WEDDING-ORGANISER":
+                handleLoginSuccessOrFail(
+                    LoginAPI.loginSucceedOrNot(
+                        LoginAPI.loginWeddingOrganiser(username, password),
+                        setToken
+                    )
+                );
+                break;
+            case "VENDOR":
+                handleLoginSuccessOrFail(
+                    LoginAPI.loginSucceedOrNot(LoginAPI.loginVendor(username, password), setToken)
+                );
+                break;
+        }
+    }
+    
     const footer = (
         <span className="flex justify-content-center ">
             <div>
