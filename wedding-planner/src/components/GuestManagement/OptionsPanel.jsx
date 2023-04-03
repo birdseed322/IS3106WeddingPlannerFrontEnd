@@ -3,7 +3,7 @@ import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 import './Guest.css';
-import image from './image.jpg';
+import image from './src/image.jpg';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import TableApi from './TableApi.jsx';
@@ -23,7 +23,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
         let max = 0;
         console.log("node length" + nodes.length);
         for (const table of nodes) {
-            console.log(table.data.tableNumber);
+            //console.log(table.data.tableNumber);
             if (max < table.data.tableNumber) {
                 max = table.data.tableNumber;
             }

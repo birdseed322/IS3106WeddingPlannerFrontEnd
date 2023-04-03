@@ -23,6 +23,8 @@ import EditProfile from "../components/Profiles/EditProfile.jsx";
 import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.jsx";
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
+import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
+
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 function EndPoints() {
     // for debugging, clear localStorage
@@ -32,6 +34,7 @@ function EndPoints() {
         <>
                 <BrowserRouter>
                     <Routes>
+                        <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                         <Route exact path="/" element={<ProjectDashboard />} />
                         <Route exact path="/login" element={<Login />} />
                         <Route exact path="/vendorlogin" element={<VendorLogin />} />

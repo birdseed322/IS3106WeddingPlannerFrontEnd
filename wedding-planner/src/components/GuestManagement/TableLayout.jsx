@@ -30,7 +30,6 @@ export default function TableLayout() {
             setSelectedNode(node);
             setSelectedGuests(node.data.guests);
         }
-        //console.log(node.data.guests);
     };
     const [r, setRerender] = useState(false);
     const rerender= () => {
@@ -62,7 +61,6 @@ export default function TableLayout() {
                     tableSize : node.style.height
                 });
             }
-            //console.log("occupancy " + toSave[0].currOccupancy);
         }
         TableApi.updateTables(toSave, weddingId);
     }
@@ -87,23 +85,13 @@ export default function TableLayout() {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
             console.log(error);
         });
-        
-        const testStage =  {   id : '100',
-                    type : 'stage',
-                    position: { x: 100, y: 100 },
-                    selected : false,
-                    style: { width: 600, height: 300, border:'1px solid black', background: '#fff'}, 
-        }
-        setNodes((nodes) => nodes.concat(testStage));
+    
         
     }, []); 
     return (
         <>
             <HeartyNavbar></HeartyNavbar>
-            <ReactFlowProvider>
-                <OptionsPanel nodes={nodes} setNodes={setNodes} changeFocus={changeFocus} saveTables={saveTables} setSelectedTable={setSelectedNode}></OptionsPanel>
-                <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>
-                
+            <ReactFlowProvider>    
                 <div style={{ height: '90%', width: '100%', position: "absolute", top:"10%", zIndex:"-1"}}>
                     <Toast ref={toast} />
                         <ReactFlow
@@ -123,8 +111,9 @@ export default function TableLayout() {
                             <Controls />
                         </ReactFlow>
                     </div>
-
-            </ReactFlowProvider>
+                    <OptionsPanel nodes={nodes} setNodes={setNodes} changeFocus={changeFocus} saveTables={saveTables} setSelectedTable={setSelectedNode}></OptionsPanel>
+                    <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>     
+           </ReactFlowProvider>
         </>
     );
 }

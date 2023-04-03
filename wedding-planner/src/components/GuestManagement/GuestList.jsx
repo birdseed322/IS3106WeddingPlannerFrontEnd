@@ -197,14 +197,44 @@ export default function GuestList() {
     const groom = "also random";
     const venue = "venue";
     const date = "date";
-    const rsvp = "link";
+    const rsvp = "link/" + weddingId;
     const sendInvitesToSelectedGuests = () => {
         const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
-        EmailAPI.sendEmail("1", "2", "3", "4", "5", emails).then(response => {
+        EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
         })
+
+        const toUpdate = new Set();
+        selectedGuests.forEach(element => {
+            toUpdate.add(element.id);
+        });
+        const newGuests = [];
+        for (const guest of guests) {
+            if (toUpdate.has(guest.id)) {
+                let _guest = {...guest};
+                _guest.rsvp = "PENDING";
+                newGuests.push(_guest);
+            } else {
+                newGuests.push(guest);
+            }
+        }
+        
+        Api.updateGuestsRSVP(newGuests).then((response) => {
+            if (response.status === 204) {
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
+                setGuests((old) => newGuests);
+                setSelectedGuests(null);
+            }
+        }).catch(e => {
+            setSelectedGuests(null);
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
+            setSelectedGuests(null);
+        })
+        
+        setSendInvitesDialog(false);
+       //need to update rsvp status
     }
     const deleteSelectedGuests = () => {
         let _guests = guests.filter((val) => !selectedGuests.includes(val));
@@ -257,10 +287,20 @@ export default function GuestList() {
         
 
     };
+    const transformedValue = (rowData) => {
+        if (rowData.rsvp === 'NOTATTENDING') {
+            return 'NOT ATTENDING';
+        } else if (rowData.rsvp === 'NOTSENT') {
+            return 'NOT SENT';
+        } else {
+            return rowData.rsvp;
+        }
 
+    }
     const statusBodyTemplate = (rowData) => {
-        return <Tag value={rowData.rsvp} severity={getSeverity(rowData)}></Tag>;
+        return <Tag value={transformedValue(rowData)} severity={getSeverity(rowData)}></Tag>;
     };
+    
 
     const actionBodyTemplate = (rowData) => {
         return (
