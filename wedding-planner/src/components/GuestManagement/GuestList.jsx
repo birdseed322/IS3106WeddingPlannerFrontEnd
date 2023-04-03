@@ -95,14 +95,14 @@ export default function GuestList() {
                         _guests[index] = _guest;
                         setGuests(_guests);
                         setGuestDialog(false);  
-                        setTimeout(200, () => setGuest(emptyGuest));  
+                        setTimeout(300, () => setGuest(emptyGuest));  
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Updated', life: 3000 });
                     } else {
                         throw new Error();
                     }
                 }).catch((error) => {
                     setGuestDialog(false);  
-                    setTimeout(200, () => setGuest(emptyGuest));  
+                    setTimeout(300, () => setGuest(emptyGuest));  
                     toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Update Guest : ', life: 3000 });   
                 })
             } else {
@@ -193,11 +193,11 @@ export default function GuestList() {
     const confirmSendInvites = () => {
         setSendInvitesDialog(true);
     }
-    const bride = "RANDOM";
-    const groom = "also random";
-    const venue = "venue";
-    const date = "date";
-    const rsvp = "link/" + weddingId;
+    const bride = "Bob";
+    const groom = "Alice";
+    const venue = "Marina Bay Sands Singapore";
+    const date = "12 October 2023";
+    const rsvp = "http://localhost:3000/rsvpform/" + weddingId;
     const sendInvitesToSelectedGuests = () => {
         const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
         EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => {

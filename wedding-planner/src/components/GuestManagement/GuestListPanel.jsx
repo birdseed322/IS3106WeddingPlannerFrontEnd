@@ -22,6 +22,32 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
     const [selectedGuests, setSelectedGuests] = useState(null); //guests selected to be added to table
     const [toDelete, setToDelete] = useState(null); //guest to delete
     const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
+    useEffect(() => {
+        Api.getAllGuests(weddingId).then((response) => {
+            return response.json();
+        }).then((g) => {
+            const temp = new Set();
+            const candidate = [];
+            console.log("table size " + tables.length);
+            for (const table of tables) {
+                if (table.type === 'table') {
+                    for (const guest of table.data.guests) {
+                        temp.add(guest.id);
+                    }
+                }
+            }
+            console.log("final size " + temp.size);
+            for (const x of g) {
+                if (!temp.has(x.id)) {
+                    candidate.push(x);
+                }
+            }
+            setFullGuests(candidate);
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
+            console.log(error);
+        });
+    }, [tables]);
     const deleteGuest = () => {
         if (selectedTable != null) {
             let _guests = [...selectedTable.data.guests];
@@ -44,6 +70,9 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
 
     };
     const handleAddToTable = () => {
+        console.log("SELECTED TABLE AND GUESTS");
+        console.log(selectedTable);
+        console.log(selectedGuests);
         if (selectedTable != null && selectedGuests != null) {
             const temp = (selectedTable.data.guests.length > 0 ? selectedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0)
                             + (selectedGuests.length > 0 ? selectedGuests.map(g => g.numPax).reduce((x,y) => x + y) : 0);
@@ -129,44 +158,23 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
         </React.Fragment>
     );
     
-    useEffect(() => {
-        Api.getAllGuests(weddingId).then((response) => {
-            return response.json();
-        }).then((g) => {
-            const temp = new Set();
-            const candidate = [];
-            console.log("table size " + tables.length);
-            for (const table of tables) {
-                if (table.type === 'table') {
-                    for (const guest of table.data.guests) {
-                        temp.add(guest.id);
-                    }
-                }
-            }
-            console.log("final size " + temp.size);
-            for (const x of g) {
-                if (!temp.has(x.id)) {
-                    candidate.push(x);
-                }
-            }
-            setFullGuests(candidate);
-        }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
-            console.log(error);
-        });
-    }, [tables]);
+
     const template = (options) => {
         const toggleIcon = options.collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up';
         const className = `${options.className} justify-content-start`;
         const titleClassName = `${options.titleClassName} ml-2 text-primary`;
         const style = { fontSize: '1.25rem' };
+        const conditionalTableLabel = selectedTable === null ? "No Table Selected" : selectedTable.type === 'table' ? 
+             " for Table " + selectedTable.data.tableNumber : 
+             "No Table Selected";
+            
         return (
             <div className={className}>
                 <button className={options.togglerClassName} onClick={options.onTogglerClick}>
                     <span className={toggleIcon}></span>
                     <Ripple />
                 </button>
-                <span className={titleClassName} style={style}>Guest List </span>
+                <span className={titleClassName} style={style}> Guest List {conditionalTableLabel} </span>
             </div>
         );
     };
@@ -179,7 +187,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
         <span>
         <Toast ref={toast} />
         <Panel headerTemplate={template} style={{maxWidth:"60%", float:"right"}} toggleable>
-            <Button label="Add Guest" onClick={doGuestSelection} style={{ backgroundColor: "#f561b0", border: "#f561b0"}} />{" "}
+            <Button label="Add Guest" onClick={doGuestSelection} style={{ backgroundColor: "#f561b0", border: "#f561b0", marginBottom:"1rem"}} />{" "}
             <DataTable value={selectedTable === null ? [] : selectedTable.data.guests} showGridlines tableStyle={{ minWidth: '50rem' }}>
                 <Column field="name" header="Name"></Column>
                 <Column field="numPax" header="Number of Pax."></Column>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Routes, Route, useParams } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
@@ -7,9 +7,11 @@ import { RadioButton } from 'primereact/radiobutton';
 import { Card } from 'primereact/card';
 import rsvp from './src/rsvp.jpg';
 import background from './src/background.mp4';
-
+import EmailAPI from './EmailAPI.jsx';
+import { Toast } from 'primereact/toast';
 
 export default function RSVPForm() {
+    const toast = useRef(null);
     const [rsvpStatus, setRSVPStatus] = useState(null);
     const [email, setEmail] = useState("");
     const {weddingId} = useParams();
@@ -17,13 +19,29 @@ export default function RSVPForm() {
     const header = (
         <img src={rsvp} style= {{maxWidth:"100%", maxHeight:"40%", marginTop:"0%"}}></img>
         );
+    const handleRSVP = () => {
+        console.log(email);
+        console.log(rsvpStatus);
+        console.log(weddingId);
+        EmailAPI.updateGuestRSVP(email, rsvpStatus, weddingId).then(response => {
+            if (response.status === 204) {
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'RSVP status updated ' , life: 3000 });
+            } else {
+                throw new Error();
+            }
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to update rsvp ' , life: 3000 });
+        })
+
+    }
     const footer = (
         <div className="flex flex-wrap justify-content-center">
-            <Button label="Submit" icon="pi pi-check" />
+            <Button label="Submit" icon="pi pi-check" onClick={handleRSVP}/>
         </div>
     );
     return (
         <div class="grid align-content-center justify-content-center text-center">
+            <Toast ref={toast} />
             <video autoplay="true" loop="true" preload="auto" width="100%" height="100%" muted="true">
                 <source src={background} type="video/mp4"></source>
             </video>

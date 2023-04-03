@@ -63,6 +63,7 @@ export default function TableLayout() {
             }
         }
         TableApi.updateTables(toSave, weddingId);
+        //TableApi.updateStage()
     }
     useEffect(() => {     
         TableApi.getTables(weddingId).then((response) => {
