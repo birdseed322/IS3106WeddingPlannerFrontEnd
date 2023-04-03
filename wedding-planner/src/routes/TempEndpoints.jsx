@@ -26,7 +26,8 @@ import useToken from "../useToken.jsx";
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
 
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
-function EndPoints() {
+import Schedule from "../components/VendorView/Schedule Page/Schedule.jsx";
+function TempEndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
 
@@ -38,7 +39,8 @@ function EndPoints() {
                         <Route exact path="/" element={<ProjectDashboard />} />
                         <Route exact path="/login" element={<Login />} />
                         <Route exact path="/vendorlogin" element={<VendorLogin />} />
-                        <Route exact path="/vendor/request" element={<VendorRequest />} />
+                        <Route exact path="/vendor/requests" element={<VendorRequest />} />
+                        <Route exact path="/vendor/schedule" element={<Schedule />} />
                         <Route
                             exact
                             path="/AdminUserManagement"
@@ -84,4 +86,4 @@ function EndPoints() {
     );
 }
 
-export default EndPoints;
+export default TempEndPoints;

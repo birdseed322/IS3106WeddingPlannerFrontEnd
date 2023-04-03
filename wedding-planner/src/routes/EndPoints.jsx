@@ -35,7 +35,6 @@ function EndPoints() {
     // note that the {} object syntax instead of the typical [] array is intended
     // although we could just as easily use [] lol
     const { token, setToken } = useToken();
-
     console.log(token);
     if (!token) {
         return (

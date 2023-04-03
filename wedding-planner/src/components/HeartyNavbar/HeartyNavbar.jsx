@@ -2,84 +2,84 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useContext } from 'react'
-import { Menubar } from 'primereact/menubar'
-import { InputText } from 'primereact/inputtext'
-import { Button } from 'primereact/button'
-import { Link } from 'react-router-dom'
-import { LoginTokenContext } from '../../context/LoginTokenContext'
+import React, { useContext } from "react";
+import { Menubar } from "primereact/menubar";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Link } from "react-router-dom";
+import { LoginTokenContext } from "../../context/LoginTokenContext";
 
 export default function HeartyNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
   const [token, setToken] = useContext(LoginTokenContext);
-  
+
   const items = [
     {
-      label: 'Vendor Management',
-      icon: 'pi pi-fw pi-file',
-      url: '/sample',
-      className: 'menuItemStyle',
+      label: "Vendor Management",
+      icon: "pi pi-fw pi-file",
+      url: "/sample",
+      className: "menuItemStyle",
     },
     {
-      label: 'Guest Management',
-      icon: 'pi pi-fw pi-users',
-      className: 'menuItemStyle',
+      label: "Guest Management",
+      icon: "pi pi-fw pi-users",
+      className: "menuItemStyle",
       items: [
         {
-          label: 'Guest List',
-          icon: 'pi pi-fw pi-cog',
-          url: '/guestlist',
+          label: "Guest List",
+          icon: "pi pi-fw pi-cog",
+          url: "/guestlist",
         },
         {
-          label: 'Table Planner',
-          icon: 'pi pi-fw pi-power-off',
-          url: '/tablelayout',
+          label: "Table Planner",
+          icon: "pi pi-fw pi-power-off",
+          url: "/tablelayout",
         },
       ],
     },
     {
-      label: 'Logistics Management',
-      icon: 'pi pi-table',
-      className: 'menuItemStyle',
+      label: "Logistics Management",
+      icon: "pi pi-table",
+      className: "menuItemStyle",
       items: [
         {
-          label: 'Wedding Checklist',
-          icon: 'pi pi-check',
-          url: '/LogisticsManagement/WeddingChecklist',
+          label: "Wedding Checklist",
+          icon: "pi pi-check",
+          url: "/LogisticsManagement/WeddingChecklist",
         },
         {
-          label: 'Budget Planner',
-          icon: 'pi pi-money-bill',
-          url: '/LogisticsManagement/WeddingBudgetPlanner',
+          label: "Budget Planner",
+          icon: "pi pi-money-bill",
+          url: "/LogisticsManagement/WeddingBudgetPlanner",
         },
         {
-          label: 'Wedding Itinerary',
-          icon: 'pi pi-calendar',
-          url: '/LogisticsManagement/WeddingItinerary',
+          label: "Wedding Itinerary",
+          icon: "pi pi-calendar",
+          url: "/LogisticsManagement/WeddingItinerary",
         },
       ],
     },
-  ]
+  ];
   const end = (
     // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
     <>
       <Link to="/login" className="noUnderline">
         <Button
           label="Logout"
-          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+          style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
           onClick={() => setToken(false)} // set token to false
-        />{' '}
+        />{" "}
       </Link>
       <Link to="/viewprofile" className="noUnderline">
         <Button
           icon="pi pi-user"
           rounded
-          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+          style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
         />
       </Link>
     </>
-  )
+  );
   const start = (
     <>
       <Link to="/" className="noUnderline">
@@ -89,18 +89,18 @@ export default function HeartyNavbar(props) {
             rounded
             size="large"
             style={{
-              backgroundColor: '#f561b0',
-              border: '#f561b0',
+              backgroundColor: "#f561b0",
+              border: "#f561b0",
             }}
           />
         </span>
       </Link>
     </>
-  )
+  );
   // height="40" className="mr-2"
-
+  console.log(items)
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
-  return <Menubar id="navbar" model={items} start={start} end={end} />
+  return (<Menubar id="navbar" model={items} start={start} end={end} />);
 }
 
 // example items
