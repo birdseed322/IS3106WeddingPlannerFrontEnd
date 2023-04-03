@@ -128,8 +128,9 @@ function Login() {
                                 setUserType(e.value);
                             }}
                         />
+                        {/* for debugging */}
                         {/* <Button label="log userType val" onClick={() => console.log(userType)}/> */}
-                        <Button label="log setToken val" onClick={() => console.log(setToken)} />
+                        {/* <Button label="log setToken val" onClick={() => console.log(setToken)} /> */}
                     </div>
                 </Card>
             </div>

@@ -10,7 +10,7 @@ import TempEndpoints from "./routes/TempEndpoints.jsx";
 
 function App() {
 
-    return <TempEndpoints />; //temporarily changed to temp endpoints to speed up development
+    return <EndPoints />;
 }
 
 export default App;
