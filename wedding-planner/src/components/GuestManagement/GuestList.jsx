@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -16,6 +16,9 @@ import { InputText } from 'primereact/inputtext';
 import { Tag } from 'primereact/tag';
 import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
+import EmailAPI from './EmailAPI.jsx';
+import ReactDOMServer from 'react-dom/server';
+
 export default function GuestList() {
     let emptyGuest = {
         id: null,
@@ -190,9 +193,18 @@ export default function GuestList() {
     const confirmSendInvites = () => {
         setSendInvitesDialog(true);
     }
-
+    const bride = "RANDOM";
+    const groom = "also random";
+    const venue = "venue";
+    const date = "date";
+    const rsvp = "link";
     const sendInvitesToSelectedGuests = () => {
-        
+        const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
+        EmailAPI.sendEmail("1", "2", "3", "4", "5", emails).then(response => {
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
+        })
     }
     const deleteSelectedGuests = () => {
         let _guests = guests.filter((val) => !selectedGuests.includes(val));

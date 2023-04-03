@@ -6,11 +6,11 @@ import "primereact/resources/primereact.css";
 import "./App.css";
 import "primeflex/primeflex.css";
 //Main App component
-
+import TempEndpoints from "./routes/TempEndpoints.jsx";
 
 function App() {
 
-    return <EndPoints />;
+    return <TempEndpoints />; //temporarily changed to temp endpoints to speed up development
 }
 
 export default App;

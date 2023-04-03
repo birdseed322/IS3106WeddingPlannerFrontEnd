@@ -24,55 +24,23 @@ import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.js
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
-
-// Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
-
 function EndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
 
-    // note that the {} object syntax instead of the typical [] array is intended
-    // although we could just as easily use [] lol
-    const { token, setToken } = useToken();
-
-    console.log(token);
-    if (!token) {
-        return (
-            <LoginTokenContext.Provider value={[token, setToken]}>
+    return (
+        <>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/*" element={<Login />} />
-                    </Routes>
-                </BrowserRouter>
-            </LoginTokenContext.Provider>
-        );
-    }
-
-    switch (token.userType) {
-        case "ADMIN":
-            return (
-                <>
-                    <LoginTokenContext.Provider value={[token, setToken]}>
-                        <BrowserRouter>
-                            <Routes>
-                                <Route exact path="/" element={<FrontPage />} />
-                                <Route exact path="/login" element={<Login />} />
-                                <Route
-                                    exact
-                                    path="/AdminUserManagement"
-                                    element={<AdminUserManagement />}
-                                />
-                            </Routes>
-                        </BrowserRouter>
-                    </LoginTokenContext.Provider>
-                </>
-            );
-            break;
-        case "WEDDING-ORGANISER":
-            return (
-                <LoginTokenContext.Provider value={[token, setToken]}>
-                    <BrowserRouter>
-                        <Routes>
+                        <Route exact path="/" element={<ProjectDashboard />} />
+                        <Route exact path="/login" element={<Login />} />
+                        <Route exact path="/vendorlogin" element={<VendorLogin />} />
+                        <Route exact path="/vendor/request" element={<VendorRequest />} />
+                        <Route
+                            exact
+                            path="/AdminUserManagement"
+                            element={<AdminUserManagement />}
+                        />
                             <Route exact path="/" element={<ProjectDashboard />} />
                             <Route
                                 exact
@@ -106,29 +74,11 @@ function EndPoints() {
                             <Route exact path="/signup" element={<SignUp />} />
                             <Route exact path="/viewprofile" element={<ViewProfile />} />
                             <Route exact path="/editprofile" element={<EditProfile />} />
-                        </Routes>
-                    </BrowserRouter>
-                </LoginTokenContext.Provider>
-            );
-            break;
-        case "VENDOR":
-            //stuff
-            return (
-                <>
-                    <LoginTokenContext.Provider value={[token, setToken]}>
-                        <BrowserRouter>
-                            <Routes>
-                                <Route exact path="/" element={<FrontPage />} />
-                                <Route exact path="/login" element={<Login />} />
-                            </Routes>
-                        </BrowserRouter>
-                    </LoginTokenContext.Provider>
-                    ;
-                </>
-            );
-
-            break;
-    }
+                    </Routes>
+                    
+                </BrowserRouter>
+        </>
+    );
 }
 
 export default EndPoints;
