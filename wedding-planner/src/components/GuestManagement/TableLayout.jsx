@@ -127,7 +127,7 @@ export default function TableLayout() {
         });
         
     }, []); 
-    return (
+        return (
         <>
             <HeartyNavbar></HeartyNavbar>
             <ReactFlowProvider>    
@@ -141,8 +141,6 @@ export default function TableLayout() {
                             maxZoom={1.5}
                             onNodeClick={onNodeClick}
                             onNodeDragStart={onNodeClick}      
-                            onSelectionDrag={onNodeClick}
-                            onMouseMove={rerender}
                             onNodesDelete={deleteNodesAction}
                             fitView
                         >                    
@@ -154,5 +152,5 @@ export default function TableLayout() {
                     <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>     
            </ReactFlowProvider>
         </>
-    );
+    );  
 }

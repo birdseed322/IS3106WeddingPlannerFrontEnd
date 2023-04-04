@@ -10,7 +10,7 @@ import TempEndpoints from "./routes/TempEndpoints.jsx";
 
 function App() {
 
-    return (<TempEndpoints />);
+    return (<TempEndpoints></TempEndpoints>);
 }
 
 export default App;
