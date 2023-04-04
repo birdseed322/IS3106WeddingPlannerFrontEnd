@@ -88,7 +88,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
             locationX : 0,
             locationY : 0,
             stageHeight : 200,
-            stageWidth : 600,
+            stageWidth : 1500,
             tableNumber : max,
         }
         TableApi.createStage(_stage, weddingId).then((response) => {

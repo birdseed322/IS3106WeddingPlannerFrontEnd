@@ -7,5 +7,9 @@ import App from './App';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// Store the original console.warn function
+// Store the original console.error function
 
-root.render( < App / > );
+root.render( 
+    < App / >
+ );

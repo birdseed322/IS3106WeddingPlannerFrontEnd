@@ -14,7 +14,7 @@ const TableApi = {
                     }).catch(error => {
                         //clearTimeout(timer);
                         throw error;
-                    })
+                    });
     },
     updateStages(stages, wId) {
         //console.log("tables " + tables);
@@ -31,7 +31,7 @@ const TableApi = {
                 return response;
             }).catch(error => {
                 throw error;
-            })
+            });
     }, 
     getStages(wId) {
         return fetch(`${SERVER_PREFIX}/stage/query?` + new URLSearchParams({  //https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
@@ -45,7 +45,7 @@ const TableApi = {
 
         }).catch(error => {
             throw error;
-        })
+        });
     },
     createTable(data, wId) {
     return fetch(`${SERVER_PREFIX}/tablemanagement/${wId}`, {
@@ -70,7 +70,7 @@ const TableApi = {
                 }).catch(error => {
                     //clearTimeout(timer);
                     throw error;
-                })
+                });
     },
     getTables(wId) {
         return fetch(`${SERVER_PREFIX}/tablemanagement/query?` + new URLSearchParams({  //https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
@@ -84,7 +84,7 @@ const TableApi = {
 
         }).catch(error => {
             throw error;
-        })
+        });
     },
     updateTables(tables, wId) {
         //console.log("tables " + tables);
@@ -101,7 +101,7 @@ const TableApi = {
                 return response;
             }).catch(error => {
                 throw error;
-            })
+            });
     }
 };
 export default TableApi;

@@ -130,14 +130,14 @@ export default function TableLayout() {
         return (
         <>
             <HeartyNavbar></HeartyNavbar>
+            <Toast ref={toast} />
             <ReactFlowProvider>    
                 <div style={{ height: '90%', width: '100%', position: "absolute", top:"10%", zIndex:"-1"}}>
-                    <Toast ref={toast} />
                         <ReactFlow
                             nodeTypes={nodeTypes}
                             nodes={nodes}
                             onNodesChange={onNodesChange}
-                            minZoom={0.3}
+                            minZoom={0.1}
                             maxZoom={1.5}
                             onNodeClick={onNodeClick}
                             onNodeDragStart={onNodeClick}      

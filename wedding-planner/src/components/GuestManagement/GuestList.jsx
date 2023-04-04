@@ -36,7 +36,7 @@ export default function GuestList() {
     const [deleteGuestsDialog, setDeleteGuestsDialog] = useState(false);
     const [sendInvitesDialog, setSendInvitesDialog] = useState(false);
     const [guest, setGuest] = useState(emptyGuest);
-    const [selectedGuests, setSelectedGuests] = useState([]);
+    const [selectedGuests, setSelectedGuests] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
     const toast = useRef(null);
@@ -150,42 +150,47 @@ export default function GuestList() {
     const date = "12 October 2023";
     const rsvp = "http://localhost:3000/rsvpform/" + weddingId;
     const sendInvitesToSelectedGuests = () => { //selectedGuests, bride, groom, venue, date, rsvp link, guests, setGuests, setSelectedGuests
-        if (selectedGuests.length > 0) {
+        if (selectedGuests != null && selectedGuests.length > 0) {
             const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
-            const sent = true;
-            EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => {
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
-            }).catch(error => {
-                sent = false;
-                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
-            })
-            if (sent) {
-                const toUpdate = new Set();
-                selectedGuests.forEach(element => {
-                    toUpdate.add(element.id);
-                });
-                const newGuests = [];
-                for (const guest of guests) {
-                    if (toUpdate.has(guest.id)) {
-                        let _guest = {...guest};
-                        _guest.rsvp = "PENDING";
-                        newGuests.push(_guest);
-                    } else {
-                        newGuests.push(guest);
-                    }
+            EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => response.json()).then(response => {
+                //console.log(response.success);
+                if (response.success === true) {
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
+                } else {
+                    throw new Error();
                 }
-                setSelectedGuests(null);
-                Api.updateGuestsRSVP(newGuests).then((response) => {
-                    if (response.status === 204) {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
-                        setGuests((old) => newGuests);
+            }).then(response => {
+                    const toUpdate = new Set();
+                    selectedGuests.forEach(element => {
+                        toUpdate.add(element.id);
+                    });
+                    const newGuests = [];
+                    for (const guest of guests) {
+                        if (toUpdate.has(guest.id)) {
+                            let _guest = {...guest};
+                            _guest.rsvp = "PENDING";
+                            newGuests.push(_guest);
+                        } else {
+                            newGuests.push(guest);
+                        }
                     }
-                }).catch(e => {
-                    toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
-                })
-            } else {
-                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
-            }
+                    setSelectedGuests(null);
+                    Api.updateGuestsRSVP(newGuests).then((response) => {
+                        if (response.status === 204) {
+                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
+                            setGuests((old) => newGuests);
+                        } else {
+                            throw new Error();
+                        }
+                    }).catch(e => {
+                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
+                    })
+            }).catch(error => {
+                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
+            });
+ 
+        } else {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'No Guests Selected', life: 3000 });
         }
         setSendInvitesDialog(false);
        //need to update rsvp status
@@ -193,7 +198,6 @@ export default function GuestList() {
     const saveGuest = () => { 
         setSubmitted(true);
         if (validateGuest(guest)) {
-            console.log("Validated");
             if (guest.name.trim()) {
                 let _guests = [...guests];
                 let _guest = { ...guest };
