@@ -27,6 +27,7 @@ import useToken from "../useToken.jsx";
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
 
+import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -40,11 +41,12 @@ function EndPoints() {
     if (!token) {
         return (
             <LoginTokenContext.Provider value={[token, setToken]}>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/*" element={<Login />} />
-                    </Routes>
-                </BrowserRouter>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
+                    <Route path="/*" element={<Login setToken={setToken} />} />
+                </Routes>
+            </BrowserRouter>
             </LoginTokenContext.Provider>
         );
     }

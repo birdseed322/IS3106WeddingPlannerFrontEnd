@@ -9,6 +9,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import TableApi from './TableApi.jsx';
 import { Toast } from 'primereact/toast';
 import 'reactflow/dist/style.css';
+import { classNames } from 'primereact/utils';
 
 export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, setSelectedTable}) {
     const toast = useRef(null);
@@ -20,6 +21,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
     ];
     const [capacity, setCapacity] = useState(10);
     const handleAddTable = () => {
+        if (capacity > 0) {
         setVisible(true);
         let max = 0;
         console.log("node length" + nodes.length);
@@ -65,7 +67,10 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
         }).catch(error => {   
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Table', life: 3000 });   
         }); 
-        
+        } else {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Table: Invalid Capacity ', life: 3000 });  
+            setVisible(false); 
+        }
     };
 
     const handleAddStage = () => {
@@ -83,7 +88,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
             locationX : 0,
             locationY : 0,
             stageHeight : 200,
-            stageWidth : 600,
+            stageWidth : 1500,
             tableNumber : max,
         }
         TableApi.createStage(_stage, weddingId).then((response) => {
@@ -99,9 +104,6 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                         selected : true,
                         data: { tableNumber: _stage.tableNumber}
                     };
-                    //console.log("TO ADD " + toAdd);
-                    //console.log(typeof setTables);
-                    //setSelectedTable(toAdd);
                     setNodes((prevNodes) => prevNodes.concat(toAdd));
                 });
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Stage Created', life: 3000 });
@@ -116,7 +118,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
     const handleSave = () => {
         saveTables();
     }
-   
+    
     return (
         <>
         <div className="card flex justify-content-center align-items-center">
@@ -126,7 +128,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                 <h3 className="m-0 mb-3">Options: New Table/Stage</h3>
                 <div className="card flex text-align-center">
                     <span className="p-inputgroup-addon max-w-30rem text-align-center"> Table Capacity </span>
-                    <InputText className="max-w-10rem" placeholder="Enter Pax" value={capacity} onChange={(e) => setCapacity(e.target.value)}/> 
+                    <InputNumber id="cap" value={capacity} onValueChange={(e) => setCapacity(e.value)} required autoFocus className={classNames({ 'p-invalid': visible && capacity <= 0})} />
                 </div>
                 <div className="card flex justify-content-center text-align-center mt-3">
                     <Button className="pinkButton"  label="Add Table" icon="pi pi-plus" onClick={handleAddTable} style={{ minWidth: '7rem' }} />

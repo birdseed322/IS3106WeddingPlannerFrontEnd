@@ -18,7 +18,7 @@ import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
 import EmailAPI from './EmailAPI.jsx';
 import ReactDOMServer from 'react-dom/server';
-
+import validateGuest from './Validations/GuestValidation.jsx';
 export default function GuestList() {
     let emptyGuest = {
         id: null,
@@ -80,55 +80,6 @@ export default function GuestList() {
     const hideSendInvitesDialog = () => {
         setSendInvitesDialog(false);
     }
-    const validateGuest = (g) => {
-        return g.name.trim().length > 0 && g.email.length > 0;
-    }
-    const saveGuest = () => {
-        setSubmitted(true);
-        if (guest.name.trim()) {
-            let _guests = [...guests];
-            let _guest = { ...guest };
-            if (guest.id != null) {
-                const index = findIndexById(guest.id);
-                Api.updateGuest(_guest, weddingId).then((response) => {
-                    if (response.status === 204) {
-                        _guests[index] = _guest;
-                        setGuests(_guests);
-                        setGuestDialog(false);  
-                        setTimeout(300, () => setGuest(emptyGuest));  
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Updated', life: 3000 });
-                    } else {
-                        throw new Error();
-                    }
-                }).catch((error) => {
-                    setGuestDialog(false);  
-                    setTimeout(300, () => setGuest(emptyGuest));  
-                    toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Update Guest : ', life: 3000 });   
-                })
-            } else {
-                if (validateGuest(_guest)) {
-                    Api.createGuest(_guest, weddingId).then((response) => {
-                        if ( (response.status === 200)) {
-                            response.json().then((idObject) => {
-                                _guest.id = idObject.GUESTID;
-                                _guests.push(_guest);
-                                setGuests(_guests);
-                                setGuestDialog(false);  
-                                setTimeout(200, () => setGuest(emptyGuest));  
-                            });
-                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Created', life: 3000 });
-                        } else {
-                            throw new Error();    
-                        }
-                    }).catch(error => {   
-                        setGuestDialog(false);  
-                        setTimeout(200, () => setGuest(emptyGuest));                   
-                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });   
-                    }); 
-                }
-            }
-        }
-    };
 
     const editGuest = (guest) => {
         setGuest({ ...guest });
@@ -198,44 +149,100 @@ export default function GuestList() {
     const venue = "Marina Bay Sands Singapore";
     const date = "12 October 2023";
     const rsvp = "http://localhost:3000/rsvpform/" + weddingId;
-    const sendInvitesToSelectedGuests = () => {
-        const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
-        EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => {
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
-        }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
-        })
-
-        const toUpdate = new Set();
-        selectedGuests.forEach(element => {
-            toUpdate.add(element.id);
-        });
-        const newGuests = [];
-        for (const guest of guests) {
-            if (toUpdate.has(guest.id)) {
-                let _guest = {...guest};
-                _guest.rsvp = "PENDING";
-                newGuests.push(_guest);
-            } else {
-                newGuests.push(guest);
-            }
+    const sendInvitesToSelectedGuests = () => { //selectedGuests, bride, groom, venue, date, rsvp link, guests, setGuests, setSelectedGuests
+        if (selectedGuests != null && selectedGuests.length > 0) {
+            const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
+            EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => response.json()).then(response => {
+                //console.log(response.success);
+                if (response.success === true) {
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
+                } else {
+                    throw new Error();
+                }
+            }).then(response => {
+                    const toUpdate = new Set();
+                    selectedGuests.forEach(element => {
+                        toUpdate.add(element.id);
+                    });
+                    const newGuests = [];
+                    for (const guest of guests) {
+                        if (toUpdate.has(guest.id)) {
+                            let _guest = {...guest};
+                            _guest.rsvp = "PENDING";
+                            newGuests.push(_guest);
+                        } else {
+                            newGuests.push(guest);
+                        }
+                    }
+                    setSelectedGuests(null);
+                    Api.updateGuestsRSVP(newGuests).then((response) => {
+                        if (response.status === 204) {
+                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
+                            setGuests((old) => newGuests);
+                        } else {
+                            throw new Error();
+                        }
+                    }).catch(e => {
+                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
+                    })
+            }).catch(error => {
+                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
+            });
+ 
+        } else {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'No Guests Selected', life: 3000 });
         }
-        
-        Api.updateGuestsRSVP(newGuests).then((response) => {
-            if (response.status === 204) {
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
-                setGuests((old) => newGuests);
-                setSelectedGuests(null);
-            }
-        }).catch(e => {
-            setSelectedGuests(null);
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
-            setSelectedGuests(null);
-        })
-        
         setSendInvitesDialog(false);
        //need to update rsvp status
     }
+    const saveGuest = () => { 
+        setSubmitted(true);
+        if (validateGuest(guest)) {
+            if (guest.name.trim()) {
+                let _guests = [...guests];
+                let _guest = { ...guest };
+                if (guest.id != null) {
+                    const index = findIndexById(guest.id);
+                    Api.updateGuest(_guest, weddingId).then((response) => {
+                        if (response.status === 204) {
+                            _guests[index] = _guest;
+                            setGuests(_guests);
+                            setGuestDialog(false);  
+                            setTimeout(300, () => setGuest(emptyGuest));  
+                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Updated', life: 3000 });
+                        } else {
+                            throw new Error();
+                        }
+                    }).catch((error) => {
+                        setGuestDialog(false);  
+                        setTimeout(300, () => setGuest(emptyGuest));  
+                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Update Guest : ', life: 3000 });   
+                    })
+                } else {
+                    if (validateGuest(_guest)) {
+                        Api.createGuest(_guest, weddingId).then((response) => {
+                            if ( (response.status === 200)) {
+                                response.json().then((idObject) => {
+                                    _guest.id = idObject.GUESTID;
+                                    _guests.push(_guest);
+                                    setGuests(_guests);
+                                    setGuestDialog(false);  
+                                    setTimeout(200, () => setGuest(emptyGuest));  
+                                });
+                                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Created', life: 3000 });
+                            } else {
+                                throw new Error();    
+                            }
+                        }).catch(error => {   
+                            setGuestDialog(false);  
+                            setTimeout(200, () => setGuest(emptyGuest));                   
+                            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });   
+                        }); 
+                    }
+                }
+            }
+        }
+    };
     const deleteSelectedGuests = () => {
         let _guests = guests.filter((val) => !selectedGuests.includes(val));
         setGuests(_guests);
@@ -387,14 +394,14 @@ export default function GuestList() {
                     <label htmlFor="name" className="font-bold">
                         Name
                     </label>
-                    <InputText id="name" value={guest.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !guest.name })}  />
+                    <InputText id="name" value={guest.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !guest.name})}  />
                     {submitted && !guest.name && <small className="p-error">Name is required.</small>}
                 </div>
                 <div className="field">
                     <label htmlFor="email" className="font-bold">
                         Email
                     </label>
-                    <InputText type = "email" id="email" value={guest.email} onChange={(e) => onInputChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': submitted && !guest.email })} />
+                    <InputText type = "email" id="email" value={guest.email} onChange={(e) => onInputChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': submitted && !guest.email})} />
                     {submitted && !guest.email && <small className="p-error">Email is required.</small>}
                 </div>
 
@@ -402,7 +409,7 @@ export default function GuestList() {
                     <label className="mb-3 font-bold">Attendee Side</label>
                     <div className="formgrid grid">
                         <div className="field-radiobutton col-6">
-                            <RadioButton inputId="bride" name="side" value="BRIDE" onChange={onCategoryChange} checked={guest.attendingSide === 'BRIDE'} required />
+                            <RadioButton inputId="bride" name="side" value="BRIDE" onChange={onCategoryChange} checked={guest.attendingSide === 'BRIDE'} required  />
                             <label htmlFor="bride">Bride</label>
                         </div>
                         <div className="field-radiobutton col-6">
@@ -410,7 +417,7 @@ export default function GuestList() {
                             <label htmlFor="groom">Groom</label>
                         </div>
                     </div>
-                    {submitted && !(guest.attendingSide == null) && <small className="p-error">Attending Side is required.</small>}
+                    {submitted && (guest.attendingSide == null) && <small className="p-error">Attending Side is required.</small>}
                 </div>
 
                 <div className="formgrid grid">
@@ -418,7 +425,9 @@ export default function GuestList() {
                         <label htmlFor="numPax" className="font-bold">
                             Number of Pax.
                         </label>
-                        <InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} />
+                        <InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required autoFocus className={classNames({ 'p-invalid': submitted && guest.numPax <= 0})} />
+                        {submitted && (guest.numPax <= 0) && <small className="p-error">Number of Pax is invalid.</small>}
+
                     </div>
                 </div>
             </Dialog>
