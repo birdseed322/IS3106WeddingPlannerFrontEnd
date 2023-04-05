@@ -28,6 +28,7 @@ import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
 
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
+import TestingImageFunctions from "../components/testingImageFunctions.js";
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -45,6 +46,16 @@ function EndPoints() {
                 <Routes>
                     <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                     <Route path="/*" element={<Login setToken={setToken} />} />
+                    <Route exact path="/VendorSearchPage" element={<SearchPage />} />
+                            <Route
+                                path="/VendorSearchPage/VendorName/:vendorName"
+                                element={<VendorDetailpage />}
+                            />
+                            <Route
+                                path="/VendorSearchPage/Category/:vendorCategory"
+                                element={<CategoryDisplayPage />}
+                            />
+                    <Route path = "/testFirebase" element = {<TestingImageFunctions/>}></Route>
                 </Routes>
             </BrowserRouter>
             </LoginTokenContext.Provider>
