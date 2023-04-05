@@ -4,6 +4,7 @@ import Login from "../components/Login Page/Login.jsx";
 import FrontPage from "../components/FrontPage/FrontPage.jsx";
 import Sample from "../Sample.jsx";
 import VendorRequest from "../components/VendorView/Request Page/VendorRequest.jsx";
+import Schedule from "../components/VendorView/Schedule Page/Schedule.jsx";
 import SearchPage from "../components/VendorManagement/SearchPage.jsx";
 import VendorDetailpage from "../components/VendorManagement/VendorDetailPage.jsx";
 import CategoryDisplayPage from "../components/VendorManagement/CategoryDisplayPage.jsx";
@@ -24,7 +25,9 @@ import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.js
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
+import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
 
+import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -34,16 +37,16 @@ function EndPoints() {
     // note that the {} object syntax instead of the typical [] array is intended
     // although we could just as easily use [] lol
     const { token, setToken } = useToken();
-
     console.log(token);
     if (!token) {
         return (
             <LoginTokenContext.Provider value={[token, setToken]}>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/*" element={<Login />} />
-                    </Routes>
-                </BrowserRouter>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
+                    <Route path="/*" element={<Login setToken={setToken} />} />
+                </Routes>
+            </BrowserRouter>
             </LoginTokenContext.Provider>
         );
     }
@@ -74,6 +77,7 @@ function EndPoints() {
                     <BrowserRouter>
                         <Routes>
                             <Route exact path="/" element={<ProjectDashboard />} />
+                            <Route path="/:projectId/*" element={<ProjectOverview />}></Route>
                             <Route
                                 exact
                                 path="/LogisticsManagement/WeddingChecklist"
@@ -118,8 +122,8 @@ function EndPoints() {
                     <LoginTokenContext.Provider value={[token, setToken]}>
                         <BrowserRouter>
                             <Routes>
-                                <Route exact path="/" element={<FrontPage />} />
-                                <Route exact path="/login" element={<Login />} />
+                                <Route exact path="/" element={<VendorRequest />} />
+                                <Route exact path="/schedule" element={<Schedule />} />
                             </Routes>
                         </BrowserRouter>
                     </LoginTokenContext.Provider>

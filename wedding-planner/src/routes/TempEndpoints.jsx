@@ -24,21 +24,25 @@ import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.js
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
+import MainTable from "../components/GuestManagement/MainTable.jsx";
 
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
-function EndPoints() {
+import Schedule from "../components/VendorView/Schedule Page/Schedule.jsx";
+function TempEndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
-
+    const { token, setToken } = useToken();
     return (
         <>
+                <LoginTokenContext.Provider value={token}></LoginTokenContext.Provider>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                         <Route exact path="/" element={<ProjectDashboard />} />
                         <Route exact path="/login" element={<Login />} />
                         <Route exact path="/vendorlogin" element={<VendorLogin />} />
-                        <Route exact path="/vendor/request" element={<VendorRequest />} />
+                        <Route exact path="/vendor/requests" element={<VendorRequest />} />
+                        <Route exact path="/vendor/schedule" element={<Schedule />} />
                         <Route
                             exact
                             path="/AdminUserManagement"
@@ -69,7 +73,7 @@ function EndPoints() {
                                 path="/VendorSearchPage/Category/:vendorCategory"
                                 element={<CategoryDisplayPage />}
                             />
-                            <Route exact path="/tablelayout" element={<TableLayout />} />
+                            <Route exact path="/tablelayout" element={<MainTable />} />
                             <Route exact path="/guestlist" element={<GuestList />} />
                             <Route exact path="/homepage" element={<Homepage />} />
                             <Route exact path="/aboutuspage" element={<AboutUs />} />
@@ -84,4 +88,4 @@ function EndPoints() {
     );
 }
 
-export default EndPoints;
+export default TempEndPoints;

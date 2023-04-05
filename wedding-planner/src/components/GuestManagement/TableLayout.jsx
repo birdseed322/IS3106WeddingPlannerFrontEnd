@@ -47,10 +47,11 @@ export default function TableLayout() {
         setSelectedNode(null);
     };
     const saveTables = () => {
-        const toSave = [];
+        const toSaveTables = [];
+        const toSaveStages = [];
         for (const node of nodes) {
             if (node.type === 'table') {
-                toSave.push({
+                toSaveTables.push({
                     capacity : node.data.capacity,
                     id : node.id,
                     currOccupancy : (node.data.guests.length > 0 ? node.data.guests.map(x => x.numPax).reduce((x,y) => x + y) : 0),
@@ -60,10 +61,28 @@ export default function TableLayout() {
                     tableNumber : node.data.tableNumber,
                     tableSize : node.style.height
                 });
+            } else if (node.type === 'stage') {
+                toSaveStages.push({
+                    id : parseInt(node.id.substring(1)),
+                    locationX : node.position.x,
+                    locationY : node.position.y,
+                    tableNumber : node.data.tableNumber,
+                    stageHeight : node.style.height,
+                    stageWidth : node.style.width
+                });
             }
         }
-        TableApi.updateTables(toSave, weddingId);
-        //TableApi.updateStage()
+        TableApi.updateTables(toSaveTables, weddingId).then(response => {
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Tables saved ' , life: 3000 });
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save tables ' , life: 3000 });
+        }); 
+
+        TableApi.updateStages(toSaveStages, weddingId).then(response => {
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Stages saved ' , life: 3000 });
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save stages ' , life: 3000 });
+        }); 
     }
     useEffect(() => {     
         TableApi.getTables(weddingId).then((response) => {
@@ -86,25 +105,42 @@ export default function TableLayout() {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
             console.log(error);
         });
-    
+        TableApi.getStages(weddingId).then((response) => {
+            return response.json();
+        }).then((t) => {
+            const temp = [];
+            for (const unit of t) {
+                const {id, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
+                temp.push({
+                    id : '' + id,
+                    type : 'stage',
+                    position: { x: locationX, y: locationY },
+                    selected : false,
+                    style: { width: stageWidth, height: stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, 
+                    data: { tableNumber: tableNumber}
+                })
+            }
+           setNodes((nodes) => nodes.concat(temp));
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load stages ' , life: 3000 });
+            console.log(error);
+        });
         
     }, []); 
-    return (
+        return (
         <>
             <HeartyNavbar></HeartyNavbar>
+            <Toast ref={toast} />
             <ReactFlowProvider>    
                 <div style={{ height: '90%', width: '100%', position: "absolute", top:"10%", zIndex:"-1"}}>
-                    <Toast ref={toast} />
                         <ReactFlow
                             nodeTypes={nodeTypes}
                             nodes={nodes}
                             onNodesChange={onNodesChange}
-                            minZoom={0.3}
+                            minZoom={0.1}
                             maxZoom={1.5}
                             onNodeClick={onNodeClick}
                             onNodeDragStart={onNodeClick}      
-                            onSelectionDrag={onNodeClick}
-                            onMouseMove={rerender}
                             onNodesDelete={deleteNodesAction}
                             fitView
                         >                    
@@ -116,5 +152,5 @@ export default function TableLayout() {
                     <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>     
            </ReactFlowProvider>
         </>
-    );
+    );  
 }
