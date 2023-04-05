@@ -27,6 +27,20 @@ p {
   margin: auto;
 }
 
+/* .p-panel-content {
+  color: red;
+} */
+/* 
+.someAccordionStyle .p-accordion-header-link {
+  color: red !important;
+  background-color: blue !important;
+}
+
+.testPanelStyle .p-panel-content {
+  color: red;
+  background-color: blue;
+} */
+
 #bodyContainer {
   box-sizing: border-box;
   border: 2px solid black;
