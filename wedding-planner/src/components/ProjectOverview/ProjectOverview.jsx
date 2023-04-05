@@ -3,6 +3,7 @@ import { LoginTokenContext } from "../../context/LoginTokenContext";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import { useParams, useSearchParams } from "react-router-dom";
 import WeddingProjectAPI from "./WeddingProjectAPI";
+import { Card } from "primereact/card";
 
 export default function ProjectOverview() {
     // note that HeartyNavbar has an id specified in its component jsx file
@@ -33,15 +34,13 @@ export default function ProjectOverview() {
         <div id="appContainer">
             <HeartyNavbar />
             <div id="bodyContainer">
-                <div className="bodyTextColumn">
-                    <h1>{currentProject.name}</h1>
-                    <h2>Description</h2>
-                    <p>{currentProject.description}</p>
-                </div>
-            </div>
 
-            <div id="footer">
-                <h2> some text</h2>
+        
+                <div className="bodyTextColumn">
+                <Card title={currentProject.name}>
+                    <p>{currentProject.description}</p>
+                </Card>
+                </div>
             </div>
         </div>
     );
