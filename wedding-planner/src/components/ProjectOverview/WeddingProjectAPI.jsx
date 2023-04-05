@@ -1,16 +1,22 @@
-const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources";
+const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/wedding-projects";
 const WeddingProjectAPI = {
     getAllWeddingProjects() {
-        return fetch(`${SERVER_PREFIX}/wedding-projects/`);
+        return fetch(`${SERVER_PREFIX}/`);
     },
-    
+
     getWeddingProjectById(id) {
-        return fetch(`${SERVER_PREFIX}/wedding-projects/${id}`);
+        return fetch(`${SERVER_PREFIX}/${id}`);
     },
-    
-    getWeddingProjectsByWeddingOrganiserId(orgId) {
-        return fetch(`${SERVER_PREFIX}/wedding-projects/query?wedding-organiser-id=${orgId}/`)
+
+    // isCompleted here is optional, defaults to undefined
+    getWeddingProjectsByWeddingOrganiserId(orgId, isCompleted) {
+        if (isCompleted == undefined) {
+            return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}`);
+        } else {
+            return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}&isCompleted=${isCompleted}`)
+        }
     },
+
     // updateListOfVendors(vendors) {
     //     // this is super inefficient because it makes 1 request per vendor LMAO
     //     for (let vendor of vendors) {
@@ -18,9 +24,9 @@ const WeddingProjectAPI = {
     //     }
     //     // also doesnt return a response, unless we want a list of responses?
     // },
-    
+
     updateWeddingProject(weddingProject) {
-        return fetch(`${SERVER_PREFIX}/wedding-projects`, {
+        return fetch(`${SERVER_PREFIX}/`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -29,9 +35,9 @@ const WeddingProjectAPI = {
             body: JSON.stringify(weddingProject),
         });
     },
-    
+
     createWeddingProject(weddingProject, orgId) {
-        return fetch(`${SERVER_PREFIX}/wedding-projects/query?wedding-organiser-id=${orgId}`, {
+        return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -39,7 +45,7 @@ const WeddingProjectAPI = {
             method: "POST",
             body: JSON.stringify(weddingProject),
         });
-    }
+    },
     // updateListOfWeddingOrganisers(organisers) {
     //     // this is super inefficient because it makes 1 request per org LMAO
     //     for (let organiser of organisers) {
