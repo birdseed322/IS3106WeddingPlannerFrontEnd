@@ -68,9 +68,6 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
 
     };
     const handleAddToTable = () => {
-        console.log("SELECTED TABLE AND GUESTS");
-        console.log(selectedTable);
-        console.log(selectedGuests);
         if (selectedTable != null && selectedGuests != null) {
             const temp = (selectedTable.data.guests.length > 0 ? selectedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0)
                             + (selectedGuests.length > 0 ? selectedGuests.map(g => g.numPax).reduce((x,y) => x + y) : 0);

@@ -87,7 +87,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
         {
             locationX : 0,
             locationY : 0,
-            stageHeight : 200,
+            stageHeight : 225,
             stageWidth : 1500,
             tableNumber : max,
         }
@@ -126,18 +126,19 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
 
             <Sidebar visible={visible} onHide={() => setVisible(false)}>
                 <h3 className="m-0 mb-3">Options: New Table/Stage</h3>
-                <div className="card flex text-align-center">
-                    <span className="p-inputgroup-addon max-w-30rem text-align-center"> Table Capacity </span>
-                    <InputNumber id="cap" value={capacity} onValueChange={(e) => setCapacity(e.value)} required autoFocus className={classNames({ 'p-invalid': visible && capacity <= 0})} />
+                <div className="card flex text-align-center justify-content-center">
+                    <span className="p-inputgroup-addon text-align-center" style={{minWidth : "7rem", backgroundColor : "white"}}> Table Capacity </span>
+                    <InputNumber value={capacity} onValueChange={(e) => setCapacity(e.value)} showButtons buttonLayout="vertical" style={{ width: '4rem' }}  min={1} max={100}
+    decrementButtonClassName="pinkButton" incrementButtonClassName="pinkButton" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
                 </div>
                 <div className="card flex justify-content-center text-align-center mt-3">
-                    <Button className="pinkButton"  label="Add Table" icon="pi pi-plus" onClick={handleAddTable} style={{ minWidth: '7rem' }} />
+                    <Button className="pinkButton"  label="Add Table" onClick={handleAddTable} style={{ minWidth: '7rem' }} />
                 </div>
-                <div className="card flex justify-content-center text-align-center mt-8">
+                <div className="card flex justify-content-center text-align-center mt-7">
                     <Button className="pinkButton"  label="Add Stage" icon="pi pi-plus" onClick={handleAddStage} style={{ minWidth: '7rem' }} />
                 </div> 
                 <div className="card flex justify-content-center text-align-center">
-                    <img src={image} style= {{maxWidth:"100%", maxHeight:"40%", marginTop:"10%"}}></img>
+                    <img src={image} style= {{maxWidth:"80%", maxHeight:"20%", marginTop:"5%"}}></img>
                 </div>
             </Sidebar>
         </div>

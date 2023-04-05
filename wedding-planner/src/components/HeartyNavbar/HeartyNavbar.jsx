@@ -100,7 +100,7 @@ export default function HeartyNavbar(props) {
   // height="40" className="mr-2"
   //console.log(items)
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
-  return (<Menubar id="navbar" model={items} start={start} end={end} />);
+  return (<Menubar className="block" id="navbar" model={items} start={start} end={end} />);
 }
 
 // example items

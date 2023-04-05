@@ -7,7 +7,7 @@ import 'reactflow/dist/style.css';
         return (
             <>
                 <div className="text-center align-items-center justify-content-center"> 
-                    <NodeResizer color="#ff0071" isVisible={selected} minWidth={600} minHeight={100} maxWidth={2000} maxHeight={200}/>
+                    {/*<NodeResizer color="#ff0071" isVisible={selected} minWidth={225} minHeight={1500} maxWidth={225} maxHeight={1500}/>*/}
                 </div>
            </>
         );

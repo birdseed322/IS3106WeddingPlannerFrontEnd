@@ -20,9 +20,6 @@ export default function RSVPForm() {
         <img src={rsvp} style= {{maxWidth:"100%", maxHeight:"40%", marginTop:"0%"}}></img>
         );
     const handleRSVP = () => {
-        console.log(email);
-        console.log(rsvpStatus);
-        console.log(weddingId);
         EmailAPI.updateGuestRSVP(email, rsvpStatus, weddingId).then(response => {
             if (response.status === 204) {
                 toast.current.show({ severity: 'success', summary: 'Success', detail: 'RSVP status updated ' , life: 3000 });
