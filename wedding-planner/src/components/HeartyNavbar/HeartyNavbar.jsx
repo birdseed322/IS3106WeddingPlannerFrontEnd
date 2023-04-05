@@ -6,7 +6,7 @@ import React, { useContext } from "react";
 import { Menubar } from "primereact/menubar";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
 
 export default function HeartyNavbar(props) {
@@ -14,7 +14,17 @@ export default function HeartyNavbar(props) {
   // see https://www.primefaces.org/primereact-v8/menumodel/
   const [token, setToken] = useContext(LoginTokenContext);
 
+  // gets projectId from URL parameters
+  const {projectId} = useParams();
+  
   const items = [
+    {
+      label: "Project Overview",
+      icon: "pi pi-fw pi-info-circle",
+      url: `/${projectId}`,
+      className: "menuItemStyle",
+    },
+    
     {
       label: "Vendor Management",
       icon: "pi pi-fw pi-file",
@@ -29,12 +39,12 @@ export default function HeartyNavbar(props) {
         {
           label: "Guest List",
           icon: "pi pi-fw pi-cog",
-          url: "/guestlist",
+          url: `/${projectId}/guestlist`,
         },
         {
           label: "Table Planner",
           icon: "pi pi-fw pi-power-off",
-          url: "/tablelayout",
+          url: `/${projectId}/tablelayout`,
         },
       ],
     },
@@ -46,17 +56,17 @@ export default function HeartyNavbar(props) {
         {
           label: "Wedding Checklist",
           icon: "pi pi-check",
-          url: "/LogisticsManagement/WeddingChecklist",
+          url: `/${projectId}/LogisticsManagement/WeddingChecklist`,
         },
         {
           label: "Budget Planner",
           icon: "pi pi-money-bill",
-          url: "/LogisticsManagement/WeddingBudgetPlanner",
+          url: `/${projectId}/LogisticsManagement/WeddingBudgetPlanner`,
         },
         {
           label: "Wedding Itinerary",
           icon: "pi pi-calendar",
-          url: "/LogisticsManagement/WeddingItinerary",
+          url: `/${projectId}/LogisticsManagement/WeddingItinerary`,
         },
       ],
     },

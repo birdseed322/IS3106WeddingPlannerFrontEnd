@@ -25,7 +25,10 @@ import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.js
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
+import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
+
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
+import TestingImageFunctions from "../components/testingImageFunctions.js";
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 import GuestView from "../components/GuestManagement/GuestView.jsx";
 import GuestViewItinerary from "../components/GuestManagement/GuestViewItinerary.jsx";
@@ -46,6 +49,16 @@ function EndPoints() {
                     <Route path="/guestview/:weddingId/:guestId" element={<GuestView></GuestView>}></Route>
                     <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                     <Route path="/*" element={<Login setToken={setToken} />} />
+                    <Route exact path="/VendorSearchPage" element={<SearchPage />} />
+                            <Route
+                                path="/VendorSearchPage/VendorName/:vendorName"
+                                element={<VendorDetailpage />}
+                            />
+                            <Route
+                                path="/VendorSearchPage/Category/:vendorCategory"
+                                element={<CategoryDisplayPage />}
+                            />
+                    <Route path = "/testFirebase" element = {<TestingImageFunctions/>}></Route>
                 </Routes>
             </BrowserRouter>
             </LoginTokenContext.Provider>
@@ -78,6 +91,7 @@ function EndPoints() {
                     <BrowserRouter>
                         <Routes>
                             <Route exact path="/" element={<ProjectDashboard />} />
+                            <Route path="/:projectId/*" element={<ProjectOverview />}></Route>
                             <Route
                                 exact
                                 path="/LogisticsManagement/WeddingChecklist"
