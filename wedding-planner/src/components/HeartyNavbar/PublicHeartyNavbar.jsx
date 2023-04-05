@@ -55,7 +55,7 @@ export default function PublicHeartyNavbar(props) {
   )
   const start = (
     <>
-      <Link to="/" className="noUnderline">
+      <Link to="/login" className="noUnderline">
         <span>
           <Button
             icon="pi pi-heart"

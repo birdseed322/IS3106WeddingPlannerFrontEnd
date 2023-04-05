@@ -12,24 +12,25 @@ function Contact() {
       <div className="flex justify-content-center">
         <p style={{ lineHeight: 3, fontSize: '3em' }}>Any Questions</p>
       </div>
-      <div className="flex justify-content-left">
+      <div className="flex justify-content-center pt-3">
         <i
-          className="pi pi-phone px-8"
+          className="pi pi-phone px-5"
           style={{
             fontSize: '4em',
             color: '#f561b0',
           }}
         />
-        <p style={{ lineHeight: 7, fontSize: '2em' }}>Contact Us</p>
+        <p style={{ lineHeight: 3, fontSize: '2em' }}>Contact Us</p>
       </div>
-      <div className="flex justify-content-right">
+      <div className="flex justify-content-center pt-5">
         <i
-          className="pi pi-envelope px-8"
+          className="pi pi-envelope px-5"
           style={{
             fontSize: '4em',
             color: '#f561b0',
           }}
         />
+        <p style={{ lineHeight: 3, fontSize: '2em' }}>Email Us</p>
       </div>
     </div>
   )
