@@ -25,6 +25,7 @@ import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.js
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
+import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
 
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
@@ -74,6 +75,7 @@ function EndPoints() {
                     <BrowserRouter>
                         <Routes>
                             <Route exact path="/" element={<ProjectDashboard />} />
+                            <Route path="/:projectId/*" element={<ProjectOverview />}></Route>
                             <Route
                                 exact
                                 path="/LogisticsManagement/WeddingChecklist"
