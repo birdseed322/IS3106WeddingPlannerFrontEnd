@@ -19,6 +19,7 @@ import Api from './GuestListAPI.jsx';
 import EmailAPI from './EmailAPI.jsx';
 import ReactDOMServer from 'react-dom/server';
 import validateGuest from './Validations/GuestValidation.jsx';
+import { Routes, Route, useParams } from 'react-router-dom';
 export default function GuestList() {
     let emptyGuest = {
         id: null,
@@ -29,13 +30,13 @@ export default function GuestList() {
         rsvp: 'NOTSENT',
         guestTable : null,
     };
-    const [weddingId, setWeddingId] = useState(1);
+    const [guest, setGuest] = useState(emptyGuest);
+    const {projectId} = useParams();
     const [guests, setGuests] = useState([]);
     const [guestDialog, setGuestDialog] = useState(false);
     const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
     const [deleteGuestsDialog, setDeleteGuestsDialog] = useState(false);
     const [sendInvitesDialog, setSendInvitesDialog] = useState(false);
-    const [guest, setGuest] = useState(emptyGuest);
     const [selectedGuests, setSelectedGuests] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
@@ -44,7 +45,7 @@ export default function GuestList() {
     
     useEffect(() => {
         const temp = [];
-        Api.getAllGuests(weddingId).then((response) => {
+        Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
             setGuests(g);
@@ -148,11 +149,12 @@ export default function GuestList() {
     const groom = "Alice";
     const venue = "Marina Bay Sands Singapore";
     const date = "12 October 2023";
-    const rsvp = "http://localhost:3000/rsvpform/" + weddingId;
+    const rsvp = "http://localhost:3000/rsvpform/" + projectId;
+    const details = "http://localhost:3000/guestview/" + projectId;
     const sendInvitesToSelectedGuests = () => { //selectedGuests, bride, groom, venue, date, rsvp link, guests, setGuests, setSelectedGuests
         if (selectedGuests != null && selectedGuests.length > 0) {
             const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
-            EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => response.json()).then(response => {
+            EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails, details).then(response => response.json()).then(response => {
                 //console.log(response.success);
                 if (response.success === true) {
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
@@ -203,7 +205,7 @@ export default function GuestList() {
                 let _guest = { ...guest };
                 if (guest.id != null) {
                     const index = findIndexById(guest.id);
-                    Api.updateGuest(_guest, weddingId).then((response) => {
+                    Api.updateGuest(_guest, projectId).then((response) => {
                         if (response.status === 204) {
                             _guests[index] = _guest;
                             setGuests(_guests);
@@ -220,7 +222,7 @@ export default function GuestList() {
                     })
                 } else {
                     if (validateGuest(_guest)) {
-                        Api.createGuest(_guest, weddingId).then((response) => {
+                        Api.createGuest(_guest, projectId).then((response) => {
                             if ( (response.status === 200)) {
                                 response.json().then((idObject) => {
                                     _guest.id = idObject.GUESTID;

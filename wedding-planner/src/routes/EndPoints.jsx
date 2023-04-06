@@ -99,7 +99,7 @@ function EndPoints() {
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<ProjectDashboard />} />
-                                <Route path="/:projectId/">
+                            <Route path="/:projectId/">
                                 <Route index element={<ProjectOverview />} />
                                     <Route
                                         path="LogisticsManagement/WeddingChecklist"
@@ -132,7 +132,7 @@ function EndPoints() {
                                     <Route path="signup" element={<SignUp />} />
                                     <Route path="viewprofile" element={<ViewProfile />} />
                                     <Route path="editprofile" element={<EditProfile />} />
-                                </Route>
+                            </Route>
                         </Routes>
                     </BrowserRouter>
                 </LoginTokenContext.Provider>

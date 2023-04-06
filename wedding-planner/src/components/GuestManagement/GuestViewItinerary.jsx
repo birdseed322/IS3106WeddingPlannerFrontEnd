@@ -4,6 +4,7 @@ import GuestViewNavbar from '../HeartyNavbar/GuestViewNavbar';
 import flower from './src/flower.png';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import GuestQuery from './GuestQuery';
+import { Routes, Route, useParams } from 'react-router-dom';
 export default function GuestViewItinerary() {
     const events = [
         { status: 'Ordered', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#FBE3E8', image: 'game-controller.jpg' },
@@ -12,7 +13,8 @@ export default function GuestViewItinerary() {
         { status: 'Ordered', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#FBE3E8', image: 'game-controller.jpg' },
         { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#FBE3E8' },
     ];
-    if (sessionStorage.getItem("guestId") != null) {
+    const {weddingId} = useParams();
+    if (sessionStorage.getItem("guestId") != null && weddingId != null) {
         return (
             <>
             <GuestViewNavbar></GuestViewNavbar>
@@ -20,7 +22,6 @@ export default function GuestViewItinerary() {
                 <ScrollPanel style={{ width: '100%', height: '40rem' }}>
                     <Timeline value={events} opposite={(item) => item.status} content={(item) => <small className="text-color-primary">{item.date}</small>} />
                 </ScrollPanel>
-
             </div>
             </>
         );

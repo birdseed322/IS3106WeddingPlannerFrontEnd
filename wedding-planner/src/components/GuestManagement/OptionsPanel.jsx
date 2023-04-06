@@ -10,10 +10,11 @@ import TableApi from './TableApi.jsx';
 import { Toast } from 'primereact/toast';
 import 'reactflow/dist/style.css';
 import { classNames } from 'primereact/utils';
+import { Routes, Route, useParams } from 'react-router-dom';
 
 export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, setSelectedTable}) {
     const toast = useRef(null);
-    const weddingId = 1;
+    const {projectId} = useParams();
     const [visible, setVisible] = useState(false);
     let items = [
         {label: 'New Table', icon: 'pi pi-fw pi-circle'},
@@ -41,7 +42,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
             capacity : capacity,
             tableSize : 200
         }
-        TableApi.createTable(_table, weddingId).then((response) => {
+        TableApi.createTable(_table, projectId).then((response) => {
             if ( (response.status === 200)) {
                // console.log(response);
                 response.json().then((idObject) => {
@@ -91,7 +92,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
             stageWidth : 1500,
             tableNumber : max,
         }
-        TableApi.createStage(_stage, weddingId).then((response) => {
+        TableApi.createStage(_stage, projectId).then((response) => {
             if ( (response.status === 200)) {
                // console.log(response);
                 response.json().then((idObject) => {

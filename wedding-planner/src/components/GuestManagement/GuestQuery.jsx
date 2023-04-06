@@ -31,7 +31,7 @@ export default function GuestQuery() {
                 throw new Error();
             }
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Invalid Email ' , life: 3000 });
+            toast.current.show({ severity: 'warning', summary: 'Error', detail: 'Invalid Email ' , life: 3000 });
         });
     }
     const footer = (
@@ -41,7 +41,7 @@ export default function GuestQuery() {
     );
     return (
         <div class="grid align-content-center justify-content-center text-center">
-            <Toast ref={toast} />
+            <Toast ref={toast} className="z-5" style={{backgroundColor:"#FFFFFF"}}/>
             <div class="col-4 mt-10"></div>
                 <div class="col-4 z-5 mt-6">
                     <Card footer={footer} header={header} className="md:w-25rem opacity-95">

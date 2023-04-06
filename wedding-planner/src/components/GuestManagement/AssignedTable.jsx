@@ -20,7 +20,7 @@ import 'reactflow/dist/style.css';
                             fill="#4fe38a"
                         />
                         <text text-anchor="middle" x="50%" y="40%" fill="white" fontFamily="Montserrat" fontSize="2.3rem" fontWeight="bold" > Table {data.tableNumber}</text>
-                        <text text-anchor="middle" x="50%" y="62%" fill="white" fontFamily="Montserrat" fontSize="2rem" fontWeight="bold" > YOUR TABLE </text> {/*center alignment credits to chatgpt*/}                </svg>`
+                        <text text-anchor="middle" x="50%" y="62%" fill="white" fontFamily="Montserrat" fontSize="1.5rem" fontWeight="bold" > YOUR TABLE </text> {/*center alignment credits to chatgpt*/}                </svg>`
             </div>
 
             </>
