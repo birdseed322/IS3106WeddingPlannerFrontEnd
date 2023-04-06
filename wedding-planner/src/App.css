@@ -20,41 +20,24 @@ p {
                     when body text grows too long*/
   box-sizing: border-box;
   background: white;
-  /* background-image: url("./images/background-pexels-photo-961402.jpeg"); */
-  /* background-size: cover; */
-  /* min-height: 100vh; */
+  background-image: url("./images/background-pexels-photo-961402.jpeg");
+  background-size: cover;
+  min-height: 100vh;
   /* max-width: 1000px; */
   margin: auto;
 }
 
-/* .p-panel-content {
-  color: red;
-} */
-/* 
-.someAccordionStyle .p-accordion-header-link {
-  color: red !important;
-  background-color: blue !important;
-}
-
-.testPanelStyle .p-panel-content {
-  color: red;
-  background-color: blue;
-} */
-
 #bodyContainer {
   box-sizing: border-box;
-  border: 2px solid black;
-  background: white;  
+  background: white;
   margin: auto;
-  min-height: calc(100vh - var(--footer-height) - var(--navbar-height)); 
-  
+  min-height: calc(100vh - var(--footer-height) - var(--navbar-height));
 }
 
 #navbar {
   /* background-color: orange; */
   background: white;
   min-height: var(--navbar-height);
-  border: 2px solid rgb(244, 241, 241);
 }
 
 #footer {
@@ -65,7 +48,7 @@ p {
 
 .bodyTextColumn {
   /* for a more centre "column"-y main body text style */
-  /* max-width: 768px; */
+  max-width: 768px;
   margin: auto;
 }
 
@@ -82,26 +65,4 @@ p {
   position: absolute;
   top: 110px;
   right: 50px;
-}
-
-/* anything smaller than 768, the body text expands to fill the screen */
-
-/* for screens with width 768 - 1366 */
-@media screen and (min-width: 768px) {
-  .bodyTextColumn {
-    max-width: 768px;
-  }
-}
-
-/* for screens with width 1366 to 1920 */
-@media screen and (min-width: 1366px) {
-  .bodyTextColumn {
-    max-width: 1080px;
-  }
-}
-
-@media screen and (min-width: 1920px) {
-  .bodyTextColumn {
-    max-width: 1366px;
-  }
 }
