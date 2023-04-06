@@ -79,7 +79,6 @@ const VendorDetailPage = () => {
     return (
       <img
         src={item.thumbnailImageSrc}
-        alt={item.alt}
         style={{ display: "block" }}
       />
     );
