@@ -57,10 +57,6 @@ const Api = {
                         return error;
                 })
         },
-
-getCustomer(cId) {
-return fetch(`${SERVER_PREFIX}/customers/${cId}`);
-},
 addField(cId, data) {
 return fetch(`${SERVER_PREFIX}/customers/${cId}/fields`, {
 headers: {

@@ -32,12 +32,15 @@ import TestingImageFunctions from "../components/testingImageFunctions.js";
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 import GuestView from "../components/GuestManagement/GuestView.jsx";
 import GuestViewItinerary from "../components/GuestManagement/GuestViewItinerary.jsx";
+import GuestViewNavbar from "../components/HeartyNavbar/GuestViewNavbar.jsx";
+import GuestQuery from "../components/GuestManagement/GuestQuery.jsx";
 function EndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
 
     // note that the {} object syntax instead of the typical [] array is intended
     // although we could just as easily use [] lol
+    
     const { token, setToken } = useToken();
     console.log(token);
     if (!token) {
@@ -45,8 +48,11 @@ function EndPoints() {
             <LoginTokenContext.Provider value={[token, setToken]}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/guestviewitinerary/:weddingId/:guestId" element={<GuestViewItinerary></GuestViewItinerary>}></Route>
-                    <Route path="/guestview/:weddingId/:guestId" element={<GuestView></GuestView>}></Route>
+                    <Route path="/guestview/:weddingId">
+                        <Route index element={<GuestQuery></GuestQuery>}/>
+                        <Route path="itinerary" element={<GuestViewItinerary></GuestViewItinerary>}/>
+                        <Route path="seatplan" element={<GuestView></GuestView>}/>
+                    </Route>
                     <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                     <Route path="/*" element={<Login setToken={setToken} />} />
                     <Route exact path="/VendorSearchPage" element={<SearchPage />} />
@@ -85,45 +91,48 @@ function EndPoints() {
                 </>
             );
             break;
+            
         case "WEDDING-ORGANISER":
+            //http://localhost:3000/1/guestlist -> ROUTING PATTERN localhost:3000/:projectId/yourPage
             return (
                 <LoginTokenContext.Provider value={[token, setToken]}>
                     <BrowserRouter>
                         <Routes>
-                            <Route exact path="/" element={<ProjectDashboard />} />
-                            <Route path="/:projectId/*" element={<ProjectOverview />}></Route>
-                            <Route
-                                exact
-                                path="/LogisticsManagement/WeddingChecklist"
-                                element={<WeddingChecklist />}
-                            />
-                            <Route
-                                exact
-                                path="/LogisticsManagement/WeddingBudgetPlanner"
-                                element={<WeddingBudgetPlanner />}
-                            />
-                            <Route
-                                exact
-                                path="/LogisticsManagement/WeddingItinerary"
-                                element={<WeddingItinerary />}
-                            />
-                            <Route exact path="/VendorSearchPage" element={<SearchPage />} />
-                            <Route
-                                path="/VendorSearchPage/VendorName/:vendorName"
-                                element={<VendorDetailpage />}
-                            />
-                            <Route
-                                path="/VendorSearchPage/Category/:vendorCategory"
-                                element={<CategoryDisplayPage />}
-                            />
-                            <Route exact path="/tablelayout" element={<TableLayout />} />
-                            <Route exact path="/guestlist" element={<GuestList />} />
-                            <Route exact path="/homepage" element={<Homepage />} />
-                            <Route exact path="/aboutuspage" element={<AboutUs />} />
-                            <Route exact path="/contactpage" element={<Contact />} />
-                            <Route exact path="/signup" element={<SignUp />} />
-                            <Route exact path="/viewprofile" element={<ViewProfile />} />
-                            <Route exact path="/editprofile" element={<EditProfile />} />
+                            <Route path="/" element={<ProjectDashboard />} />
+                                <Route path="/:projectId/">
+                                <Route index element={<ProjectOverview />} />
+                                    <Route
+                                        path="LogisticsManagement/WeddingChecklist"
+                                        element={<WeddingChecklist />}
+                                    />
+                                    <Route
+                                        
+                                        path="LogisticsManagement/WeddingBudgetPlanner"
+                                        element={<WeddingBudgetPlanner />}
+                                    />
+                                    <Route
+                                        
+                                        path="LogisticsManagement/WeddingItinerary"
+                                        element={<WeddingItinerary />}
+                                    />
+                                    <Route path="VendorSearchPage" element={<SearchPage />} />
+                                    <Route
+                                        path="VendorSearchPage/VendorName/:vendorName"
+                                        element={<VendorDetailpage />}
+                                    />
+                                    <Route
+                                        path="VendorSearchPage/Category/:vendorCategory"
+                                        element={<CategoryDisplayPage />}
+                                    />
+                                    <Route path="tablelayout" element={<TableLayout />} />
+                                    <Route path="guestlist" element={<GuestList />} />
+                                    <Route path="homepage" element={<Homepage />} />
+                                    <Route path="aboutuspage" element={<AboutUs />} />
+                                    <Route path="contactpage" element={<Contact />} />
+                                    <Route path="signup" element={<SignUp />} />
+                                    <Route path="viewprofile" element={<ViewProfile />} />
+                                    <Route path="editprofile" element={<EditProfile />} />
+                                </Route>
                         </Routes>
                     </BrowserRouter>
                 </LoginTokenContext.Provider>

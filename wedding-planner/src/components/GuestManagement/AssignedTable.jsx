@@ -11,17 +11,16 @@ import 'reactflow/dist/style.css';
     const AssignedTable = ({data, selected}) => {
         return (
             <>
-            <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} maxHeight={200} maxWidth={200}  />
             <div className="tableNode">
 `                <svg width="100%" height="100%" viewBox="0 0 200 200">
                         <circle
                             cx="100"
                             cy="100"
                             r="100"
-                            fill="#d5ffc1"
+                            fill="#4fe38a"
                         />
-                        <text text-anchor="middle" x="50%" y="40%" fill="black" font-family="Optima" font-size="30px" font-weight="bold" > Table {data.tableNumber}</text>
-                        <text text-anchor="middle" x="50%" y="62%" fill="black" font-family="Optima" font-size="20px"> YOUR TABLE </text> {/*center alignment credits to chatgpt*/}                </svg>`
+                        <text text-anchor="middle" x="50%" y="40%" fill="white" fontFamily="Montserrat" fontSize="2.3rem" fontWeight="bold" > Table {data.tableNumber}</text>
+                        <text text-anchor="middle" x="50%" y="62%" fill="white" fontFamily="Montserrat" fontSize="2rem" fontWeight="bold" > YOUR TABLE </text> {/*center alignment credits to chatgpt*/}                </svg>`
             </div>
 
             </>

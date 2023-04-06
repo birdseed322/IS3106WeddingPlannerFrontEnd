@@ -9,10 +9,11 @@ import Stage from './Stage.jsx';
 import GuestViewNavbar from "../HeartyNavbar/GuestViewNavbar.jsx";
 import AssignedTable from "./AssignedTable.jsx";
 import { classNames } from 'primereact/utils';
-
+import GuestQuery from "./GuestQuery.jsx";
 export default function GuestView() {
     const toast = useRef(null);
-    const {weddingId, guestId} = useParams();
+    const {weddingId} = useParams();
+    const guestId = sessionStorage.getItem("guestId");
     const [nodes, setNodes] = useState([]);
     const onNodesChange = useCallback((changes) => {
         setNodes((nds) => applyNodeChanges(changes, nds))
@@ -73,26 +74,30 @@ export default function GuestView() {
         });
         
     }, []); 
-        return (
-        <>
-            <GuestViewNavbar></GuestViewNavbar>
-            <Toast ref={toast} />
-            <ReactFlowProvider>    
-                <div style={{ height: '90%', width: '100%', position: "absolute", top:"10%", zIndex:"-1"}}>
-                        <ReactFlow
-                            nodeTypes={nodeTypes}
-                            nodes={nodes}
-                            onNodesChange={onNodesChange}
-                            minZoom={0.1}
-                            maxZoom={1.5}
-                            nodesDraggable={false}
-                            fitView
-                        >                    
-                        <Background />
-                            <Controls />
-                        </ReactFlow>
-                    </div>
-           </ReactFlowProvider>
-        </>
-    );  
+    if (sessionStorage.getItem("guestId") != null) {
+            return (
+            <>
+                <GuestViewNavbar></GuestViewNavbar>
+                <Toast ref={toast} />
+                <ReactFlowProvider>    
+                    <div style={{ height: '90%', width: '100%', position: "absolute", top:"10%", zIndex:"-1"}}>
+                            <ReactFlow
+                                nodeTypes={nodeTypes}
+                                nodes={nodes}
+                                onNodesChange={onNodesChange}
+                                minZoom={0.1}
+                                maxZoom={1.5}
+                                nodesDraggable={false}
+                                fitView
+                            >                    
+                            <Background />
+                                <Controls />
+                            </ReactFlow>
+                        </div>
+            </ReactFlowProvider>
+            </>
+        );  
+        } else {
+            return <GuestQuery></GuestQuery>
+        }
 }

@@ -28,7 +28,7 @@ export default function HeartyNavbar(props) {
     {
       label: "Vendor Management",
       icon: "pi pi-fw pi-file",
-      url: "/sample",
+      url: `/${projectId}`,
       className: "menuItemStyle",
     },
     {
@@ -77,7 +77,7 @@ export default function HeartyNavbar(props) {
       <Link to="/login" className="noUnderline">
         <Button
           label="Logout"
-          style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+          style={{ backgroundColor: "#f561b0", border: "#f561b0", marginRight:"1rem"}}
           onClick={() => setToken(false)} // set token to false
         />{" "}
       </Link>
@@ -110,7 +110,7 @@ export default function HeartyNavbar(props) {
   // height="40" className="mr-2"
   //console.log(items)
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
-  return (<Menubar className="block" id="navbar" model={items} start={start} end={end} />);
+  return (<Menubar id="navbar" className ="p-4" model={items} start={start} end={end} />);
 }
 
 // example items

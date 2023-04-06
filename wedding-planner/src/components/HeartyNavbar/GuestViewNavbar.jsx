@@ -18,13 +18,13 @@ export default function GuestViewNavbar() {
     {
       label: "Seating Plan",
       icon: "pi pi-fw pi-file",
-      url: "/guestview/"+weddingId+"/"+guestId,
+      url: "/guestview/"+weddingId+"/seatplan",
       className: "menuItemStyle",
     },
     {
       label: "Wedding Itinerary",
       icon: "pi pi-fw pi-file",
-      url: "/guestviewitinerary/"+weddingId+"/"+guestId,
+      url: "/guestview/"+weddingId+"/itinerary",
       className: "menuItemStyle",
     },
   ];

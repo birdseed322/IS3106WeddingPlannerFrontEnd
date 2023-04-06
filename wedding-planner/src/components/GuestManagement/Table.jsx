@@ -18,11 +18,11 @@ import 'reactflow/dist/style.css';
                             cx="100"
                             cy="100"
                             r="100"
-                            fill="#FBE3E8"
+                            fill="#f794b6"
                         />
-                        <text text-anchor="middle" x="50%" y="40%" fill="black" font-family="Montserrat" font-size="30px" font-weight="bold" > Table {data.tableNumber}</text>
-                        <text text-anchor="middle" x="50%" y="62%" fill="black" font-family="Montserrat" font-size="20px">{data.currOccupancy}/{data.capacity} </text> {/*center alignment credits to chatgpt*/}
-                        <text text-anchor="middle" x="50%" y="80%" fill="black" font-family="Montserrat" font-size="15px"> occupied </text>
+                        <text text-anchor="middle" x="50%" y="40%" fill="white" fontFamily="Montserrat" fontSize="2.3rem" fontWeight="bold" > Table {data.tableNumber}</text>
+                        <text text-anchor="middle" x="50%" y="62%" fill="white" fontFamily="Montserrat" fontSize="1.5rem">{data.currOccupancy}/{data.capacity} </text> {/*center alignment credits to chatgpt*/}
+                        <text text-anchor="middle" x="50%" y="80%" fill="white" fontFamily="Montserrat" fontSize="1.25rem"> occupied </text>
                 </svg>`
             </div>
 
