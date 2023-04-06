@@ -29,6 +29,7 @@ import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
 
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
 import TestingImageFunctions from "../components/testingImageFunctions.js";
+import AdminStatistics from "../components/AdminUserManagement/AdminStatistics/AdminStatistics.jsx";
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 
 function EndPoints() {
@@ -69,13 +70,14 @@ function EndPoints() {
                     <LoginTokenContext.Provider value={[token, setToken]}>
                         <BrowserRouter>
                             <Routes>
-                                <Route exact path="/" element={<FrontPage />} />
+                                <Route exact path="/" element={<AdminUserManagement />} />
                                 <Route exact path="/login" element={<Login />} />
                                 <Route
                                     exact
                                     path="/AdminUserManagement"
                                     element={<AdminUserManagement />}
                                 />
+                                <Route exact path="/AdminStatistics" element={<AdminStatistics />}/>
                             </Routes>
                         </BrowserRouter>
                     </LoginTokenContext.Provider>
@@ -88,7 +90,7 @@ function EndPoints() {
                     <BrowserRouter>
                         <Routes>
                             <Route exact path="/" element={<ProjectDashboard />} />
-                            <Route path="/:projectId/*" element={<ProjectOverview />}></Route>
+                            <Route exact path="/:projectId/*" element={<ProjectOverview />}></Route>
                             <Route
                                 exact
                                 path="/LogisticsManagement/WeddingChecklist"
