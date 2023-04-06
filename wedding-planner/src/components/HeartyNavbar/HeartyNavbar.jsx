@@ -73,21 +73,26 @@ export default function HeartyNavbar(props) {
   ];
   const end = (
     // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
-    <>
+    <> 
+      <Link to="/" className="noUnderline">
+          <Button icon="pi pi-undo" label="Back to Projects" severity="secondary" text style={{marginRight:"1rem"}} />
+      </Link>
       <Link to="/login" className="noUnderline">
         <Button
           label="Logout"
+          icon="pi pi-sign-out"
           style={{ backgroundColor: "#f561b0", border: "#f561b0", marginRight:"1rem"}}
           onClick={() => setToken(false)} // set token to false
         />{" "}
       </Link>
-      <Link to="/viewprofile" className="noUnderline">
+
+      {/*       <Link to="/viewprofile" className="noUnderline">
         <Button
           icon="pi pi-user"
           rounded
           style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
         />
-      </Link>
+      </Link> */}
     </>
   );
   const start = (
