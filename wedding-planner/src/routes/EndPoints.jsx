@@ -49,6 +49,10 @@ function EndPoints() {
             <LoginTokenContext.Provider value={[token, setToken]}>
             <BrowserRouter>
                 <Routes>
+                    <Route path="signup" element={<SignUp />} />
+                    <Route path="homepage" element={<Homepage />} />
+                    <Route path="aboutuspage" element={<AboutUs />} />
+                    <Route path="contactpage" element={<Contact />} />
                     <Route path="/guestview/:weddingId">
                         <Route index element={<GuestQuery></GuestQuery>}/>
                         <Route path="itinerary" element={<GuestViewItinerary></GuestViewItinerary>}/>
@@ -101,8 +105,10 @@ function EndPoints() {
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<ProjectDashboard />} />
-                                <Route path="/:projectId/">
-                                <Route index element={<ProjectOverview />} />
+                            <Route path="viewprofile" element={<ViewProfile />} />
+                            <Route path="editprofile" element={<EditProfile />} />
+                            <Route path="/:projectId/">
+                                    <Route index element={<ProjectOverview />} />
                                     <Route
                                         path="LogisticsManagement/WeddingChecklist"
                                         element={<WeddingChecklist />}
@@ -128,13 +134,7 @@ function EndPoints() {
                                     />
                                     <Route path="tablelayout" element={<TableLayout />} />
                                     <Route path="guestlist" element={<GuestList />} />
-                                    <Route path="homepage" element={<Homepage />} />
-                                    <Route path="aboutuspage" element={<AboutUs />} />
-                                    <Route path="contactpage" element={<Contact />} />
-                                    <Route path="signup" element={<SignUp />} />
-                                    <Route path="viewprofile" element={<ViewProfile />} />
-                                    <Route path="editprofile" element={<EditProfile />} />
-                                </Route>
+                            </Route>
                         </Routes>
                     </BrowserRouter>
                 </LoginTokenContext.Provider>

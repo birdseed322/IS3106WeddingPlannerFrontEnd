@@ -18,9 +18,10 @@ const footer = (
       </Link>
 
       <div className="flex justify-content-center px-5">
-        <p className="px-1">Have an Account ?</p>
+        <p className="px-1 mt-6">Have an Account ?</p>
         <Link to="/login" className="noUnderline">
-          <p style={{ color: '#f561b0' }}>Login</p>
+          <p className="mt-6"
+          style={{ color: '#f561b0' }}>Login</p>
         </Link>
       </div>
     </div>
@@ -31,7 +32,7 @@ function SignUp() {
   return (
     <div>
       <PublicHeartyNavbar />
-      <div className="flex justify-content-center pt-5">
+      <div className="flex justify-content-center pt-5 mt-8">
         <Card
           footer={footer}
           style={{
@@ -41,7 +42,7 @@ function SignUp() {
             maxHeight: '700px',
           }}
         >
-          <h3 className="flex justify-content-center">Sign Up</h3>
+          <h1 className="flex justify-content-center mt-3">Sign Up</h1>
         </Card>
       </div>
     </div>

@@ -11,9 +11,10 @@ import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
 import { Toast } from 'primereact/toast';
 import 'reactflow/dist/style.css';
+import { Routes, Route, useParams } from 'react-router-dom';
 
 export default function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable}) { //guests and the selectedTable props are related
-    const weddingId = 1;
+    const {projectId} = useParams();
     const toast = useRef(null);
     const dt = useRef(null);
     const [globalFilter, setGlobalFilter] = useState(null);
@@ -23,7 +24,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
     const [toDelete, setToDelete] = useState(null); //guest to delete
     const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
     useEffect(() => {
-        Api.getAllGuests(weddingId).then((response) => {
+        Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
             const temp = new Set();
