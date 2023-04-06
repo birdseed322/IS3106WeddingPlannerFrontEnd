@@ -20,7 +20,6 @@ const CategoryDisplayPage = () => {
     "http://localhost:8080/IS3106WeddingPlanner-war/webresources/vendors";
 
   useEffect(() => {
-    console.log("Triggering useeffect");
     getAllVendorsInCategory();
   }, []);
 
