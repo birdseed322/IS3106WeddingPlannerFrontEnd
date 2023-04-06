@@ -104,7 +104,6 @@ function Login() {
     return (
         <div>
             <PublicHeartyNavbar />
-<<<<<<< HEAD
             <div className="flex justify-content-center pt-5">
                 <form onSubmit={doLogin}>
                     <Card
@@ -150,45 +149,6 @@ function Login() {
                         </div>
                     </Card>
                 </form>
-=======
-            <div className="flex justify-content-center pt-3 mt-5">
-                <Card
-                    // title={title}
-                    footer={footer}
-                    style={{
-                        minWidth: "300px",
-                        maxWidth: "500px",
-                        minHeight: "500px",
-                        maxHeight: "600px",
-                    }} 
-                >
-                    <h1 className="flex justify-content-center">Login</h1>
-
-                    <div className="flex justify-content-center mt-5">
-                        {/* set flex grow to 1 */}
-                        <p className="flex-1 mt-2">Username: </p>
-                        <InputText value={username} onChange={(e) => setUsername(e.target.value)} />
-                    </div>
-                    <div className="flex justify-content-center mt-5">
-                        <p className="flex-1 mt-2">Password: </p>
-                        <InputText value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </div>
-                    <div className="flex justify-content-center mt-5">
-                        <p className="flex-1 mt-2">User Type: </p>
-                        <Dropdown
-                            label="userType"
-                            options={userTypeItems}
-                            value={userType}
-                            onChange={(e) => {
-                                setUserType(e.value);
-                            }}
-                        />
-                        {/* for debugging */}
-                        {/* <Button label="log userType val" onClick={() => console.log(userType)}/> */}
-                        {/* <Button label="log setToken val" onClick={() => console.log(setToken)} /> */}
-                    </div>
-                </Card>
->>>>>>> e4805825ed6b6e1a4b1b6207fecde533f3a85921
             </div>
         </div>
     );
