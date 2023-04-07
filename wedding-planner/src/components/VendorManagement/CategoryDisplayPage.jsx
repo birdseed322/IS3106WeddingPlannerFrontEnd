@@ -14,6 +14,8 @@ const CategoryDisplayPage = () => {
 
   const { vendorCategory } = useParams(); //category name assumed to be unique
   const [vendors, setVendors] = useState([]);
+  const { projectId } = useParams();
+
 
   console.log("selected category = " + vendorCategory);
   const SERVER_PREFIX =
@@ -62,7 +64,8 @@ const CategoryDisplayPage = () => {
       //const vendorJson = JSON.parse(selectedVendor);
 
       //console.log("CLICKED THE BUTTON > " + vendorJson.username);
-      navigate(`/VendorSearchPage/VendorName/${vendor.username}`);
+      navigate(`/${projectId}/VendorSearchPage/VendorName/${vendor.username}`); //adds on to the current endpoint
+
       //navigate(`/VendorSearchPage/VendorName/${vendorName}`); 
     }
     return(

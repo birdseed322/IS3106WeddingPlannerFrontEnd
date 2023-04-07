@@ -60,15 +60,6 @@ function EndPoints() {
                     </Route>
                     <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                     <Route path="/*" element={<Login setToken={setToken} />} />
-                    <Route exact path="/VendorSearchPage" element={<SearchPage />} />
-                            <Route
-                                path="/VendorSearchPage/VendorName/:vendorName"
-                                element={<VendorDetailpage />}
-                            />
-                            <Route
-                                path="/VendorSearchPage/Category/:vendorCategory"
-                                element={<CategoryDisplayPage />}
-                            />
                     <Route path = "/testFirebase" element = {<TestingImageFunctions/>}></Route>
                 </Routes>
             </BrowserRouter>
@@ -134,7 +125,9 @@ function EndPoints() {
                                     />
                                     <Route path="tablelayout" element={<TableLayout />} />
                                     <Route path="guestlist" element={<GuestList />} />
+                                    
                             </Route>
+                            
                         </Routes>
                     </BrowserRouter>
                 </LoginTokenContext.Provider>
