@@ -66,7 +66,7 @@ function EndPoints() {
             </LoginTokenContext.Provider>
         );
     }
-    const {encodedJWT, setEncodedJWT} = localStorage.getItem("encodedJWT");
+    const encodedJWT = localStorage.getItem("encodedJWT");
 
     switch (token.userType) {
         case "ADMIN":
