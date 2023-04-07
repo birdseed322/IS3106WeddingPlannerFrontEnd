@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +13,7 @@ const SearchBar = () => {
   const navigate = useNavigate();
   const toast = useRef(null);
   const categories = ["Entertainment", "Food", "Lighting", "Decoration", "Clothes", "Venue"];
-
+  const { projectId } = useParams();
 
   const SERVER_PREFIX =
     "http://localhost:8080/IS3106WeddingPlanner-war/webresources/vendors";
@@ -45,7 +46,7 @@ const SearchBar = () => {
 
   //handles the search and will redirect to the vendor's profile should
   function HandleSearch() {
-    console.log("Criteria length = " + searchCriteria.length);
+    console.log("Project ID = " + projectId);
     if (search.length == 0) {
       toast.current.show({
         severity: "warn",
@@ -58,7 +59,8 @@ const SearchBar = () => {
       if (searchCriteria.toLowerCase() == "vendor name") {
         if (checkIfVendorExists()) {
           console.log("handling search for vendor! = " + search);
-          navigate(`/VendorSearchPage/VendorName/${search}`); //adds on to the current endpoint
+          //navigate(`${projectId}/VendorSearchPage/VendorName/${search}`); //adds on to the current endpoint
+          navigate(`VendorName/${search}`);
         } else {
           toast.current.show({
             severity: "warn",
@@ -72,7 +74,8 @@ const SearchBar = () => {
       else if (searchCriteria.toLowerCase() == "categories") {
         console.log("handling search for categories! = " + search);
         if(categories.map(str => str.toLowerCase()).includes(search.toLowerCase())){
-        navigate(`/VendorSearchPage/Category/${search}`);
+        //navigate(`${projectId}/VendorSearchPage/Category/${search}`);
+        navigate(`Category/${search}`);
         //navigate(search); //adds on to the current endpoint eg http://localhost:3000/VendorSearchPage/search
         }else{
             toast.current.show({
