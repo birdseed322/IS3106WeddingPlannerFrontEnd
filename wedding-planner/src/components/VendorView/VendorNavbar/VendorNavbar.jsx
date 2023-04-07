@@ -1,11 +1,13 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { Menubar } from "primereact/menubar";
 import heartyLogo from "../../../images/favicon-heart-3.png";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
+import { LoginTokenContext } from "../../../context/LoginTokenContext"
 
 function VendorNavbar(props) {
+  const [token, setToken] = useContext(LoginTokenContext);
   const items = [
     {
       label: "Schedule",
@@ -26,7 +28,9 @@ function VendorNavbar(props) {
       <Link to="/login" className="noUnderline">
         <Button
           label="Logout"
+          icon="pi pi-sign-out"
           style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+          onClick={() => setToken(false)} // set token to false
         />
       </Link>
       <Button
