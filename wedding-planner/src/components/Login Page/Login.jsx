@@ -108,23 +108,23 @@ function Login() {
                 >
                         <h3 className="flex justify-content-center">Login</h3>
 
-                        <div className="flex justify-content-center">
+                        <div className="flex justify-content-center mt-3">
                         {/* set flex grow to 1 */}
-                            <p className="flex-1">Username: </p>
+                            <p className="flex-1 mt-1">Username: </p>
                             <InputText
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
                     </div>
-                        <div className="flex justify-content-center">
-                            <p className="flex-1">Password: </p>
+                        <div className="flex justify-content-center mt-3">
+                            <p className="flex-1 mt-2">Password: </p>
                             <InputText
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                     </div>
-                        <div className="flex justify-content-center">
-                            <p className="flex-1">User Type: </p>
+                        <div className="flex justify-content-center mt-3">
+                            <p className="flex-1 mt-2">User Type: </p>
                         <Dropdown
                             label="userType"
                             options={userTypeItems}
