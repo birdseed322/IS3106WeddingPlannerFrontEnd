@@ -1,3 +1,5 @@
+
+
 const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/guestmanagement";
 const Api = {
            createGuest(data, wId) {
@@ -46,9 +48,9 @@ const Api = {
         updateGuestsRSVP(data) {
                 return fetch(`${SERVER_PREFIX}/changersvp`, {
                 headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                },
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        },
                 method: "PUT",
                 body: JSON.stringify(data)
                 }).then((response) => {
@@ -97,10 +99,17 @@ method: "DELETE",
                 });
         },
         
-        getAllGuests(wId) {
+        getAllGuests(token, wId) {
+                
                 return fetch(`${SERVER_PREFIX}/query?` + new URLSearchParams({  //https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
                         "wId" : wId
-                })).then(response => {
+                }), {
+                        headers : new Headers({
+                                'Authorization': token, 
+                        }), 
+                        method: "GET",
+                        
+                }).then(response => {
                         if (response.status === 200) {
                                 return response;
                         } else {

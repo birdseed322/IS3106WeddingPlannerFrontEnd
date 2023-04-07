@@ -75,6 +75,7 @@ function EndPoints() {
             </LoginTokenContext.Provider>
         );
     }
+    const {encodedJWT, setEncodedJWT} = localStorage.getItem("encodedJWT");
 
     switch (token.userType) {
         case "ADMIN":
@@ -107,7 +108,7 @@ function EndPoints() {
                             <Route path="/" element={<ProjectDashboard />} />
                             <Route path="viewprofile" element={<ViewProfile />} />
                             <Route path="editprofile" element={<EditProfile />} />
-                            <Route path="/:projectId/">
+                            <Route path="/:projectId/"> 
                                     <Route index element={<ProjectOverview />} />
                                     <Route
                                         path="LogisticsManagement/WeddingChecklist"

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, memo, FC, useCallback} from 'react'
 import { Button } from 'primereact/button';
 import { Handle, Position, NodeResizer } from 'reactflow';
 import 'reactflow/dist/style.css';
-
+import table from './src/table.png';
     const Stage = ({data, selected}) => {
         return (
             <>

@@ -51,7 +51,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                         id : '' + _table.id,
                         type : 'table',
                         position: { x: _table.locationX, y: _table.locationY },
-                        style: { width: _table.tableSize, height: _table.tableSize }, 
+                        style: { width: _table.tableSize, height: _table.tableSize}, 
                         selected : true,
                         data: { tableNumber: _table.tableNumber, currOccupancy : _table.currOccupancy,  capacity : _table.capacity, guests : []}
                     };

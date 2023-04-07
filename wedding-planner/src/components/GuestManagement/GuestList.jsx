@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useContext } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -20,6 +20,7 @@ import EmailAPI from './EmailAPI.jsx';
 import ReactDOMServer from 'react-dom/server';
 import validateGuest from './Validations/GuestValidation.jsx';
 import { Routes, Route, useParams } from 'react-router-dom';
+import { LoginTokenContext } from "../../context/LoginTokenContext";
 export default function GuestList() {
     let emptyGuest = {
         id: null,
@@ -30,6 +31,7 @@ export default function GuestList() {
         rsvp: 'NOTSENT',
         guestTable : null,
     };
+    const [token, setToken] = useContext(LoginTokenContext);
     const [guest, setGuest] = useState(emptyGuest);
     const {projectId} = useParams();
     const [guests, setGuests] = useState([]);
@@ -44,8 +46,9 @@ export default function GuestList() {
     const dt = useRef(null);
     
     useEffect(() => {
+        console.log(token);
         const temp = [];
-        Api.getAllGuests(projectId).then((response) => {
+        Api.getAllGuests(token, projectId).then((response) => {
             return response.json();
         }).then((g) => {
             setGuests(g);

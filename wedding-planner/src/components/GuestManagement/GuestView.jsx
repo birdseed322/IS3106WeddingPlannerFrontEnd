@@ -53,11 +53,14 @@ export default function GuestView() {
             console.log(error);
         });
         TableApi.getStages(weddingId).then((response) => {
+            console.log(response);
             return response.json();
         }).then((t) => {
             const temp = [];
+            console.log("HERE");
             for (const unit of t) {
                 const {stageId, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
+                console.log(stageId);
                 temp.push({
                     id : '' + stageId,
                     type : 'stage',
