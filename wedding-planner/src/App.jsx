@@ -9,7 +9,7 @@ import "primeflex/primeflex.css";
 import TempEndpoints from "./routes/TempEndpoints.jsx";
 
 function App() {
-    return <EndPoints></EndPoints>;
+    return (<EndPoints></EndPoints>)
 }
 
 export default App;
