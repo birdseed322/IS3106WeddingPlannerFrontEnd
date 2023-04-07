@@ -72,7 +72,7 @@ export default function AdminUserManagement() {
                     </Card>
                 </div>
                 <div className="grid">
-                    <div className="col-12 md:col-10 md:col-offset-1">
+                    <div className="col-12">
                         {visibleTable === "organisers" && (
                             <WeddingOrganisersDataTable
                                 fetchedData={organisersData}

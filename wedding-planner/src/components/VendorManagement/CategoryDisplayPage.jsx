@@ -2,108 +2,132 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
 import { DataView, DataViewLayoutOptions } from "primereact/dataview";
-import SearchBar from './SearchBar';
-import { Button } from 'primereact/button';
+import SearchBar from "./SearchBar";
+import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { useEventListener } from 'primereact/hooks';
-
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+  list,
+} from "firebase/storage";
+import { storage } from "../firebase";
 
 //import Api from './VendorAPI';
 
 const CategoryDisplayPage = () => {
-
   const { vendorCategory } = useParams(); //category name assumed to be unique
   const [vendors, setVendors] = useState([]);
+  const { projectId } = useParams();
+  const [profilePicUrl, setProfilePicUrl] = useState([]);
+  //const vendorProfilePic = ref(storage, `Vendor/${vendorName}/ProfilePic/`);
+  //i want it to be Vendor/${vendorName}/ProfilePic/
 
-  console.log("selected category = " + vendorCategory);
+  //console.log("selected category = " + vendorCategory);
   const SERVER_PREFIX =
     "http://localhost:8080/IS3106WeddingPlanner-war/webresources/vendors";
 
   useEffect(() => {
-    getAllVendorsInCategory();
+    //getAllProfilePictures();
+    //getAllVendorsInCategory();
+     Promise.all([getAllVendorsInCategory(), getAllProfilePictures()]) 
   }, []);
 
-  //get all vendors in a category for display
+  const getAllProfilePictures = () => {
+    return vendors.forEach(vendor => {
+      
+      const vendorName = vendor.username
+      //console.log("vendor username type = " + typeof vendorName);
+      //console.log("vendor username = " + vendorName) 
+      const vendorProfilePic = ref(storage, `Vendor/${vendorName}/ProfilePic/`);
+      listAll(vendorProfilePic).then((response) => {
+        response.items.forEach((item) => {
+          getDownloadURL(item).then((url)=> {
+            console.log("ienidnwei " + url);
+            setProfilePicUrl((prev) => [...prev, url]);   
+          })
+        })
+      })
+    } )//console.log("diwueniwun" + vendor.username)))
+  }
+
+  function getSpecificUrl(username){
+    for(let index = 0; index < profilePicUrl.length; index++){
+      const largeString = profilePicUrl[index];
+      console.log("large string = " + largeString);
+      const startIndex = largeString.indexOf("Vendor") + 9; // add 8 to skip over "/Vendor/"
+      const endIndex = largeString.indexOf("ProfilePic") - 3;
+      const extractedString = largeString.substring(startIndex, endIndex);
+      console.log("extracted string = " + extractedString) 
+      if (username === extractedString){
+        return largeString;
+      }
+    }
+  }
+
+
   const getAllVendorsInCategory = () => {
     return fetch(`${SERVER_PREFIX}/allCategories/${vendorCategory}`)
       .then(response => response.json()
       )
       //then((data)=>console.log(data))
-      .then((data) => setVendors(data))
-      .then(()=>console.log("displaying vendors = "+vendors))
-  };
+      .then(data => setVendors(data))
+      
+  };    
 
   const GridItem = (vendors) => {
-    console.log("the vendor is = " + vendors)
+    console.log("the vendor is = " + vendors);
     const navigate = useNavigate();
-    let chosenVendor = {
-      email: "",
-      isBanned: null,
-      password: "",
-      userId: null,
-      username: "",
-      banner: "",
-      category: "",
-      description: "",
-      facebookUrl: "",
-      instagramUrl: "",
-      websiteUrl: "",
-      whatsappUrl: "",
-    }; 
-    //const [selectedVendor, setSelectedVendor] = useState(chosenVendor);
-  
+
     function redirectTo(vendor) {
       //console.log("step 0 = " + vendor.username);
       //console.log("step 1 = " + JSON.stringify(vendor));
       //console.log("Step 1 type = " + typeof JSON.stringify(vendor));
       //console.log(" step 2 = " + JSON.parse(JSON.stringify(vendor)).username);
-      //setSelectedVendor()
-      //setSelectedVendor(JSON.stringify(vendor));
-      //const vendorJson = JSON.parse(selectedVendor);
-
       //console.log("CLICKED THE BUTTON > " + vendorJson.username);
-      navigate(`/VendorSearchPage/VendorName/${vendor.username}`);
-      //navigate(`/VendorSearchPage/VendorName/${vendorName}`); 
+      navigate(`/${projectId}/VendorSearchPage/VendorName/${vendor.username}`); //adds on to the current endpoint
     }
-    return(
-        <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
+
+    return (
+      <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
         <div className="p-4 border-1 surface-border surface-card border-round">
-            <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+          <div className="flex flex-wrap align-items-center justify-content-between gap-2">
             <div className="flex align-items-center gap-2">
-                <i className="pi pi-tag"></i>
-                <span className="font-semibold">{vendors.username}</span>
+              <i className="pi pi-tag"></i>
+              <span className="font-semibold">{vendors.username}</span>
             </div>
-            </div>
-            <div className="flex flex-column align-items-center gap-3 py-5">
+          </div>
+          <div className="flex flex-column align-items-center gap-3 py-5">
             <div className="text-2xl font-bold">
-                {vendors.username}
+              <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"  src = {getSpecificUrl(vendors.username)}/>
             </div>
-            </div>
-            <Button icon="pi pi-shopping-cart" className="p-button-rounded" onClick={() => redirectTo(vendors)} />  
+          </div>
+          <Button
+            icon="pi pi-shopping-cart"
+            className="p-button-rounded"
+            onClick={() => redirectTo(vendors)}    
+          />
         </div>
-        </div>
-    )
+      </div>
+    );
   };
-  
+
   const itemTemplate = (product) => {
     return GridItem(product);
   };
 
-
   return (
     <div>
       <PublicHeartyNavbar />
-      <br/>
-      <br/>
-      <SearchBar/>
+      <br />
+      <br />
+      <SearchBar />
       <div className="card">
         <h1> CategoryDisplayPage, category name = {vendorCategory} </h1>
-        <div className="card flex justify-content-center">
-
-        </div>
-          <DataView value={vendors} itemTemplate={itemTemplate} />
-        </div>
-      
+        <div className="card flex justify-content-center"></div>
+        <DataView value={vendors} itemTemplate={itemTemplate} />
+      </div>
     </div>
   );
 };
