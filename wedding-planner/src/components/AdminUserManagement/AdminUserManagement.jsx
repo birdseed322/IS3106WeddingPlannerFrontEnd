@@ -62,8 +62,8 @@ export default function AdminUserManagement() {
         <div id="appContainer">
             <AdminHeartyNavbar />
             <div id="bodyContainer">
-                <div className="bodyTextColumn">
-                    <Card>
+                <div className="grid">
+                    <Card className="col-10 col-offset-1">
                         Click on the corresponding button to view the corresponding group of users.
                         LOGGED IN ADMIN IS {token.username}
                         <div>
