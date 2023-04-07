@@ -1,19 +1,37 @@
-import React from 'react'; 
+import React, {useEffect, useState} from 'react'; 
 import { Timeline } from 'primereact/timeline';
 import GuestViewNavbar from '../HeartyNavbar/GuestViewNavbar';
 import flower from './src/flower.png';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import GuestQuery from './GuestQuery';
 import { Routes, Route, useParams } from 'react-router-dom';
+import GuestViewAPI from './GuestViewAPI.jsx';
+import moment from "moment";
 export default function GuestViewItinerary() {
-    const events = [
-        { status: 'Ordered', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#FBE3E8', image: 'game-controller.jpg' },
-        { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#FBE3E8' },
-        { status: 'Shipped', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FBE3E8' },
-        { status: 'Ordered', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#FBE3E8', image: 'game-controller.jpg' },
-        { status: 'Processing', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#FBE3E8' },
-    ];
+    const [events, setEvents] = useState([]);
     const {weddingId} = useParams();
+    useEffect(() => {
+        GuestViewAPI.getItinerary(weddingId).then(res => {
+            return res.json();
+        })
+        .then(itineraries => {
+            const list = [];
+            for (const itinerary of itineraries) {
+                console.log(itinerary);
+                const {eventStartTime, eventEndTime, eventDate, eventName} = itinerary;
+                const start =  moment(eventStartTime, "YYYY-MM-DDTHH:mm:ssZ[UTC]").toDate();
+                const end = moment(eventEndTime, "YYYY-MM-DDTHH:mm:ssZ[UTC]").toDate();
+                let d = moment(eventDate, "YYYY-MM-DDTHH:mm:ssZ[UTC]").toDate();
+                d.setHours(start.getHours());
+                d.setMinutes(start.getMinutes());
+                list.push({
+                    status : eventName,
+                    date : d.toLocaleDateString() + " " + d.toLocaleTimeString()
+                });
+            }
+            setEvents(list);
+        });
+    }, []);
     if (sessionStorage.getItem("guestId") != null && weddingId != null) {
         return (
             <>
