@@ -31,7 +31,6 @@ export default function GuestList() {
         rsvp: 'NOTSENT',
         guestTable : null,
     };
-    const [token, setToken] = useContext(LoginTokenContext);
     const [guest, setGuest] = useState(emptyGuest);
     const {projectId} = useParams();
     const [guests, setGuests] = useState([]);
@@ -46,9 +45,8 @@ export default function GuestList() {
     const dt = useRef(null);
     
     useEffect(() => {
-        console.log(token);
         const temp = [];
-        Api.getAllGuests(token, projectId).then((response) => {
+        Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
             setGuests(g);

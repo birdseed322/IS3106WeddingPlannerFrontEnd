@@ -99,17 +99,11 @@ method: "DELETE",
                 });
         },
         
-        getAllGuests(token, wId) {
-                
+        getAllGuests(wId) {
                 return fetch(`${SERVER_PREFIX}/query?` + new URLSearchParams({  //https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
                         "wId" : wId
-                }), {
-                        headers : new Headers({
-                                'Authorization': token, 
-                        }), 
-                        method: "GET",
-                        
-                }).then(response => {
+                })).then(response => {
+                        console.log(response);
                         if (response.status === 200) {
                                 return response;
                         } else {
@@ -118,7 +112,7 @@ method: "DELETE",
                         
                 }).catch(error => {
                         throw error;
-                })
+                });
         },
 };
 export default Api
