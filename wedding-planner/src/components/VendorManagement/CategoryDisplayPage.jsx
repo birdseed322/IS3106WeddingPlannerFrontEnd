@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
+import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import { DataView, DataViewLayoutOptions } from "primereact/dataview";
 import SearchBar from "./SearchBar";
 import { Button } from "primereact/button";
@@ -115,7 +115,7 @@ const CategoryDisplayPage = () => {
 
     return (
         <div>
-            <PublicHeartyNavbar />
+            <HeartyNavbar />
             <br />
             <br />
             <SearchBar />
