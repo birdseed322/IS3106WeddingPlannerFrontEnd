@@ -69,6 +69,7 @@ const VendorDetailPage = () => {
 
   const SERVER_PREFIX =
     "http://localhost:8080/IS3106WeddingPlanner-war/webresources/vendors";
+  
 
   useEffect(() => {
     getVendorDetails();
@@ -136,6 +137,25 @@ const VendorDetailPage = () => {
     });
   };
 
+  function checkIfCanCreateReq() {
+    return VendorAPI.checkIfRequestExists(projectId, vendor.userId)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(`Does request with pId = ${projectId} and vId = ${vendor.userId} exist = ${data}`)
+      if(data == false){ //req doesnt exist, can create
+        setVisible(true);
+      }else{ //cannot create
+        setVisible(false);
+        toast.current.show({
+          severity: "warn",
+          summary: "Warning",
+          detail: "You already have a pending request with this vendor",
+        });
+      }
+    })
+    }
+  
+
   return (
     <div>
       <HeartyNavbar />
@@ -149,7 +169,7 @@ const VendorDetailPage = () => {
           style={{ float: "right" }}
           label="Send a Request"
           className="p-button-raised p-button-rounded"
-          onClick={() => setVisible(true)}
+          onClick={() => checkIfCanCreateReq()}
         />
         <Dialog
           visible={visible}
@@ -178,12 +198,12 @@ const VendorDetailPage = () => {
       </Card>
       <Splitter style={{ height: "780px" }}>
         <SplitterPanel size={80} minSize={70}>
-          <Panel header={"More about: " + vendor.username}>
+          <Panel header={"About Me: " }>
             {vendor.description}
           </Panel>
           <br />
           <br />
-          <Panel header="Photos and Videos">
+          <Panel header="Photos:">
             <div className="card">
               <Galleria
                 value={imageUrls}
@@ -198,12 +218,12 @@ const VendorDetailPage = () => {
           </Panel>
           <br />
           <br />
-          <Panel header="Pricing">
+          <Panel header="Pricing Information:">
             For pricing information, visit the webside on the right
           </Panel>
         </SplitterPanel>
         <SplitterPanel size={20} minSize={15}>
-          <Panel header="Contacts">
+          <Panel header="Contacts:">
             <div className="card flex justify-content-center">
               <Tree
                 value={nodes}
