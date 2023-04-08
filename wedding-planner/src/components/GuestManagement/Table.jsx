@@ -1,14 +1,13 @@
 
 import React, { useState, useEffect, useRef, memo, FC } from 'react';
 import { Button } from 'primereact/button';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeResizer} from 'reactflow';
 import 'reactflow/dist/style.css';
 import table from './src/table.png';
 //{tableNumber, currOccupancy, capacity}
 //                    stroke="#FF69B4" stroke-width="1"
+//style={{borderStyle: "solid", borderColor: selected ? "pink" : "white"}}
 
-
-    //adapted svg circle from https://codesandbox.io/s/svg-circle-forked-h3p9h6?file=/package.json adapted svg attributes https://www.geeksforgeeks.org/how-to-make-an-svg-scale-with-its-parent-container/
     const Table = ({data, selected}) => {
         return (
             <>
