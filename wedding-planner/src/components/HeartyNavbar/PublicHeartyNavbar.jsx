@@ -34,7 +34,7 @@ export default function PublicHeartyNavbar(props) {
   const end = (
     // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
     <>
-      <Link to="/signup" className="p-1 noUnderline">
+      <Link to="signup" className="p-1 noUnderline">
         <Button
           label="Sign Up"
           style={{

@@ -1,3 +1,22 @@
+export const dateProcessor = (dateString) => {
+    if (typeof dateString === "string") {
+        // it works without this if-else but just in case sth goes wrong:
+        if (dateString[dateString.length - 1] == "]") {
+            return new Date(dateString.slice(0, -5));
+        } else {
+            return new Date(dateString);
+        }
+    } else {
+        return undefined;
+    }
+};
+
+export const dateFormatter = (dateObject) => {
+    if (dateObject == undefined) return '';
+    
+    return `${dateObject.getFullYear()}-${dateObject.getMonth()}-${dateObject.getDate()}`;
+}
+
 export const computeGuestInfo = (guestList) => {
     const guestInfo = {
         total: {
@@ -65,3 +84,26 @@ export const computeGuestInfo = (guestList) => {
     
     return guestInfo;
 };
+
+export const computeRequestsInfo = (requestsList) => {
+    
+    const requestsInfo = {
+        pending: 0,
+        rejected: 0,
+        accepted: 0,
+        total: 0,
+    }
+    
+    requestsList.forEach((req) => {
+        requestsInfo.total++;
+        if (req.isAccepted == undefined) {
+            requestsInfo.pending++;
+        } else if (req.isAccepted == true) {
+            requestsInfo.accepted++;
+        } else {
+            requestsInfo.rejected++;
+        }
+    })
+    
+    return requestsInfo;
+}

@@ -20,7 +20,6 @@ const userTypeItems = [
     { label: "Vendor", value: "VENDOR" },
 ];
 function Login() {
-  
     const [token, setToken] = useContext(LoginTokenContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -52,7 +51,10 @@ function Login() {
         switch (userType) {
             case "ADMIN":
                 handleLoginSuccessOrFail(
-                    LoginAPI.loginSucceedOrNot(LoginAPI.loginAdmin(username, password), setToken)
+                    LoginAPI.loginSucceedOrNot(
+                        LoginAPI.loginAdmin(username, password),
+                        setToken
+                    )
                 );
                 break;
             case "WEDDING-ORGANISER":
@@ -65,7 +67,10 @@ function Login() {
                 break;
             case "VENDOR":
                 handleLoginSuccessOrFail(
-                    LoginAPI.loginSucceedOrNot(LoginAPI.loginVendor(username, password), setToken)
+                    LoginAPI.loginSucceedOrNot(
+                        LoginAPI.loginVendor(username, password),
+                        setToken
+                    )
                 );
                 break;
         }
@@ -74,11 +79,19 @@ function Login() {
     const footer = (
         <span className="flex justify-content-center ">
             <div>
-                <Link to="/" className="flex justify-content-center noUnderline">
+                <Link
+                    to="/"
+                    className="flex justify-content-center noUnderline"
+                >
                     <Button
                         label="Login"
-                        style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-                        onClick={() => doLogin(userType, username, password, setToken)}
+                        style={{
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
+                        onClick={() =>
+                            doLogin(userType, username, password, setToken)
+                        }
                     />{" "}
                 </Link>
                 <div className="flex justify-content-center px-5 mt-5">
@@ -96,48 +109,48 @@ function Login() {
             <PublicHeartyNavbar />
             <div className="flex justify-content-center pt-5">
                 <form onSubmit={doLogin}>
-                <Card
-                    // title={title}
-                    footer={footer}
-                    style={{
-                        minWidth: "300px",
-                        maxWidth: "500px",
-                        minHeight: "500px",
+                    <Card
+                        // title={title}
+                        footer={footer}
+                        style={{
+                            minWidth: "300px",
+                            maxWidth: "500px",
+                            minHeight: "500px",
                             maxHeight: "700px",
-                    }} 
-                >
+                        }}
+                    >
                         <h3 className="flex justify-content-center">Login</h3>
 
                         <div className="flex justify-content-center mt-3">
-                        {/* set flex grow to 1 */}
+                            {/* set flex grow to 1 */}
                             <p className="flex-1 mt-1">Username: </p>
                             <InputText
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
-                    </div>
+                        </div>
                         <div className="flex justify-content-center mt-3">
                             <p className="flex-1 mt-2">Password: </p>
                             <InputText
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                    </div>
+                        </div>
                         <div className="flex justify-content-center mt-3">
                             <p className="flex-1 mt-2">User Type: </p>
-                        <Dropdown
-                            label="userType"
-                            options={userTypeItems}
-                            value={userType}
-                            onChange={(e) => {
-                                setUserType(e.value);
-                            }}
-                        />
-                        {/* for debugging */}
-                        {/* <Button label="log userType val" onClick={() => console.log(userType)}/> */}
-                        {/* <Button label="log setToken val" onClick={() => console.log(setToken)} /> */}
-                    </div>
-                </Card>
+                            <Dropdown
+                                label="userType"
+                                options={userTypeItems}
+                                value={userType}
+                                onChange={(e) => {
+                                    setUserType(e.value);
+                                }}
+                            />
+                            {/* for debugging */}
+                            {/* <Button label="log userType val" onClick={() => console.log(userType)}/> */}
+                            {/* <Button label="log setToken val" onClick={() => console.log(setToken)} /> */}
+                        </div>
+                    </Card>
                 </form>
             </div>
         </div>

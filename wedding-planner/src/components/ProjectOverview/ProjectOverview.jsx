@@ -13,9 +13,10 @@ import { Accordion, AccordionTab } from "primereact/accordion";
 import "primeflex/primeflex.css";
 import { classNames } from "primereact/utils";
 import { Panel } from "primereact/panel";
-import { computeGuestInfo } from "./ProjectOverviewHelperMethods";
-import BrideGroomDataTable from "./BrideGroomGuestsDataTable";
+import { computeGuestInfo, computeRequestsInfo } from "./ProjectOverviewHelperMethods";
+import BrideGroomDataTable from "./ProjectOverviewDataTables/BrideGroomGuestsDataTable";
 import EditProject from "./EditProject";
+import RequestsDataTable from "./ProjectOverviewDataTables/RequestsDataTable";
 
 const dateProcessor = (dateString) => {
     if (typeof dateString === "string") {
@@ -52,6 +53,7 @@ export default function ProjectOverview() {
     const [projectGuestList, setProjectGuestList] = useState([]);
     const [projectTables, setProjectTables] = useState([]);
     const [projectWeddingChecklist, setProjectWeddingChecklist] = useState([]);
+    const [projectRequests, setProjectRequests] = useState([]);
     // const [searchParams, setSearchParams] = useSearchParams();
     // console.log(searchParams.getAll("x"))
     // for (const x of searchParams.entries()) {
@@ -79,9 +81,16 @@ export default function ProjectOverview() {
         },
     });
 
+    const [projectRequestsInfo, setProjectRequestsInfo] = useState({
+        pending: 0,
+        rejected: 0,
+        accepted: 0,
+        total: 0
+    })
+    
+    // --- INITIAL DATA FETCHING ---
     useEffect(() => {
         let fetchedProject;
-        // let fetchedGuestList;
 
         WeddingProjectAPI.getWeddingProjectById(projectId)
             .then((res) => res.json())
@@ -100,40 +109,26 @@ export default function ProjectOverview() {
             .then(() => TableApi.getTables(fetchedProject.weddingProjectId))
             .then((res) => res.json())
             .then((tables) => setProjectTables(tables))
-            .catch(() => console.log("sth went wrong with fetching tables"));
+            .catch(() => console.log("sth went wrong with fetching tables"))
+            .then(() => WeddingProjectAPI.getRequestsByWeddingProjectId(fetchedProject.weddingProjectId))
+            .then((res) => res.json())
+            .then((requests) => setProjectRequests(requests))
+            .catch(() => console.log('something went wrong with fetching requests'))
+            
     }, []);
 
     useEffect(() => {
-        // const testGuests = [
-        //     {
-        //         id: 1,
-        //         name: "foo",
-        //         attendingSide: "BRIDE",
-        //         email: "bar",
-        //         numPax: 3,
-        //         rsvp: "CONFIRMED",
-        //     },
-        //     {
-        //         id: 2,
-        //         name: "foo",
-        //         attendingSide: "BRIDE",
-        //         email: "bar",
-        //         numPax: 3,
-        //         rsvp: "PENDING",
-        //     },
-        //     {
-        //         id: 4,
-        //         name: "foo",
-        //         attendingSide: "GROOM",
-        //         email: "bar",
-        //         numPax: 2,
-        //         rsvp: "PENDING",
-        //     },
-        // ];
         const guestInfo = computeGuestInfo(projectGuestList);
         console.log(guestInfo);
         setBrideGroomAttendingGuestInfo(guestInfo);
     }, [projectGuestList]);
+    
+    useEffect(() => {
+        const requestsInfo = computeRequestsInfo(projectRequests);
+        console.log("Requests info is: ");
+        console.log(requestsInfo);
+        setProjectRequestsInfo(requestsInfo);
+    }, [projectRequests])
 
     useEffect(() => console.log(projectTables), [projectTables]);
 
@@ -201,8 +196,8 @@ export default function ProjectOverview() {
                                     <p>Total cost of vendors: $X</p>
                                     <p>maybe buttons that link to vendors</p>
                                 </AccordionTab>
-                                <AccordionTab className="m-1" header="Pending Requests">
-                                    <p>Number of pending request: X</p>
+                                <AccordionTab className="m-1" header="Requests Overview">
+                                    <RequestsDataTable requestsInfo={projectRequestsInfo}/>
                                     <p>maybe buttons that link to requests</p>
                                 </AccordionTab>
                             </Accordion>

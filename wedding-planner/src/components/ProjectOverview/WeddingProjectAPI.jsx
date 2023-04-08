@@ -1,4 +1,8 @@
-const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/wedding-projects";
+const SERVER_PREFIX =
+    "http://localhost:8080/IS3106WeddingPlanner-war/webresources/wedding-projects";
+
+const NORMAL_WEBRESOURCES_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources";
+
 const WeddingProjectAPI = {
     getAllWeddingProjects() {
         return fetch(`${SERVER_PREFIX}/`);
@@ -13,17 +17,15 @@ const WeddingProjectAPI = {
         if (isCompleted == undefined) {
             return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}`);
         } else {
-            return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}&isCompleted=${isCompleted}`)
+            return fetch(
+                `${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}&isCompleted=${isCompleted}`
+            );
         }
     },
-
-    // updateListOfVendors(vendors) {
-    //     // this is super inefficient because it makes 1 request per vendor LMAO
-    //     for (let vendor of vendors) {
-    //         this.updateOneVendor(vendor);
-    //     }
-    //     // also doesnt return a response, unless we want a list of responses?
-    // },
+    
+    getRequestsByWeddingProjectId(projectId) {
+      return fetch(`${NORMAL_WEBRESOURCES_PREFIX}/requests/weddingProjectRequests/${projectId}`);
+    },
 
     updateWeddingProject(weddingProject) {
         return fetch(`${SERVER_PREFIX}/`, {
@@ -36,7 +38,7 @@ const WeddingProjectAPI = {
         });
     },
 
-    createWeddingProject(weddingProject, orgId) {
+    createWeddingProject(orgId, weddingProject) {
         return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}`, {
             headers: {
                 Accept: "application/json",
@@ -46,12 +48,6 @@ const WeddingProjectAPI = {
             body: JSON.stringify(weddingProject),
         });
     },
-    // updateListOfWeddingOrganisers(organisers) {
-    //     // this is super inefficient because it makes 1 request per org LMAO
-    //     for (let organiser of organisers) {
-    //         this.updateOneWeddingOrganiser(organiser);
-    //     }
-    //     // also doesnt return a response, unless we want a list of responses?
-    // },
+
 };
 export default WeddingProjectAPI;
