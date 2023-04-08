@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
@@ -12,7 +12,7 @@ import 'reactflow/dist/style.css';
 import { classNames } from 'primereact/utils';
 import { Routes, Route, useParams } from 'react-router-dom';
 
-export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, setSelectedTable}) {
+function OptionsPanel({nodes, setNodes, changeFocus, saveTables, setSelectedTable}) {
     const toast = useRef(null);
     const {projectId} = useParams();
     const [visible, setVisible] = useState(false);
@@ -101,7 +101,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                         id : '-' + _stage.id,
                         type : 'stage',
                         position: { x: _stage.locationX, y: _stage.locationY }, // backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"
-                        style: { width: _stage.stageWidth, height: _stage.stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, //www.makeuseof.com/css-background-gradients/#pink-fish
+                        style: { width: _stage.stageWidth, height: _stage.stageHeight, backgroundColor : "rgb(242, 112, 156)"}, //www.makeuseof.com/css-background-gradients/#pink-fish
                         selected : true,
                         data: { tableNumber: _stage.tableNumber}
                     };
@@ -150,4 +150,5 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
     )
     //image credits to ivonne adams
 }
-         
+
+export default memo(OptionsPanel);

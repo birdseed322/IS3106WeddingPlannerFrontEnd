@@ -16,6 +16,8 @@ import { Routes, Route, useParams } from 'react-router-dom';
 
 export default function TableLayout() {
     const toast = useRef(null);
+    const [fullGuests, setFullGuests] = useState([]); //guests to select from
+    const nodesLength = useRef(0);
     const changeFocus = () => {
     };
     const [selectedNode, setSelectedNode] = useState(null);
@@ -88,6 +90,12 @@ export default function TableLayout() {
         }); 
         setUpdateGuest(!updateGuest);
     }
+    useEffect(() => {
+        if (nodesLength.current != nodes.length) {
+            nodesLength.current = nodes.length;
+            setUpdateGuest(!updateGuest);
+        }
+    }, [nodes]);
     useEffect(() => {     
         TableApi.getTables(projectId).then((response) => {
             return response.json();
@@ -105,7 +113,7 @@ export default function TableLayout() {
                     data: { tableNumber: tableNumber, currOccupancy : currOccupancy,  capacity : capacity, guests : guests}
                 })
             }
-           setNodes((nodes) => nodes.concat(temp));
+            setNodes((nodes) => nodes.concat(temp));
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
             console.log(error);
@@ -122,7 +130,7 @@ export default function TableLayout() {
                     type : 'stage',
                     position: { x: locationX, y: locationY },
                     selected : false,
-                    style: { width: stageWidth, height: stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, 
+                    style: { width: stageWidth, height: stageHeight, backgroundColor : "rgb(242, 112, 156)"}, 
                     data: { tableNumber: tableNumber}
                 })
             }
