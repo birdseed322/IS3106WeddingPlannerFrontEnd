@@ -1,219 +1,449 @@
-import React, { useState } from "react";
-import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
+import React, { useState, useEffect } from "react";
+
 import { Button } from "primereact/button";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Row } from "primereact/row";
+import { Checkbox } from "primereact/checkbox";
 import { Dialog } from "primereact/dialog";
-import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import classNames from "classnames";
+import { InputNumber } from "primereact/inputnumber";
+import { classNames } from "primereact/utils";
+import { Card } from "primereact/card";
+import { BigDecimal } from "js-big-decimal";
+import { Dropdown } from "primereact/dropdown";
+
+import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
+import WeddingBudgetPlannerAPI from "./WeddingBudgetPlannerAPI";
 
 export default function WeddingBudgetPlanner() {
-    return (
-        <div id="appContainer">
-            <HeartyNavbar />
-            <div id="bodyContainer">
-                <div className="bodyTextColumn">
-                    <h2>Budget Planner</h2>
-                </div>
-                <>
-                    <BudgetPlannerPage></BudgetPlannerPage>
-                </>
-            </div>
-
-            <div id="footer">
-                <h2> some text</h2>
-            </div>
-        </div>
-    );
-}
-
-function BudgetPlannerPage() {
-    const [showDialog, setShowDialog] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
-
-    const [category, setCategory] = useState("");
-    const [itemName, setItemName] = useState("");
-    const [cost, setCost] = useState(0);
-
-    const addItemDialog = () => {
-        setShowDialog(true);
+    let emptyBudget = {
+        weddingBudgetListId: null,
+        budget: 0,
     };
 
-    const onHide = () => {
-        setShowDialog(!showDialog);
-        setCategory("");
-        setItemName("");
-        setCost(0.0);
+    let emptyItem = {
+        category: "",
+        cost: 0,
+        isPaid: false,
+        name: "",
+        weddingBudgetItemId: null,
+    };
+
+    const [weddingProjectId, setWeddingProjectId] = useState(1);
+    const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
+    const [budget, setBudget] = useState(emptyBudget);
+    const [budgets, setBudgets] = useState([]);
+    const [item, setItem] = useState(emptyItem);
+    const [items, setItems] = useState([]);
+
+    const [budgetDialog, setBudgetDialog] = useState(false);
+    const [itemDialog, setItemDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => reloadData(), []);
+
+    const reloadData = () => {
+        WeddingBudgetPlannerAPI.retrieveAllItems()
+            .then((res) => {
+                console.log(budget);
+                return res.json();
+            })
+            .then((items) => {
+                setItems(items);
+                console.log(items);
+            });
+    };
+
+    // const groupedItems = items.reduceRight((acc, curr) => {
+    //     const category = curr.category;
+    //     if (!acc[category]) {
+    //         acc[category] = [];
+    //     }
+    //     acc[category].push(curr);
+    //     return acc;
+    // }, {});
+
+    // const groupRows = Object.entries(groupedItems).map(([category, items]) => ({
+    //     category,
+    //     items,
+    // }));
+
+    const onItemPaidChange = (e, rowData) => {
+        const newItems = [...items];
+        const index = newItems.findIndex(
+            (item) => item.weddingBudgetItemId === rowData.weddingBudgetItemId
+        );
+        newItems[index].isPaid = e.checked;
+        setItems(newItems);
+    };
+
+    const itemPaidTemplate = (rowData) => {
+        return (
+            <Checkbox
+                onChange={(e) => onItemPaidChange(e, rowData)}
+                checked={rowData.isPaid}
+            />
+        );
+    };
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button
+                    icon="pi pi-pencil"
+                    rounded
+                    outlined
+                    className="mr-2"
+                    // onClick={() => editGuest(rowData)}
+                />
+                <Button
+                    icon="pi pi-trash"
+                    rounded
+                    outlined
+                    severity="danger"
+                    // onClick={() => confirmDeleteItem(rowData)}
+                />
+            </React.Fragment>
+        );
+    };
+
+    const onInputBudgetChange = (e, name) => {
+        const val = (e.target && e.target.value) || "";
+        let _budget = { ...budget };
+
+        _budget[`${name}`] = val;
+
+        setBudget(_budget);
+    };
+
+    const onInputNumBudgetChange = (e, number) => {
+        const val = e.value || 0;
+        let _budget = { ...budget };
+
+        _budget[`${number}`] = val;
+
+        setBudget(_budget);
+    };
+
+    const onInputItemChange = (e, name) => {
+        const val = (e.target && e.target.value) || "";
+        let _item = { ...item };
+
+        _item[`${name}`] = val;
+
+        setItem(_item);
+    };
+
+    const onInputNumItemChange = (e, number) => {
+        const val = e.value || 0;
+        let _item = { ...item };
+
+        _item[`${number}`] = val;
+
+        setItem(_item);
+    };
+
+    const onInputPaidChange = (e, payment) => {
+        const val = e.target.checked;
+        let _item = { ...item };
+
+        _item[`${payment}`] = val;
+
+        setItem(_item);
+    };
+
+    const showBudgetDialog = () => {
+        setSubmitted(false);
+        setBudgetDialog(true);
+    };
+
+    const showItemDialog = () => {
+        setSubmitted(false);
+        setItemDialog(true);
+    };
+
+    const hideBudgetDialog = () => {
+        setBudgetDialog(false);
         setSubmitted(false);
     };
 
-    const onCategoryChange = (e) => {
-        setCategory(e.target.value);
+    const hideItemDialog = () => {
+        setItemDialog(false);
+        setSubmitted(false);
     };
 
-    const onItemNameChange = (e) => {
-        setItemName(e.target.value);
-    };
-
-    const onCostChange = (e) => {
-        setCost(e.target.value);
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleBudgetDialog = () => {
         setSubmitted(true);
-
-        // reset the form and hide the dialog
-        if (itemName) {
-            setCategory("");
-            setItemName("");
-            setCost("");
-            setSubmitted(false);
-            setShowDialog(false);
+        let _budget = { ...budget };
+        let _budgets = [...budgets];
+        if (budget.weddingBudgetListId === null) {
+            WeddingBudgetPlannerAPI.createBudget(budget, weddingProjectId)
+                .then((res) => {
+                    return res.json();
+                })
+                .then((idObject) => {
+                    _budget.weddingBudgetListId = idObject.WEDDINGBUDGETLISTID;
+                    _budgets.push(_budget);
+                    setBudgets(_budgets);
+                    setBudgetDialog(false);
+                });
+        } else {
         }
     };
 
-    // sample data
-    const budget = 2000;
+    const handleItemDialog = () => {
+        setSubmitted(true);
+    };
+
+    const budgetFooter = (
+        <React.Fragment>
+            <Button
+                label="Cancel"
+                icon="pi pi-times"
+                outlined
+                onClick={hideBudgetDialog}
+            />
+            <Button
+                label="Save"
+                icon="pi pi-check"
+                onClick={handleBudgetDialog}
+            />
+        </React.Fragment>
+    );
+
+    const itemFooter = (
+        <React.Fragment>
+            <Button
+                label="Cancel"
+                icon="pi pi-times"
+                outlined
+                onClick={hideItemDialog}
+            />
+            <Button
+                label="Save"
+                icon="pi pi-check"
+                onClick={handleItemDialog}
+            />
+        </React.Fragment>
+    );
+
     let totalCost = () => {
-        return BudgetPlannerPageData[0].logistics.reduce((acc, curr) => {
-            return acc + curr.eventCost;
+        return items.reduce((acc, curr) => {
+            return acc + curr.cost;
         }, 0);
     };
 
     let totalPaid = () => {
-        return BudgetPlannerPageData[0].logistics.reduce((acc, curr) => {
-            if (curr.paidStatus) {
-                return acc + curr.eventCost;
+        return items.reduce((acc, curr) => {
+            if (curr.isPaid) {
+                return acc + curr.cost;
             } else {
                 return acc;
             }
         }, 0);
     };
 
-    const BudgetPlannerPageData = [
-        {
-            logistics: [
-                {
-                    category: "Entertainment",
-                    eventName: "Amazing Music Band",
-                    eventCost: 250,
-                    paidStatus: false,
-                },
-                {
-                    category: "Food",
-                    eventName: "Tan & Lee Catering",
-                    eventCost: 600,
-                    paidStatus: true,
-                },
-                {
-                    category: "Food",
-                    eventName: "Super Bartender and Drinks",
-                    eventCost: 200,
-                    paidStatus: true,
-                },
-            ],
-        },
-    ];
-
-    const groupedByCategory = BudgetPlannerPageData[0].logistics.reduce(
-        (acc, curr) => {
-            const category = curr.category;
-            if (!acc[category]) {
-                acc[category] = [];
-            }
-            acc[category].push(curr);
-            return acc;
-        },
-        {}
-    );
-
-    // sample
     const options = [
-        { label: "Category 1", value: "category1" },
-        { label: "Category 2", value: "category2" },
-        { label: "Category 3", value: "category3" },
+        { label: "ENTERTAINMENT", value: "ENTERTAINMENT" },
+        { label: "FOOD", value: "FOOD" },
+        { label: "LIGHTING", value: "LIGHTING" },
+        { label: "DECORATION", value: "DECORATION" },
+        { label: "CLOTHES", value: "CLOTHES" },
+        { label: "VENUE", value: "VENUE" },
+        { label: "UNTITLED", value: "UNTITLED" },
     ];
+
     return (
         <div>
-            <div style={{ display: "flex" }}>
-                <h4>Budget: {budget}</h4>
-                <Button>Edit</Button>
+            <div>
+                <HeartyNavbar></HeartyNavbar>
+                <Card className="flex justify-content-center">
+                    <h3>Budget: {budget.budget}</h3>
+                    <Button label="edit" onClick={showBudgetDialog} />
+                    <h3>
+                        Total Cost:{" "}
+                        {totalCost().toLocaleString("en-SG", {
+                            style: "currency",
+                            currency: "SGD",
+                        })}
+                    </h3>
+                    <h3>
+                        Total Paid:{" "}
+                        {totalPaid().toLocaleString("en-SG", {
+                            style: "currency",
+                            currency: "SGD",
+                        })}{" "}
+                    </h3>
+                    <Button
+                        label="Add Item"
+                        icon="pi pi-plus"
+                        onClick={showItemDialog}
+                    ></Button>
+                </Card>
             </div>
-            <h4>Total Cost: {totalCost()}</h4>
-            <h4>Total Paid: {totalPaid()}</h4>
-            <Button onClick={addItemDialog}>Add Item</Button>
-            {Object.entries(groupedByCategory).map(([category, logistics]) => (
-                <div key={category}>
-                    <h4>{category}</h4>
-                    <ul>
-                        {logistics.map((logistic) => (
-                            <li key={logistic.eventName}>
-                                {logistic.eventName} - {logistic.eventCost} (
-                                {logistic.paidStatus ? "paid" : "unpaid"})
-                            </li>
-                        ))}
-                    </ul>
-                    <hr />
-                </div>
-            ))}
+
+            <div>
+                <DataTable
+                    value={items}
+                    header="Wedding Budget"
+                    tableStyle={{ minWidth: "60rem" }}
+                    // selection={selectedGuests}
+                    // onSelectionChange={(e) => setSelectedGuests(e.value)}
+                    dataKey="id"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[5, 10, 25]}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+                >
+                    <Column field="weddingBudgetItemId" header="No."></Column>
+                    <Column header="Category" field="category" />
+                    <Column field="name" header="Event Name"></Column>
+                    <Column
+                        field="cost"
+                        header="Cost"
+                        body={(rowData) => {
+                            return rowData.cost.toLocaleString("en-SG", {
+                                style: "currency",
+                                currency: "SGD",
+                            });
+                        }}
+                    ></Column>
+                    <Column
+                        header="Payment Status"
+                        body={itemPaidTemplate}
+                    ></Column>
+                    <Column
+                        body={actionBodyTemplate}
+                        exportable={false}
+                    ></Column>
+                </DataTable>
+            </div>
 
             <Dialog
-                header="Add Item"
-                visible={showDialog}
-                onHide={onHide}
+                visible={budgetDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Add Budget"
                 modal
-                draggable
-                resizable
+                className="p-fluid"
+                onHide={hideBudgetDialog}
+                footer={budgetFooter}
             >
-                <form onSubmit={handleSubmit}>
-                    <div className="field">
-                        <label htmlFor="category" className="font-bold">
-                            Category:
-                        </label>
-                        <Dropdown
-                            id="category"
-                            value={category}
-                            onChange={onCategoryChange}
-                            options={options}
-                            required
-                            autoFocus
-                            className={classNames({
-                                "p-invalid": submitted && !category,
-                            })}
-                        />
+                <div className="field">
+                    <label htmlFor="budget" className="font-bold">
+                        Budget
+                    </label>
+                    <InputNumber
+                        id="budget"
+                        value={budget.budget}
+                        onChange={(e) => onInputBudgetChange(e, "budget")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && budget.budget < 0,
+                        })}
+                    />
+                    {submitted && budget.budget < 0 && (
+                        <small className="p-error">
+                            Item Budget is required.
+                        </small>
+                    )}
+                </div>
+            </Dialog>
 
-                        <br />
-                        <br />
-                        <label htmlFor="itemName" className="font-bold">
-                            Item Name:
-                        </label>
-                        <InputText
-                            id="itemName"
-                            value={itemName}
-                            onChange={onItemNameChange}
-                            required
-                            className={classNames({
-                                "p-invalid": submitted && !itemName,
-                            })}
-                        />
-
-                        <br />
-                        <br />
-                        <label htmlFor="cost" className="font-bold">
-                            Cost:
-                        </label>
-                        <InputText
-                            id="cost"
-                            value={cost}
-                            onChange={onCostChange}
-                            required
-                            className={classNames({
-                                "p-invalid": submitted && !cost,
-                            })}
-                        />
-                    </div>
-                    <Button type="submit" label="Add Item" />
-                </form>
+            <Dialog
+                visible={itemDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Add Item"
+                modal
+                className="p-fluid"
+                onHide={hideItemDialog}
+                footer={itemFooter}
+            >
+                <div className="field">
+                    <label htmlFor="name" className="font-bold">
+                        Item Name
+                    </label>
+                    <InputText
+                        id="name"
+                        value={item.name}
+                        onChange={(e) => onInputItemChange(e, "name")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !item.name,
+                        })}
+                    />
+                    {submitted && !item.name && (
+                        <small className="p-error">
+                            Item Name is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="cost" className="font-bold">
+                        Item Cost
+                    </label>
+                    <InputNumber
+                        id="cost"
+                        value={item.cost}
+                        onChange={(e) => onInputNumItemChange(e, "cost")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && item.cost < 0,
+                        })}
+                    />
+                    {submitted && item.cost < 0 && (
+                        <small className="p-error">
+                            Item Cost is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="isPaid" className="font-bold">
+                        Item Payment Status
+                    </label>
+                    <Checkbox
+                        id="isPaid"
+                        checked={item.isPaid}
+                        onChange={(e) => onInputPaidChange(e, "isPaid")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !item.isPaid,
+                        })}
+                    />
+                    {submitted && !item.isPaid && (
+                        <small className="p-error">
+                            Item Payment Status is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="category" className="font-bold">
+                        Category
+                    </label>
+                    <Dropdown
+                        id="category"
+                        value={item.category}
+                        onChange={(e) => onInputItemChange(e, "category")}
+                        required
+                        autoFocus
+                        options={options}
+                        className={classNames({
+                            "p-invalid": submitted && !item.category,
+                        })}
+                    />
+                    {submitted && !item.category && (
+                        <small className="p-error">
+                            Item Category is required.
+                        </small>
+                    )}
+                </div>
             </Dialog>
         </div>
     );
