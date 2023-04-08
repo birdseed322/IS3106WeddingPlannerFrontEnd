@@ -46,7 +46,7 @@ export default function ProjectNavbar(props) {
             style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
           />{' '}
         </Link>
-        <Link to="/viewprofile" className="noUnderline px-3">
+        <Link to="/editprofile" className="noUnderline px-3">
           <Button
             icon="pi pi-user"
             rounded
