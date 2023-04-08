@@ -60,7 +60,7 @@ const SearchBar = () => {
         if (checkIfVendorExists()) {
           console.log("handling search for vendor! = " + search);
           //navigate(`${projectId}/VendorSearchPage/VendorName/${search}`); //adds on to the current endpoint
-          navigate(`VendorName/${search}`);
+          navigate(`/${projectId}/VendorSearchPage/VendorName/${search}`);
         } else {
           toast.current.show({
             severity: "warn",
@@ -75,7 +75,7 @@ const SearchBar = () => {
         console.log("handling search for categories! = " + search);
         if(categories.map(str => str.toLowerCase()).includes(search.toLowerCase())){
         //navigate(`${projectId}/VendorSearchPage/Category/${search}`);
-        navigate(`Category/${search}`);
+        navigate(`/${projectId}/VendorSearchPage/Category/${search}`);
         //navigate(search); //adds on to the current endpoint eg http://localhost:3000/VendorSearchPage/search
         }else{
             toast.current.show({
