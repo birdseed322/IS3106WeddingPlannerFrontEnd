@@ -11,7 +11,7 @@ function SignUp() {
   return (
     <div>
       <PublicHeartyNavbar />
-      <div className="flex justify-content-center pt-5">
+      <div className="flex justify-content-center pt-5 mt-8">
         <Card
           style={{
             minWidth: '200px',

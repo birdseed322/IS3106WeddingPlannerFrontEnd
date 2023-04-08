@@ -26,6 +26,9 @@ import MainTable from '../components/GuestManagement/MainTable.jsx'
 
 import { LoginTokenContext } from '../context/LoginTokenContext.jsx'
 import Schedule from '../components/VendorView/Schedule Page/Schedule.jsx'
+import SpecificRequestPage from '../components/VendorView/Specific Request Page/SpecificRequestPage.jsx'
+import { LoginTokenContext } from '../context/LoginTokenContext.jsx'
+import Schedule from '../components/VendorView/Schedule Page/Schedule.jsx'
 import AdminSignUp from '../components/UnregisteredView/AdminSignUp.jsx'
 import VendorSignUp from '../components/UnregisteredView/VendorSignUp.jsx'
 import OrganiserSignUp from '../components/UnregisteredView/OrganiserSignUp.jsx'
@@ -47,6 +50,11 @@ function TempEndPoints() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/vendorlogin" element={<VendorLogin />} />
           <Route exact path="/vendor/requests" element={<VendorRequest />} />
+          <Route
+            exact
+            path="/vendor/request/:id"
+            element={<SpecificRequestPage />}
+          />
           <Route exact path="/vendor/schedule" element={<Schedule />} />
           <Route
             exact
@@ -84,13 +92,7 @@ function TempEndPoints() {
           <Route exact path="/aboutuspage" element={<AboutUs />} />
           <Route exact path="/contactpage" element={<Contact />} />
           <Route exact path="/signup" element={<SignUp />} />
-          <Route exact path="/adminsignup" element={<AdminSignUp />} />
-          <Route exact path="/vendorsignup" element={<VendorSignUp />} />
-          <Route
-            exact
-            path="/weddingorganisersignup"
-            element={<OrganiserSignUp />}
-          />
+          <Route exact path="/viewprofile" element={<ViewProfile />} />
           <Route exact path="/editprofile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>

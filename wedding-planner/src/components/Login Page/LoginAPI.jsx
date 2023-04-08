@@ -57,7 +57,10 @@ const LoginAPI = {
     loginSucceedOrNot(responsePromise, setTokenFunction) {
         return responsePromise.then((response) => {
             if (response.status == 200) {
-                return response.text().then((encodedJWT) => decodeJwt(encodedJWT))
+                return response.text().then((encodedJWT) => {
+                    localStorage.setItem("encodedJWT", encodedJWT);
+                    return decodeJwt(encodedJWT)
+                })
                 .then((decodedJWT) => JSON.parse(decodedJWT.sub))
                 .then((parsedTokenObject) => {
                     setTokenFunction(parsedTokenObject);

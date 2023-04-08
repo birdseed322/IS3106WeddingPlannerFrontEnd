@@ -12,15 +12,19 @@ import Api from './GuestListAPI.jsx';
 import { Toast } from 'primereact/toast';
 import TableApi from './TableApi.jsx';
 import Stage from './Stage.jsx';
+import { Routes, Route, useParams } from 'react-router-dom';
 
 export default function TableLayout() {
     const toast = useRef(null);
+    const [fullGuests, setFullGuests] = useState([]); //guests to select from
+    const nodesLength = useRef(0);
     const changeFocus = () => {
     };
     const [selectedNode, setSelectedNode] = useState(null);
     const [selectedGuests, setSelectedGuests] = useState([]);
     const [nodes, setNodes] = useState([]);
     const [tableID, setTableID] = useState(null);
+    const [updateGuest, setUpdateGuest] = useState(false);
     const onNodesChange = useCallback((changes) => {
         setNodes((nds) => applyNodeChanges(changes, nds))
     }, []);
@@ -35,7 +39,7 @@ export default function TableLayout() {
     const rerender= () => {
         setRerender(true);
     }
-    const weddingId = 1;
+    const {projectId} = useParams();
     const deleteNodesAction = (deletedNodes) => {
         const _nodes = [];
         for (const node of nodes) {
@@ -45,6 +49,7 @@ export default function TableLayout() {
         }
         setNodes((nds) => _nodes);
         setSelectedNode(null);
+        setUpdateGuest(!updateGuest);
     };
     const saveTables = () => {
         const toSaveTables = [];
@@ -72,22 +77,30 @@ export default function TableLayout() {
                 });
             }
         }
-        TableApi.updateTables(toSaveTables, weddingId).then(response => {
+        TableApi.updateTables(toSaveTables, projectId).then(response => {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Tables saved ' , life: 3000 });
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save tables ' , life: 3000 });
         }); 
 
-        TableApi.updateStages(toSaveStages, weddingId).then(response => {
+        TableApi.updateStages(toSaveStages, projectId).then(response => {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Stages saved ' , life: 3000 });
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save stages ' , life: 3000 });
         }); 
+        setUpdateGuest(!updateGuest);
     }
+    useEffect(() => {
+        if (nodesLength.current != nodes.length) {
+            nodesLength.current = nodes.length;
+            setUpdateGuest(!updateGuest);
+        }
+    }, [nodes]);
     useEffect(() => {     
-        TableApi.getTables(weddingId).then((response) => {
+        TableApi.getTables(projectId).then((response) => {
             return response.json();
         }).then((t) => {
+            console.log(t);
             const temp = [];
             for (const unit of t) {
                 const {capacity, currOccupancy, guests, id, locationX, locationY, tableNumber, tableSize} = unit;
@@ -100,23 +113,24 @@ export default function TableLayout() {
                     data: { tableNumber: tableNumber, currOccupancy : currOccupancy,  capacity : capacity, guests : guests}
                 })
             }
-           setNodes((nodes) => nodes.concat(temp));
+            setNodes((nodes) => nodes.concat(temp));
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
             console.log(error);
         });
-        TableApi.getStages(weddingId).then((response) => {
+        TableApi.getStages(projectId).then((response) => {
             return response.json();
         }).then((t) => {
             const temp = [];
             for (const unit of t) {
-                const {id, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
+                const {stageId, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
+                console.log(unit);
                 temp.push({
-                    id : '' + id,
+                    id : '-' + stageId,
                     type : 'stage',
                     position: { x: locationX, y: locationY },
                     selected : false,
-                    style: { width: stageWidth, height: stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, 
+                    style: { width: stageWidth, height: stageHeight, backgroundColor : "rgb(242, 112, 156)"}, 
                     data: { tableNumber: tableNumber}
                 })
             }
@@ -149,7 +163,8 @@ export default function TableLayout() {
                         </ReactFlow>
                     </div>
                     <OptionsPanel nodes={nodes} setNodes={setNodes} changeFocus={changeFocus} saveTables={saveTables} setSelectedTable={setSelectedNode}></OptionsPanel>
-                    <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>     
+                    <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} 
+                        setSelectedTable={setSelectedNode} updateGuest={updateGuest} setUpdateGuest={setUpdateGuest}></GuestListPanel>     
            </ReactFlowProvider>
         </>
     );  

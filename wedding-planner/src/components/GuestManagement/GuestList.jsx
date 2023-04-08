@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useContext } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -19,6 +19,10 @@ import Api from './GuestListAPI.jsx';
 import EmailAPI from './EmailAPI.jsx';
 import ReactDOMServer from 'react-dom/server';
 import validateGuest from './Validations/GuestValidation.jsx';
+import { Routes, Route, useParams } from 'react-router-dom';
+import { LoginTokenContext } from "../../context/LoginTokenContext";
+import WeddingProjectAPI from '../ProjectOverview/WeddingProjectAPI';
+import moment from "moment";
 export default function GuestList() {
     let emptyGuest = {
         id: null,
@@ -29,13 +33,13 @@ export default function GuestList() {
         rsvp: 'NOTSENT',
         guestTable : null,
     };
-    const [weddingId, setWeddingId] = useState(1);
+    const [guest, setGuest] = useState(emptyGuest);
+    const {projectId} = useParams();
     const [guests, setGuests] = useState([]);
     const [guestDialog, setGuestDialog] = useState(false);
     const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
     const [deleteGuestsDialog, setDeleteGuestsDialog] = useState(false);
     const [sendInvitesDialog, setSendInvitesDialog] = useState(false);
-    const [guest, setGuest] = useState(emptyGuest);
     const [selectedGuests, setSelectedGuests] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
@@ -44,7 +48,7 @@ export default function GuestList() {
     
     useEffect(() => {
         const temp = [];
-        Api.getAllGuests(weddingId).then((response) => {
+        Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
             setGuests(g);
@@ -65,6 +69,7 @@ export default function GuestList() {
     };
 
     const hideDialog = () => {
+        setEditFlag(false);
         setSubmitted(false);
         setGuestDialog(false);
     };
@@ -80,8 +85,10 @@ export default function GuestList() {
     const hideSendInvitesDialog = () => {
         setSendInvitesDialog(false);
     }
-
+    const [editFlag, setEditFlag] = useState(false);
     const editGuest = (guest) => {
+        setEditFlag(true);
+        setTimeout(100);
         setGuest({ ...guest });
         setGuestDialog(true);
     };
@@ -144,66 +151,77 @@ export default function GuestList() {
     const confirmSendInvites = () => {
         setSendInvitesDialog(true);
     }
-    const bride = "Bob";
-    const groom = "Alice";
-    const venue = "Marina Bay Sands Singapore";
-    const date = "12 October 2023";
-    const rsvp = "http://localhost:3000/rsvpform/" + weddingId;
+
     const sendInvitesToSelectedGuests = () => { //selectedGuests, bride, groom, venue, date, rsvp link, guests, setGuests, setSelectedGuests
-        if (selectedGuests != null && selectedGuests.length > 0) {
-            const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
-            EmailAPI.sendEmail(bride, groom, venue, date, rsvp, emails).then(response => response.json()).then(response => {
-                //console.log(response.success);
-                if (response.success === true) {
-                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
-                } else {
-                    throw new Error();
-                }
-            }).then(response => {
-                    const toUpdate = new Set();
-                    selectedGuests.forEach(element => {
-                        toUpdate.add(element.id);
-                    });
-                    const newGuests = [];
-                    for (const guest of guests) {
-                        if (toUpdate.has(guest.id)) {
-                            let _guest = {...guest};
-                            _guest.rsvp = "PENDING";
-                            newGuests.push(_guest);
-                        } else {
-                            newGuests.push(guest);
-                        }
+        var weddingName = "";
+        var venue = "";
+        var date = "";
+        const rsvp = "http://localhost:3000/rsvpform/" + projectId;
+        const details = "http://localhost:3000/guestview/" + projectId;
+        let terminate = false;
+        WeddingProjectAPI.getWeddingProjectById(projectId).then(res => res.json())
+        .then(wp => {
+            if (wp != null && wp != undefined) {
+                weddingName = wp.name;
+                venue = wp.venue;
+                date = moment(wp.weddingDate, "YYYY-MM-DDTHH:mm:ssZ[UTC]").toDate().toLocaleDateString();
+                console.log(weddingName);
+            } else {
+                throw new Error();
+            }
+            if (!terminate && selectedGuests != null && selectedGuests.length > 0) {
+                const emails = selectedGuests.map(g => g.email).reduce((x,y) => x + "," + y);
+                EmailAPI.sendEmail(weddingName, venue, date, rsvp, emails, details).then(response => response.json()).then(response => {
+                    //console.log(response.success);
+                    if (response.success === true) {
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Invites sent', life: 3000 });
+                    } else {
+                        throw new Error();
                     }
-                    setSelectedGuests(null);
-                    Api.updateGuestsRSVP(newGuests).then((response) => {
-                        if (response.status === 204) {
-                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
-                            setGuests((old) => newGuests);
-                        } else {
-                            throw new Error();
+                }).then(response => {
+                        const toUpdate = new Set();
+                        selectedGuests.forEach(element => {
+                            toUpdate.add(element.id);
+                        });
+                        const newGuests = [];
+                        for (const guest of guests) {
+                            if (toUpdate.has(guest.id)) {
+                                let _guest = {...guest};
+                                _guest.rsvp = "PENDING";
+                                newGuests.push(_guest);
+                            } else {
+                                newGuests.push(guest);
+                            }
                         }
-                    }).catch(e => {
-                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
-                    })
-            }).catch(error => {
-                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
-            });
- 
-        } else {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'No Guests Selected', life: 3000 });
-        }
+                        setSelectedGuests(null);
+                        Api.updateGuestsRSVP(newGuests).then((response) => {
+                            if (response.status === 204) {
+                                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'RSVP status updated', life: 3000 });
+                                setGuests((old) => newGuests);
+                            } else {
+                                throw new Error();
+                            }
+                        }).catch(e => {
+                            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
+                        })
+                }).catch(error => {
+                    toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
+                });
+            } 
+        }).catch(error => {
+            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in invites sending', life: 3000 });
+        });
         setSendInvitesDialog(false);
        //need to update rsvp status
     }
     const saveGuest = () => { 
         setSubmitted(true);
         if (validateGuest(guest)) {
-            if (guest.name.trim()) {
                 let _guests = [...guests];
                 let _guest = { ...guest };
                 if (guest.id != null) {
                     const index = findIndexById(guest.id);
-                    Api.updateGuest(_guest, weddingId).then((response) => {
+                    Api.updateGuest(_guest, projectId).then((response) => {
                         if (response.status === 204) {
                             _guests[index] = _guest;
                             setGuests(_guests);
@@ -220,7 +238,7 @@ export default function GuestList() {
                     })
                 } else {
                     if (validateGuest(_guest)) {
-                        Api.createGuest(_guest, weddingId).then((response) => {
+                        Api.createGuest(_guest, projectId).then((response) => {
                             if ( (response.status === 200)) {
                                 response.json().then((idObject) => {
                                     _guest.id = idObject.GUESTID;
@@ -240,8 +258,9 @@ export default function GuestList() {
                         }); 
                     }
                 }
-            }
         }
+        setEditFlag(false);
+    
     };
     const deleteSelectedGuests = () => {
         let _guests = guests.filter((val) => !selectedGuests.includes(val));
@@ -389,7 +408,7 @@ export default function GuestList() {
                 </DataTable>
             </div>
 
-            <Dialog visible={guestDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Guest Details" modal className="p-fluid" footer={guestDialogFooter} onHide={hideDialog}>
+            <Dialog visible={guestDialog} edit={editFlag} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Guest Details" modal className="p-fluid" footer={guestDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name" className="font-bold">
                         Name
@@ -425,9 +444,10 @@ export default function GuestList() {
                         <label htmlFor="numPax" className="font-bold">
                             Number of Pax.
                         </label>
-                        <InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required autoFocus className={classNames({ 'p-invalid': submitted && guest.numPax <= 0})} />
-                        {submitted && (guest.numPax <= 0) && <small className="p-error">Number of Pax is invalid.</small>}
-
+                        {!editFlag ? (<InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required autoFocus className={classNames({ 'p-invalid': submitted && guest.numPax <= 0})} />)
+                           : <InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required disabled={true} readOnly={true} /> 
+                        }
+                        {submitted && (guest.numPax <= 0) ? <small className="p-error">Number of Pax is invalid.</small> : <></>}
                     </div>
                 </div>
             </Dialog>

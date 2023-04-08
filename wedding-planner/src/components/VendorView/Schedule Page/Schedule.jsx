@@ -5,10 +5,20 @@ import {
 } from "@daypilot/daypilot-lite-react";
 import { Card } from "primereact/card";
 import VendorNavbar from "../VendorNavbar/VendorNavbar";
+import { Button } from "primereact/button";
+import { Link, redirect } from "react-router-dom";
+import { Dialog } from "primereact/dialog";
 
 function Schedule() {
   const [startDate, setStartDate] = React.useState(new Date());
-  const [selectedReq, setSelectedReq] = React.useState({});
+  const [selectedReq, setSelectedReq] = React.useState({
+    start: "",
+    end: "",
+    id: "",
+  });
+  const [calendarVisible, setCalendarVisible] = React.useState(false);
+  const [requestVisible, setRequestVisible] = React.useState(false);
+
   const events = [
     {
       id: 1,
@@ -46,47 +56,84 @@ function Schedule() {
 
   return (
     <div>
-      <VendorNavbar/>
-      <div className="grid justify-content-center gap-5 h-min">
-        <div className="col-5 py-8 grid w-min">
-          <div className="px-8 my-6 col-12 w-min">
+      <VendorNavbar />
+      <>
+        <h3
+          className="text-center text-2xl m-1 w-2 m-auto cursor-pointer"
+          onClick={() => setCalendarVisible(true)}
+        >
+          {startDate.toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          })}
+        </h3>
+        <DayPilotCalendar
+          viewType="Week"
+          startDate={startDate}
+          events={events}
+          headerDateFormat= "d, dddd"
+          onEventClick={(args) => {
+            console.log(args.e.data);
+            //Onclick maybe will open request pop up to view summary. With choice to enter to request page.
+            setSelectedReq(args.e.data);
+            setRequestVisible(true);
+          }}
+          eventMoveHandling="Disabled"
+        />
+        <Dialog
+          visible={calendarVisible}
+          style={{ width: "25vw"}}
+          onHide={() => setCalendarVisible(false)}
+          draggable={false}
+          header="Week Selection"
+        >
+          <div className="m-auto w-min">
             <DayPilotNavigator
               onTimeRangeSelected={(args) => {
                 console.log("You clicked: " + args.day);
-                setStartDate(args.day);
+                setStartDate(new Date(args.day));
               }}
               selectMode="week"
             />
           </div>
-          <Card
-            className="col-12"
-            title={
-              !Object.keys(selectedReq).includes("text")
-                ? null
-                : selectedReq.text
-            }
-          >
-            {!Object.keys(selectedReq).includes("description") ? (
-              <h1>No request selected</h1>
-            ) : (
-              selectedReq.description
-            )}
-          </Card>
-        </div>
-        <div className="col-7 my-auto">
-          <DayPilotCalendar
-            viewType="Week"
-            startDate={startDate}
-            events={events}
-            onEventClick={(args) => {
-              console.log(args.e.data.url);
-              //Onclick maybe will open request pop up to view summary. With choice to enter to request page.
-              setSelectedReq(args.e.data);
-            }}
-            eventMoveHandling="Disabled"
-          />
-        </div>
-      </div>
+        </Dialog>
+        <Dialog
+          visible={requestVisible}
+          style={{ width: "25vw" }}
+          header={selectedReq.text}
+          onHide={() => setRequestVisible(false)}
+          draggable={false}
+        >
+          <div>
+            <p>{selectedReq.description}</p>
+            <p>
+              Date: {new Date(selectedReq.start.value).toLocaleDateString()}
+            </p>
+            <p>
+              Start:{" "}
+              {new Date(selectedReq.start.value).toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </p>
+            <p>
+              End:{" "}
+              {new Date(selectedReq.end.value).toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
+          <div className="flex justify-content-center">
+            <Link
+              className="no-underline"
+              to={"/vendor/request/" + selectedReq.id}
+            >
+              <Button label="View Request" />
+            </Link>
+          </div>
+        </Dialog>
+      </>
     </div>
   );
 }

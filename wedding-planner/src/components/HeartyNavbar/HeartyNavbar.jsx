@@ -2,14 +2,14 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useContext } from 'react'
+import React, { useContext, memo } from 'react'
 import { Menubar } from 'primereact/menubar'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { Link, useParams } from 'react-router-dom'
 import { LoginTokenContext } from '../../context/LoginTokenContext'
 
-export default function HeartyNavbar(props) {
+function HeartyNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
   const [token, setToken] = useContext(LoginTokenContext)
@@ -28,8 +28,14 @@ export default function HeartyNavbar(props) {
     {
       label: 'Vendor Management',
       icon: 'pi pi-fw pi-file',
-      url: '/sample',
       className: 'menuItemStyle',
+      items: [
+        {
+          label: 'Vendor Search Page',
+          icon: 'pi pi-search',
+          url: `/${projectId}/VendorSearchPage`,
+        },
+      ],
     },
     {
       label: 'Guest Management',
@@ -74,20 +80,35 @@ export default function HeartyNavbar(props) {
   const end = (
     // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
     <>
+      <Link to="/" className="noUnderline">
+        <Button
+          icon="pi pi-undo"
+          label="Back to Projects"
+          severity="secondary"
+          text
+          style={{ marginRight: '1rem' }}
+        />
+      </Link>
       <Link to="/login" className="noUnderline">
         <Button
           label="Logout"
-          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+          icon="pi pi-sign-out"
+          style={{
+            backgroundColor: '#f561b0',
+            border: '#f561b0',
+            marginRight: '1rem',
+          }}
           onClick={() => setToken(false)} // set token to false
         />{' '}
       </Link>
-      <Link to="/editprofile" className="noUnderline">
+
+      {/*       <Link to="/viewprofile" className="noUnderline">
         <Button
           icon="pi pi-user"
           rounded
           style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
         />
-      </Link>
+      </Link> */}
     </>
   )
   const start = (
@@ -110,8 +131,17 @@ export default function HeartyNavbar(props) {
   // height="40" className="mr-2"
   //console.log(items)
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
-  return <Menubar id="navbar" model={items} start={start} end={end} />
+  return (
+    <Menubar
+      id="navbar"
+      className="p-4"
+      model={items}
+      start={start}
+      end={end}
+    />
+  )
 }
+export default memo(HeartyNavbar)
 
 // example items
 // const items = [

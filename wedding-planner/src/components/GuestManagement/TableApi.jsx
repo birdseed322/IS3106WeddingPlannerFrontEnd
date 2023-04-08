@@ -37,6 +37,7 @@ const TableApi = {
         return fetch(`${SERVER_PREFIX}/stage/query?` + new URLSearchParams({  //https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
             "weddingId": wId
         })).then(response => {
+            
             if (response.status === 200) {
                 return response;
             } else {
@@ -76,6 +77,7 @@ const TableApi = {
         return fetch(`${SERVER_PREFIX}/tablemanagement/query?` + new URLSearchParams({  //https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
             "weddingId": wId
         })).then(response => {
+            console.log(response);
             if (response.status === 200) {
                 return response;
             } else {
