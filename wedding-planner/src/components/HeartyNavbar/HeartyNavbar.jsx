@@ -28,8 +28,14 @@ export default function HeartyNavbar(props) {
         {
             label: "Vendor Management",
             icon: "pi pi-fw pi-file",
-            url: `/${projectId}`,
             className: "menuItemStyle",
+            items: [
+                {
+                    label: "Vendor Search Page",
+                    icon: "pi pi-search",
+                    url: `/${projectId}/VendorSearchPage`,
+                }
+            ]
         },
         {
             label: "Guest Management",
