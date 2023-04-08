@@ -9,11 +9,21 @@ import { Card } from "primereact/card";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
+import { Fieldset } from "primereact/fieldset";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import "primeflex/primeflex.css";
 import { classNames } from "primereact/utils";
 import { Panel } from "primereact/panel";
-import { computeGuestInfo, computeRequestsInfo } from "./ProjectOverviewHelperMethods";
+import { Chart } from "primereact/chart";
+import {
+    computeAndSetVendorsPaidAndTotalCost,
+    computeGuestInfo,
+    computeRequestsInfo,
+    fetchAndSetVendoTransObjectList,
+    fetchAndSetVendorsTransactionsList,
+    generateVendorCostPieChartData,
+    requestAndComputeHiredVendors,
+} from "./ProjectOverviewHelperMethods";
 import BrideGroomDataTable from "./ProjectOverviewDataTables/BrideGroomGuestsDataTable";
 import EditProject from "./EditProject";
 import RequestsDataTable from "./ProjectOverviewDataTables/RequestsDataTable";
@@ -27,15 +37,10 @@ const dateProcessor = (dateString) => {
             return new Date(dateString);
         }
     } else {
-        return undefined;
+        return new Date(0); // return 0 so undefined doesnt crash the whole thing when trying to render before data is fetched
     }
 };
 
-const dateFormatter = (dateObject) => {
-    if (dateObject == undefined) return '';
-    
-    return `${dateObject.getFullYear()}-${dateObject.getMonth()}-${dateObject.getDate()}`;
-}
 export default function ProjectOverview() {
     // note that HeartyNavbar has an id specified in its component jsx file
     const [token, setToken] = useContext(LoginTokenContext);
@@ -54,6 +59,13 @@ export default function ProjectOverview() {
     const [projectTables, setProjectTables] = useState([]);
     const [projectWeddingChecklist, setProjectWeddingChecklist] = useState([]);
     const [projectRequests, setProjectRequests] = useState([]);
+    const [projectHiredVendors, setProjectHiredVendors] = useState([]);
+    const [projectVendorsPaidCostAndTotalCost, setProjectPaidCostAndTotalCost] = useState([]);
+    // ^ this is of the form [paidCost, totalCost]
+    const [projectVendoTransObjectList, setProjectVendoTransObjectList] = useState([]);
+    // ^ vendoTransObj is an object of the form: {vendor: VendorObject, transaction: TransactionObject}
+    const [vendorsCostPieChartData, setVendorsCostPieChartData] = useState();
+
     // const [searchParams, setSearchParams] = useSearchParams();
     // console.log(searchParams.getAll("x"))
     // for (const x of searchParams.entries()) {
@@ -85,9 +97,9 @@ export default function ProjectOverview() {
         pending: 0,
         rejected: 0,
         accepted: 0,
-        total: 0
-    })
-    
+        total: 0,
+    });
+
     // --- INITIAL DATA FETCHING ---
     useEffect(() => {
         let fetchedProject;
@@ -110,11 +122,12 @@ export default function ProjectOverview() {
             .then((res) => res.json())
             .then((tables) => setProjectTables(tables))
             .catch(() => console.log("sth went wrong with fetching tables"))
-            .then(() => WeddingProjectAPI.getRequestsByWeddingProjectId(fetchedProject.weddingProjectId))
+            .then(() =>
+                WeddingProjectAPI.getRequestsByWeddingProjectId(fetchedProject.weddingProjectId)
+            )
             .then((res) => res.json())
             .then((requests) => setProjectRequests(requests))
-            .catch(() => console.log('something went wrong with fetching requests'))
-            
+            .catch(() => console.log("something went wrong with fetching requests"));
     }, []);
 
     useEffect(() => {
@@ -122,13 +135,27 @@ export default function ProjectOverview() {
         console.log(guestInfo);
         setBrideGroomAttendingGuestInfo(guestInfo);
     }, [projectGuestList]);
-    
+
     useEffect(() => {
         const requestsInfo = computeRequestsInfo(projectRequests);
         console.log("Requests info is: ");
         console.log(requestsInfo);
         setProjectRequestsInfo(requestsInfo);
-    }, [projectRequests])
+
+        // these 2 fns dont need to call set fn directly, they are passed in as callback fn
+        requestAndComputeHiredVendors(projectRequests, setProjectHiredVendors);
+        fetchAndSetVendoTransObjectList(projectRequests, setProjectVendoTransObjectList);
+    }, [projectRequests]);
+
+    // generating pie chart data for vendor costs, once projectVendoTransObjectList is updated
+    // also generate the paid and total cost data
+    useEffect(() => {
+        generateVendorCostPieChartData(projectVendoTransObjectList, setVendorsCostPieChartData);
+        computeAndSetVendorsPaidAndTotalCost(
+            projectVendoTransObjectList,
+            setProjectPaidCostAndTotalCost
+        );
+    }, [projectVendoTransObjectList]);
 
     useEffect(() => console.log(projectTables), [projectTables]);
 
@@ -160,17 +187,27 @@ export default function ProjectOverview() {
                     />
                 </Dialog>
                 <Card title={currentProject.name} header={headerToolbar}>
+                    <Fieldset legend="Description">
                     <p>{currentProject.description}</p>
-                    
-                    <p>Date of wedding: {dateFormatter(dateProcessor(currentProject.weddingDate))}</p>
-                    
+                    </Fieldset>
+                    <Fieldset legend="Date">
+                    <p>
+                        Date of wedding: <b>{dateProcessor(currentProject.weddingDate).toLocaleString(undefined, {year: 'numeric', month: 'numeric', day: 'numeric'})}</b> <br/>
+                        Start time: <b>{dateProcessor(currentProject.weddingStartTime).toLocaleString(undefined, {hour: "2-digit", minute: "2-digit"})} </b><br/>
+                        End time:<b> {dateProcessor(currentProject.weddingEndTime).toLocaleString(undefined, {hour: "2-digit", minute: "2-digit"})} </b><br/>
+                    </p>
+                    </Fieldset>
+                    <Fieldset legend="Venue & Directions">
+                    <p>{currentProject.venue}</p>
+                    </Fieldset>
+
                     <div className="grid grid-nogutter">
                         <div className="col-12 md:col-6">
                             {/* there is no way to style header and content using headerStyle and contentStyle attributes */}
                             {/* This shit is literally bugged and there are many ppl online complaining as well */}
                             {/* To customise it u have to go in-depth into the CSS, and do some descendant selectors */}
                             {/* someAccordionStyle example is in the App.css */}
-                            <Accordion multiple>
+                            <Accordion multiple activeIndex={[0,1]}>
                                 <AccordionTab className="m-1" header="Guests & Tables">
                                     <BrideGroomDataTable
                                         guestNumberInfo={brideGroomAttendingGuestInfo}
@@ -181,7 +218,6 @@ export default function ProjectOverview() {
 
                                     <p>maybe buttons that links to guestlist & tables</p>
                                 </AccordionTab>
-                                {projectTables.length}
                                 <AccordionTab className="m-1" header="Tasks & Budget">
                                     <p>Current task progress: X out of Y tasks done</p>
                                     <p>Budget set: $X</p>
@@ -190,14 +226,29 @@ export default function ProjectOverview() {
                             </Accordion>
                         </div>
                         <div className="col-12 md:col-6">
-                            <Accordion multiple>
+                            <Accordion multiple activeIndex={[0,1]}>
                                 <AccordionTab className="m-1 someAccordionStyle" header="Vendors">
-                                    <p>Vendors hired: X</p>
-                                    <p>Total cost of vendors: $X</p>
+                                    <p>Vendors hired: <b>{projectHiredVendors.length}</b></p>
+                                    <p>
+                                        Paid/Total cost of vendors:{" "}
+                                        <b>
+                                            ${projectVendorsPaidCostAndTotalCost[0]}
+                                            {" / "}
+                                            ${projectVendorsPaidCostAndTotalCost[1]}
+                                        </b>
+                                    </p>
+                                    <Card title="Cost Breakdown By Vendor">
+                                        <Chart
+                                            type="pie"
+                                            data={vendorsCostPieChartData}
+                                            options={{ animation: true }}
+                                            className="w-full"
+                                        />
+                                    </Card>
                                     <p>maybe buttons that link to vendors</p>
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Requests Overview">
-                                    <RequestsDataTable requestsInfo={projectRequestsInfo}/>
+                                    <RequestsDataTable requestsInfo={projectRequestsInfo} />
                                     <p>maybe buttons that link to requests</p>
                                 </AccordionTab>
                             </Accordion>

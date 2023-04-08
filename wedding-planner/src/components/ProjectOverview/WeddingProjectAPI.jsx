@@ -26,6 +26,14 @@ const WeddingProjectAPI = {
     getRequestsByWeddingProjectId(projectId) {
       return fetch(`${NORMAL_WEBRESOURCES_PREFIX}/requests/weddingProjectRequests/${projectId}`);
     },
+    
+    getVendorOfRequest(requestId) {
+      return fetch(`${NORMAL_WEBRESOURCES_PREFIX}/vendors/getByRequest/${requestId}`);
+    },
+    
+    getTransactionOfAcceptedRequest(requestId) {
+      return fetch(`${NORMAL_WEBRESOURCES_PREFIX}/transactions/getByRequest/${requestId}`);
+    },
 
     updateWeddingProject(weddingProject) {
         return fetch(`${SERVER_PREFIX}/`, {

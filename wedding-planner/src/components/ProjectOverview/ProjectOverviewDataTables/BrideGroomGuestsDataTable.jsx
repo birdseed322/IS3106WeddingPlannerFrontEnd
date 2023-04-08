@@ -50,7 +50,7 @@ const BrideGroomGuestsDataTable = ({ guestNumberInfo }) => {
 
     const headerText = (
         <div style={{ textAlign: "center" }}>
-            <b>Guest Status</b>
+            <b>Guests Status</b>
         </div>
     );
     return (
