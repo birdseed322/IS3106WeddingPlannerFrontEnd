@@ -10,7 +10,8 @@ import { storage } from "../firebase";
 import { Galleria } from "primereact/galleria";
 import VendorAPI from './VendorManagementAPI';
 import { Toast } from 'primereact/toast';
-
+import { Tree } from 'primereact/tree';
+import { useNavigate } from "react-router-dom";
 
 
 const VendorDetailPage = () => {
@@ -20,7 +21,6 @@ const VendorDetailPage = () => {
 
   //ensure that the 'vendorName' param is the same as the :vendorName in the endpoint
   //console.log("endpoint extracted = " + vendorName);
-
 
   let chosenVendor = {
     email: "",
@@ -38,15 +38,35 @@ const VendorDetailPage = () => {
   };
 
   const imagesListRef = ref(storage, `Vendor/${vendorName}/Photos/`);
-
   const [vendor, setVendor] = useState(chosenVendor);
   const [imageUrls, setImageUrls] = useState([]);
+  const [selectedNodeKey, setSelectedNodeKey] = useState('');
+  const navigate = useNavigate();
+
+  const nodes = [{
+    label:"Visit Website",
+    icon: "pi pi-link",
+    url: "www.google.com"
+
+  }, {
+    label:"Instagram",
+    icon: "pi pi-camera",
+    url: "www.google.com"
+  },{
+    label: "Facebook",
+    icon: "pi pi-facebook",
+    url: "www.google.com"
+  },{
+    label: "Whatsapp",
+    icon: "pi pi-whatsapp",
+    url: "www.google.com"
+  }
+];
 
   const SERVER_PREFIX =
     "http://localhost:8080/IS3106WeddingPlanner-war/webresources/vendors";
 
   useEffect(() => {
-    console.log("Triggering get vendor details");
     getVendorDetails();
   }, []);
 
@@ -87,11 +107,19 @@ const VendorDetailPage = () => {
         quotedPrice: 0,
         requestDate: data.weddingDate,
         requestDetails: "Small gig",
+
       }
       VendorAPI.createRequest(request);
       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Request Created', life: 3000 });
      })
     }
+
+    const onSelect = (event) => {
+      let externalSite = "https://" + event.node.url;
+      window.open(externalSite);
+      toast.current.show({ severity: 'info', summary: 'Opening New Tab:', detail: event.node.url });
+  }
+  
 
   return (
     <div>
@@ -139,25 +167,13 @@ const VendorDetailPage = () => {
         </SplitterPanel>
         <SplitterPanel size={20} minSize={15}>
           <Panel header="Contacts">
-            <p className="m-0">
-              <i className="pi pi-link" />
-              <a href={vendor.websiteUrl}> Visit Website </a>
-            </p>
-
-            <p className="m-0">
-              <i className="pi pi-camera" />
-              <a href={vendor.instagramUrl}> Instagram </a>
-            </p>
-
-            <p className="m-0">
-              <i className="pi pi-facebook" />
-              <a href={vendor.facebookUrl}> Facebook </a>
-            </p>
-
-            <p className="m-0">
-              <i className="pi pi-whatsapp" />
-              <a href={vendor.whatsappUrl}> Whatsapp </a>
-            </p>
+          <div className="card flex justify-content-center">
+                <Tree value={nodes} selectionMode="single"
+                selectionKeys={selectedNodeKey} 
+                onSelectionChange={(e) => setSelectedNodeKey(e.label)}
+                onSelect={onSelect}
+                className="w-full md:w-25rem" />
+            </div>
           </Panel>
         </SplitterPanel>
       </Splitter>
