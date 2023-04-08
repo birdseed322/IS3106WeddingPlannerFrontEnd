@@ -34,6 +34,9 @@ import GuestView from '../components/GuestManagement/GuestView.jsx'
 import GuestViewItinerary from '../components/GuestManagement/GuestViewItinerary.jsx'
 import GuestViewNavbar from '../components/HeartyNavbar/GuestViewNavbar.jsx'
 import GuestQuery from '../components/GuestManagement/GuestQuery.jsx'
+import AdminSignUp from '../components/UnregisteredView/AdminSignUp.jsx'
+import VendorSignUp from '../components/UnregisteredView/VendorSignUp.jsx'
+import OrganiserSignUp from '../components/UnregisteredView/OrganiserSignUp.jsx'
 function EndPoints() {
   // for debugging, clear localStorage
   // localStorage.clear();
@@ -48,7 +51,13 @@ function EndPoints() {
       <LoginTokenContext.Provider value={[token, setToken]}>
         <BrowserRouter>
           <Routes>
-            <Route path="signup" element={<SignUp />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/adminsignup" element={<AdminSignUp />} />
+            <Route path="/vendorsingup" element={<VendorSignUp />} />
+            <Route
+              path="/weddingorganisersignup"
+              element={<OrganiserSignUp />}
+            />
             <Route path="homepage" element={<Homepage />} />
             <Route path="aboutuspage" element={<AboutUs />} />
             <Route path="contactpage" element={<Contact />} />

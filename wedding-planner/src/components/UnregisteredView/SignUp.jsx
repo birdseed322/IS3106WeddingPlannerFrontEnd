@@ -22,7 +22,7 @@ function SignUp() {
         >
           <h3 className="flex justify-content-center">Sign Up</h3>
           <div className="flex justify-content-center">
-            <Link to="/vendorsignup" className="noUnderline">
+            <Link to="vendorsignup" className="noUnderline">
               <Button
                 className="px-7"
                 label="Vendor"
@@ -32,7 +32,7 @@ function SignUp() {
           </div>
 
           <div className="flex justify-content-center pt-3">
-            <Link to="/weddingorganisersignup" className="noUnderline">
+            <Link to="weddingorganisersignup" className="noUnderline">
               <Button
                 className="px-3 pt-2"
                 label="Wedding Organiser"
@@ -41,7 +41,7 @@ function SignUp() {
             </Link>
           </div>
           <div className="flex justify-content-center pt-3">
-            <Link to="/adminsignup" className="noUnderline">
+            <Link to="adminsignup" className="noUnderline">
               <Button
                 className="px-7"
                 label="Admin"
