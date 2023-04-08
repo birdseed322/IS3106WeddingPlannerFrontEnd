@@ -41,7 +41,6 @@ const VendorDetailPage = () => {
   const [vendor, setVendor] = useState(chosenVendor);
   const [imageUrls, setImageUrls] = useState([]);
   const [selectedNodeKey, setSelectedNodeKey] = useState('');
-  const navigate = useNavigate();
 
   const nodes = [{
     label:"Visit Website",
@@ -107,9 +106,8 @@ const VendorDetailPage = () => {
         quotedPrice: 0,
         requestDate: data.weddingDate,
         requestDetails: "Small gig",
-
       }
-      VendorAPI.createRequest(request);
+      VendorAPI.createRequest(request,projectId, vendor.userId);
       toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Request Created', life: 3000 });
      })
     }
