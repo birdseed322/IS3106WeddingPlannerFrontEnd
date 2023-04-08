@@ -1,31 +1,22 @@
 
 import React, { useState, useEffect, useRef, memo, FC } from 'react';
-import { NodeResizer, NodeResizeControl } from '@reactflow/node-resizer';
-import { Handle, Position, NodeToolbar } from 'reactflow';
 import { Button } from 'primereact/button';
-import '@reactflow/node-resizer/dist/style.css';
+import { Handle, Position, NodeResizer } from 'reactflow';
 import 'reactflow/dist/style.css';
-
+import table from './src/table.png';
 //{tableNumber, currOccupancy, capacity}
 //                    stroke="#FF69B4" stroke-width="1"
+
 
     //adapted svg circle from https://codesandbox.io/s/svg-circle-forked-h3p9h6?file=/package.json adapted svg attributes https://www.geeksforgeeks.org/how-to-make-an-svg-scale-with-its-parent-container/
     const Table = ({data, selected}) => {
         return (
             <>
-            <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} maxHeight={400} maxWidth={400} keepAspectRatio={true} />
-            <div className="tableNode">
-`                <svg width="100%" height="100%" viewBox="0 0 200 200">
-                        <circle
-                            cx="100"
-                            cy="100"
-                            r="100"
-                            fill="#FBE3E8"
-                        />
-                        <text text-anchor="middle" x="50%" y="40%" fill="black" font-family="Optima" font-size="30px" font-weight="bold" > Table {data.tableNumber}</text>
-                        <text text-anchor="middle" x="50%" y="62%" fill="black" font-family="Optima" font-size="20px">{data.currOccupancy}/{data.capacity} </text> {/*center alignment credits to chatgpt*/}
-                        <text text-anchor="middle" x="50%" y="80%" fill="black" font-family="Optima" font-size="15px"> occupied </text>
-                </svg>`
+            <div className="inline-block text-center">
+                <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} maxWidth={200} maxHeight={200}/>
+                <img className="z-1" src={table} height="200px" width="200px"></img>
+                <h2 className="inline-block mt-8 z-5 absolute m-auto left-0 right-0">Table {data.tableNumber}</h2>
+                <h3 style={{marginTop:"7.5rem"}} className="absolute inline-block z-5 left-0 right-0">{data.currOccupancy} / {data.capacity}</h3>
             </div>
 
             </>

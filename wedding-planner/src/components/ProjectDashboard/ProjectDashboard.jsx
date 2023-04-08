@@ -1,12 +1,12 @@
 import { Button } from 'primereact/button'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import HeartyNavbar from '../HeartyNavbar/HeartyNavbar'
 import { Card } from 'primereact/card'
 import AddProject from './AddProject'
 import { Dialog } from 'primereact/dialog'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
+import ProjectNavbar from '../HeartyNavbar/ProjectNavbar'
 
 function ProjectDashboard() {
   const [showCard, setShowCard] = useState(false)
@@ -44,7 +44,7 @@ function ProjectDashboard() {
 
   return (
     <div>
-      <HeartyNavbar />
+      <ProjectNavbar />
       <div id="bodyContainer" className="pt-5 px-3">
         <Button
           className="top-right-button"

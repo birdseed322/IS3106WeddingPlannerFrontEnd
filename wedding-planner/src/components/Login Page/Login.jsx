@@ -7,7 +7,6 @@ import { InputText } from "primereact/inputtext";
 import LoginAPI from "./LoginAPI";
 import { Dropdown } from "primereact/dropdown";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
-
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
 
@@ -23,7 +22,6 @@ const userTypeItems = [
 function Login() {
   
     const [token, setToken] = useContext(LoginTokenContext);
-  
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [userType, setUserType] = useState("ADMIN");
@@ -83,7 +81,7 @@ function Login() {
                         onClick={() => doLogin(userType, username, password, setToken)}
                     />{" "}
                 </Link>
-                <div className="flex justify-content-center px-5">
+                <div className="flex justify-content-center px-5 mt-5">
                     <p className="px-1">Don't Have an Account ?</p>
                     <Link to="/signup" className="noUnderline">
                         <p style={{ color: "#f561b0" }}>Sign Up</p>
@@ -97,6 +95,7 @@ function Login() {
         <div>
             <PublicHeartyNavbar />
             <div className="flex justify-content-center pt-5">
+                <form onSubmit={doLogin}>
                 <Card
                     // title={title}
                     footer={footer}
@@ -104,22 +103,28 @@ function Login() {
                         minWidth: "300px",
                         maxWidth: "500px",
                         minHeight: "500px",
-                        maxHeight: "700px",
-                    }}
+                            maxHeight: "700px",
+                    }} 
                 >
-                    <h3 className="flex justify-content-center">Login</h3>
+                        <h3 className="flex justify-content-center">Login</h3>
 
-                    <div className="flex justify-content-center">
+                        <div className="flex justify-content-center mt-3">
                         {/* set flex grow to 1 */}
-                        <p className="flex-1">Username: </p>
-                        <InputText value={username} onChange={(e) => setUsername(e.target.value)} />
+                            <p className="flex-1 mt-1">Username: </p>
+                            <InputText
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
                     </div>
-                    <div className="flex justify-content-center">
-                        <p className="flex-1">Password: </p>
-                        <InputText value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <div className="flex justify-content-center mt-3">
+                            <p className="flex-1 mt-2">Password: </p>
+                            <InputText
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
                     </div>
-                    <div className="flex justify-content-center">
-                        <p className="flex-1">User Type: </p>
+                        <div className="flex justify-content-center mt-3">
+                            <p className="flex-1 mt-2">User Type: </p>
                         <Dropdown
                             label="userType"
                             options={userTypeItems}
@@ -133,6 +138,7 @@ function Login() {
                         {/* <Button label="log setToken val" onClick={() => console.log(setToken)} /> */}
                     </div>
                 </Card>
+                </form>
             </div>
         </div>
     );

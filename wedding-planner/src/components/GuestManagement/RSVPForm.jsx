@@ -20,9 +20,6 @@ export default function RSVPForm() {
         <img src={rsvp} style= {{maxWidth:"100%", maxHeight:"40%", marginTop:"0%"}}></img>
         );
     const handleRSVP = () => {
-        console.log(email);
-        console.log(rsvpStatus);
-        console.log(weddingId);
         EmailAPI.updateGuestRSVP(email, rsvpStatus, weddingId).then(response => {
             if (response.status === 204) {
                 toast.current.show({ severity: 'success', summary: 'Success', detail: 'RSVP status updated ' , life: 3000 });
@@ -41,11 +38,10 @@ export default function RSVPForm() {
     );
     return (
         <div class="grid align-content-center justify-content-center text-center">
-            <Toast ref={toast} />
+            <Toast ref={toast} className="z-5" style={{backgroundColor:"#FFFFFF"}}/>
             <video autoplay="true" loop="true" preload="auto" width="100%" height="100%" muted="true">
                 <source src={background} type="video/mp4"></source>
             </video>
-
             <div class="col-4 absolute top-0"></div>
                 <div class="col-4 absolute top-0">
                     <Card footer={footer} header={header} className="md:w-25rem opacity-95">

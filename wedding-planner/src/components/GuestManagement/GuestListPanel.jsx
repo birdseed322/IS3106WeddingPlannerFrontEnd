@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef ,memo  } from 'react';
 import { Panel } from 'primereact/panel';
 import { Ripple } from 'primereact/ripple';
 import {DataTable} from 'primereact/datatable';
@@ -11,9 +11,10 @@ import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
 import { Toast } from 'primereact/toast';
 import 'reactflow/dist/style.css';
+import { Routes, Route, useParams } from 'react-router-dom';
 
-export default function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable}) { //guests and the selectedTable props are related
-    const weddingId = 1;
+function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable, updateGuest, setUpdateGuest}) { //guests and the selectedTable props are related
+    const {projectId} = useParams();
     const toast = useRef(null);
     const dt = useRef(null);
     const [globalFilter, setGlobalFilter] = useState(null);
@@ -23,9 +24,10 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
     const [toDelete, setToDelete] = useState(null); //guest to delete
     const [deleteGuestDialog, setDeleteGuestDialog] = useState(false);
     useEffect(() => {
-        Api.getAllGuests(weddingId).then((response) => {
+        Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
+            console.log(g);
             const temp = new Set();
             const candidate = [];
             for (const table of tables) {
@@ -45,7 +47,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
             console.log(error);
         });
-    }, [tables]);
+    }, [updateGuest]);
     const deleteGuest = () => {
         if (selectedTable != null) {
             let _guests = [...selectedTable.data.guests];
@@ -61,6 +63,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             setSelectedTable(newUpdatedTable);
             setFullGuests(fg => fg.concat(toDelete));
             setToDelete(null);
+            setUpdateGuest(!updateGuest);
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
         } else {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
@@ -68,9 +71,6 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
 
     };
     const handleAddToTable = () => {
-        console.log("SELECTED TABLE AND GUESTS");
-        console.log(selectedTable);
-        console.log(selectedGuests);
         if (selectedTable != null && selectedGuests != null) {
             const temp = (selectedTable.data.guests.length > 0 ? selectedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0)
                             + (selectedGuests.length > 0 ? selectedGuests.map(g => g.numPax).reduce((x,y) => x + y) : 0);
@@ -109,6 +109,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
                 setVisible(false);
             }
         }
+        setUpdateGuest(!updateGuest);
     }
     const footerContent = (
         <div className="card flex justify-content-center">
@@ -218,3 +219,4 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             </span>
     )
 }
+export default memo(GuestListPanel);

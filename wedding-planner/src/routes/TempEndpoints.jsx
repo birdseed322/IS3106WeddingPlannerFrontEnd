@@ -24,6 +24,7 @@ import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.js
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
+import MainTable from "../components/GuestManagement/MainTable.jsx";
 
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 import Schedule from "../components/VendorView/Schedule Page/Schedule.jsx";
@@ -31,9 +32,10 @@ import SpecificRequestPage from "../components/VendorView/Specific Request Page/
 function TempEndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
-
+    const { token, setToken } = useToken();
     return (
         <>
+                <LoginTokenContext.Provider value={token}></LoginTokenContext.Provider>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
@@ -73,7 +75,7 @@ function TempEndPoints() {
                                 path="/VendorSearchPage/Category/:vendorCategory"
                                 element={<CategoryDisplayPage />}
                             />
-                            <Route exact path="/tablelayout" element={<TableLayout />} />
+                            <Route exact path="/tablelayout" element={<MainTable />} />
                             <Route exact path="/guestlist" element={<GuestList />} />
                             <Route exact path="/homepage" element={<Homepage />} />
                             <Route exact path="/aboutuspage" element={<AboutUs />} />
