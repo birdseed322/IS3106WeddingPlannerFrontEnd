@@ -30,7 +30,7 @@ export default function WeddingBudgetPlanner() {
         weddingBudgetItemId: null,
     };
 
-    const [weddingProjectId, setWeddingProjectId] = useState(1);
+    const [weddingProjectId, setWeddingProjectId] = useState(3);
     const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
     const [budget, setBudget] = useState(emptyBudget);
     const [budgets, setBudgets] = useState([]);
@@ -39,6 +39,7 @@ export default function WeddingBudgetPlanner() {
 
     const [budgetDialog, setBudgetDialog] = useState(false);
     const [itemDialog, setItemDialog] = useState(false);
+    const [deleteItemDialog, setDeleteItemDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => reloadData(), []);
@@ -46,12 +47,24 @@ export default function WeddingBudgetPlanner() {
     const reloadData = () => {
         WeddingBudgetPlannerAPI.retrieveAllItems()
             .then((res) => {
-                console.log(budget);
                 return res.json();
             })
             .then((items) => {
                 setItems(items);
                 console.log(items);
+            });
+    };
+
+    useEffect(() => budgetData(), []);
+
+    const budgetData = () => {
+        WeddingBudgetPlannerAPI.retrieveAllBudgets()
+            .then((res) => {
+                return res.json();
+            })
+            .then((budgets) => {
+                setBudgets(budgets);
+                console.log(budgets);
             });
     };
 
@@ -95,36 +108,37 @@ export default function WeddingBudgetPlanner() {
                     rounded
                     outlined
                     className="mr-2"
-                    // onClick={() => editGuest(rowData)}
+                    onClick={() => editItem(rowData)}
                 />
                 <Button
                     icon="pi pi-trash"
                     rounded
                     outlined
                     severity="danger"
-                    // onClick={() => confirmDeleteItem(rowData)}
+                    onClick={() => confirmDeleteItem(rowData)}
                 />
             </React.Fragment>
         );
     };
 
     const onInputBudgetChange = (e, name) => {
-        const val = (e.target && e.target.value) || "";
+        const val = e.value || 0;
         let _budget = { ...budget };
 
         _budget[`${name}`] = val;
 
         setBudget(_budget);
+        console.log(budget);
     };
 
-    const onInputNumBudgetChange = (e, number) => {
-        const val = e.value || 0;
-        let _budget = { ...budget };
+    // const onInputNumBudgetChange = (e, number) => {
+    //     const val = e.value || 0;
+    //     let _budget = { ...budget };
 
-        _budget[`${number}`] = val;
+    //     _budget[`${number}`] = val;
 
-        setBudget(_budget);
-    };
+    //     setBudget(_budget);
+    // };
 
     const onInputItemChange = (e, name) => {
         const val = (e.target && e.target.value) || "";
@@ -158,6 +172,12 @@ export default function WeddingBudgetPlanner() {
         setBudgetDialog(true);
     };
 
+    const newItemDialog = () => {
+        setItem(emptyItem);
+        setSubmitted(false);
+        setItemDialog(true);
+    };
+
     const showItemDialog = () => {
         setSubmitted(false);
         setItemDialog(true);
@@ -173,28 +193,141 @@ export default function WeddingBudgetPlanner() {
         setSubmitted(false);
     };
 
+    const findIndexById = (id) => {
+        let index = -1;
+
+        for (let i = 0; i < budgets.length; i++) {
+            if (budgets[i].weddingBudgetListId === id) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    };
+
+    const findItemIndexById = (id) => {
+        let index = -1;
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].weddingBudgetItemId === id) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    };
+
     const handleBudgetDialog = () => {
         setSubmitted(true);
         let _budget = { ...budget };
         let _budgets = [...budgets];
-        if (budget.weddingBudgetListId === null) {
-            WeddingBudgetPlannerAPI.createBudget(budget, weddingProjectId)
-                .then((res) => {
-                    return res.json();
-                })
-                .then((idObject) => {
+        console.log(_budget);
+        console.log(_budgets);
+
+        const jsonified = JSON.stringify(_budget);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        if (budget.weddingBudgetListId != null) {
+            const index = findIndexById(budget.weddingBudgetListId);
+            WeddingBudgetPlannerAPI.updateBudget(parsedCopy).then(() => {
+                _budgets[index] = _budget;
+                setBudgets(_budgets);
+                setBudgetDialog(false);
+            });
+        } else {
+            WeddingBudgetPlannerAPI.createBudget(
+                parsedCopy,
+                weddingProjectId
+            ).then((response) => {
+                response.json().then((idObject) => {
                     _budget.weddingBudgetListId = idObject.WEDDINGBUDGETLISTID;
                     _budgets.push(_budget);
                     setBudgets(_budgets);
                     setBudgetDialog(false);
                 });
-        } else {
+            });
         }
     };
 
     const handleItemDialog = () => {
         setSubmitted(true);
+        let _item = { ...item };
+        let _items = [...items];
+        console.log(_item);
+        console.log(_items);
+
+        const jsonified = JSON.stringify(_item);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        if (item.weddingBudgetItemId != null) {
+            const index = findItemIndexById(item.weddingBudgetItemId);
+            WeddingBudgetPlannerAPI.updateItem(parsedCopy).then(() => {
+                _items[index] = _item;
+                setItems(_items);
+                setItemDialog(false);
+            });
+        } else {
+            WeddingBudgetPlannerAPI.createItem(
+                parsedCopy,
+                weddingBudgetListId
+            ).then((response) => {
+                response.json().then((idObject) => {
+                    _item.weddingBudgetItemId = idObject.WEDDINGBUDGETITEMID;
+                    _items.push(_item);
+                    setItems(_items);
+                    setItemDialog(false);
+                });
+            });
+        }
     };
+
+    const editItem = (item) => {
+        setItem({ ...item });
+        setItemDialog(true);
+    };
+
+    const confirmDeleteItem = (item) => {
+        setItem(item);
+        setDeleteItemDialog(true);
+    };
+
+    const deleteItem = () => {
+        let _items = items.filter(
+            (val) => val.weddingBudgetItemId !== item.weddingBudgetItemId
+        );
+        WeddingBudgetPlannerAPI.deleteItem(item.weddingBudgetItemId).then(
+            () => {
+                setItems(_items);
+                setDeleteItemDialog(false);
+                setItem(emptyItem);
+            }
+        );
+    };
+
+    const hideDeleteItemDialog = () => {
+        setDeleteItemDialog(false);
+    };
+
+    const deleteItemDialogFooter = (
+        <React.Fragment>
+            <Button
+                label="No"
+                icon="pi pi-times"
+                outlined
+                onClick={hideDeleteItemDialog}
+            />
+            <Button
+                label="Yes"
+                icon="pi pi-check"
+                severity="danger"
+                onClick={deleteItem}
+            />
+        </React.Fragment>
+    );
 
     const budgetFooter = (
         <React.Fragment>
@@ -259,7 +392,13 @@ export default function WeddingBudgetPlanner() {
             <div>
                 <HeartyNavbar></HeartyNavbar>
                 <Card className="flex justify-content-center">
-                    <h3>Budget: {budget.budget}</h3>
+                    <h3>
+                        Budget:{" "}
+                        {budget.budget.toLocaleString("en-SG", {
+                            style: "currency",
+                            currency: "SGD",
+                        })}
+                    </h3>
                     <Button label="edit" onClick={showBudgetDialog} />
                     <h3>
                         Total Cost:{" "}
@@ -278,7 +417,7 @@ export default function WeddingBudgetPlanner() {
                     <Button
                         label="Add Item"
                         icon="pi pi-plus"
-                        onClick={showItemDialog}
+                        onClick={newItemDialog}
                     ></Button>
                 </Card>
             </div>
@@ -290,7 +429,7 @@ export default function WeddingBudgetPlanner() {
                     tableStyle={{ minWidth: "60rem" }}
                     // selection={selectedGuests}
                     // onSelectionChange={(e) => setSelectedGuests(e.value)}
-                    dataKey="id"
+                    dataKey="weddingBudgetItemId"
                     paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
@@ -342,10 +481,10 @@ export default function WeddingBudgetPlanner() {
                         required
                         autoFocus
                         className={classNames({
-                            "p-invalid": submitted && budget.budget < 0,
+                            "p-invalid": submitted && budget.budget <= 0,
                         })}
                     />
-                    {submitted && budget.budget < 0 && (
+                    {submitted && budget.budget <= 0 && (
                         <small className="p-error">
                             Item Budget is required.
                         </small>
@@ -442,6 +581,28 @@ export default function WeddingBudgetPlanner() {
                         <small className="p-error">
                             Item Category is required.
                         </small>
+                    )}
+                </div>
+            </Dialog>
+
+            <Dialog
+                visible={deleteItemDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Confirm"
+                modal
+                footer={deleteItemDialogFooter}
+                onHide={hideDeleteItemDialog}
+            >
+                <div className="confirmation-content">
+                    <i
+                        className="pi pi-exclamation-triangle mr-3"
+                        style={{ fontSize: "2rem" }}
+                    />
+                    {item && (
+                        <span>
+                            Are you sure you want to delete <b>{item.name}</b>?
+                        </span>
                     )}
                 </div>
             </Dialog>

@@ -14,7 +14,7 @@ const WeddingBudgetPlannerAPI = {
     },
 
     createItem(data, weddingBudgetListId) {
-        return fetch(`${SERVER_PREFIX}/item/${weddingBudgetListId}`, {
+        return fetch(`${SERVER_PREFIX}/${weddingBudgetListId}`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -24,8 +24,8 @@ const WeddingBudgetPlannerAPI = {
         });
     },
 
-    retrieveAllBudgets(weddingProjectId) {
-        return fetch(`${SERVER_PREFIX}/budgets/${weddingProjectId}`);
+    retrieveAllBudgets() {
+        return fetch(`${SERVER_PREFIX}/budgets`);
     },
 
     retrieveBudget(weddingBudgetListId) {

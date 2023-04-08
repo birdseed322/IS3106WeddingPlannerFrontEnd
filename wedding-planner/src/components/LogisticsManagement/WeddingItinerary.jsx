@@ -1,20 +1,45 @@
 import React, { useState, useEffect } from "react";
-import moment from "moment";
+
+import { Card } from "primereact/card";
+import { Calendar } from "primereact/calendar";
+import { Button } from "primereact/button";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { classNames } from "primereact/utils";
 
 import WeddingItineraryAPI from "./WeddingItineraryAPI";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 
 export default function WeddingItinerary() {
     let emptyItinerary = {
-        eventDate: moment("1990-01-01 00:00:00").toDate(),
+        eventDate: null,
         eventEndTime: null,
         eventName: "",
         eventStartTime: null,
         weddingItineraryId: null,
     };
 
+    const [weddingProjectId, setWeddingProjectId] = useState(1);
     const [itinerary, setItinerary] = useState(emptyItinerary);
     const [itineraries, setItineraries] = useState([]);
+    const [itineraryDialog, setItineraryDialog] = useState(false);
+    const [deleteItineraryDialog, setDeleteItineraryDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+
+    const dateProcessor = (dateString) => {
+        if (typeof dateString === "string") {
+            // it works without this if-else but just in case sth goes wrong:
+            if (dateString[dateString.length - 1] === "]") {
+                return new Date(dateString.slice(0, -5));
+            } else {
+                return new Date(dateString);
+            }
+        } else {
+            return undefined;
+        }
+    };
 
     useEffect(() => {
         reloadData();
@@ -23,21 +48,19 @@ export default function WeddingItinerary() {
     const reloadData = () => {
         WeddingItineraryAPI.getAllItineraries()
             .then((res) => {
-                console.log(res);
-                console.log(res.json());
-                // return res.json();
+                return res.json();
             })
             .then((itineraries) => {
                 const updatedItineraries = itineraries.map((itinerary) => {
-                    const updatedEventDate = new Date(itinerary.eventDate);
-                    const updatedEventStartTime = moment(
-                        itinerary.eventStartTime,
-                        "YYYY-MM-DDTHH:mm:ssZ[UTC]"
-                    ).toDate();
-                    const updatedEventEndTime = moment(
-                        itinerary.eventEndTime,
-                        "YYYY-MM-DDTHH:mm:ssZ[UTC]"
-                    ).toDate();
+                    const updatedEventDate = dateProcessor(
+                        itinerary.eventDate
+                    ).toLocaleDateString();
+                    const updatedEventStartTime = dateProcessor(
+                        itinerary.eventStartTime
+                    ).toLocaleTimeString();
+                    const updatedEventEndTime = dateProcessor(
+                        itinerary.eventEndTime
+                    ).toLocaleTimeString();
 
                     return {
                         ...itinerary,
@@ -52,41 +75,312 @@ export default function WeddingItinerary() {
             .catch((error) => console.log(error));
     };
 
-    // const reloadData = () => {
-    //     WeddingItineraryAPI.getAllItineraries()
-    //         .then((res) => {
-    //             console.log(res);
-    //             console.log(res.json());
-    //             // return res.json();
-    //         })
-    //         .then((itineraries) => {
-    //             const updatedItineraries = itineraries.map((itinerary) => {
-    //                 const updatedEventDate = new Date(itinerary.eventDate);
-    //                 const updatedEventStartTime = moment(
-    //                     itinerary.eventStartTime,
-    //                     "YYYY-MM-DDTHH:mm:ssZ[UTC]"
-    //                 ).toDate();
-    //                 const updatedEventEndTime = moment(
-    //                     itinerary.eventEndTime,
-    //                     "YYYY-MM-DDTHH:mm:ssZ[UTC]"
-    //                 ).toDate();
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button
+                    icon="pi pi-pencil"
+                    rounded
+                    outlined
+                    className="mr-2"
+                    onClick={() => editItinerary(rowData)}
+                />
+                <Button
+                    icon="pi pi-trash"
+                    rounded
+                    outlined
+                    severity="danger"
+                    onClick={() => confirmDeleteItinerary(rowData)}
+                />
+            </React.Fragment>
+        );
+    };
 
-    //                 return {
-    //                     ...itinerary,
-    //                     eventDate: updatedEventDate,
-    //                     eventStartTime: updatedEventStartTime,
-    //                     eventEndTime: updatedEventEndTime,
-    //                 };
-    //             });
+    const onInputChange = (e, name) => {
+        const val = (e.target && e.target.value) || "";
+        let _itinerary = { ...itinerary };
 
-    //             setItineraries(updatedItineraries);
-    //         })
-    //         .catch((error) => console.log(error));
-    // };
+        _itinerary[`${name}`] = val;
+
+        setItinerary(_itinerary);
+    };
+
+    const showItineraryDialog = () => {
+        setItinerary(emptyItinerary);
+        setSubmitted(false);
+        setItineraryDialog(true);
+    };
+
+    const hideItineraryDialog = () => {
+        setSubmitted(false);
+        setItineraryDialog(false);
+    };
+
+    const findIndexById = (id) => {
+        let index = -1;
+
+        for (let i = 0; i < itineraries.length; i++) {
+            if (itineraries[i].id === id) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    };
+    const handleItineraryDialog = () => {
+        setSubmitted(true);
+        let _itinerary = { ...itinerary };
+        let _itineraries = [...itineraries];
+        console.log(_itinerary);
+        console.log(_itineraries);
+
+        const jsonified = JSON.stringify(_itinerary);
+        const parsedCopy = JSON.parse(jsonified);
+
+        if (itinerary.weddingItineraryId != null) {
+            const index = findIndexById(itinerary.weddingItineraryId);
+            WeddingItineraryAPI.updateItinerary(parsedCopy).then(() => {
+                _itineraries[index] = _itinerary;
+                setItineraries(_itineraries);
+                setItineraryDialog(false);
+            });
+        } else {
+            WeddingItineraryAPI.createNewItinerary(
+                parsedCopy,
+                weddingProjectId
+            ).then((response) => {
+                response.json().then((idObject) => {
+                    _itinerary.weddingItineraryId = idObject.WEDDINGITINERARYID;
+                    _itineraries.push(_itinerary);
+                    setItineraries(_itineraries);
+                    setItineraryDialog(false);
+                });
+            });
+        }
+    };
+
+    const editItinerary = (itinerary) => {
+        setItinerary({ ...itinerary });
+        setItineraryDialog(true);
+    };
+
+    const confirmDeleteItinerary = (itinerary) => {
+        setItinerary(itinerary);
+        setDeleteItineraryDialog(true);
+    };
+
+    const deleteItinerary = () => {
+        let _itineraries = itineraries.filter(
+            (val) => val.weddingItineraryId !== itinerary.weddingItineraryId
+        );
+        WeddingItineraryAPI.deleteItinerary(itinerary.weddingItineraryId).then(
+            () => {
+                setItineraries(_itineraries);
+                setDeleteItineraryDialog(false);
+                setItinerary(emptyItinerary);
+            }
+        );
+    };
+
+    const hideDeleteItineraryDialog = () => {
+        setDeleteItineraryDialog(false);
+    };
+
+    const deleteItineraryDialogFooter = (
+        <React.Fragment>
+            <Button
+                label="No"
+                icon="pi pi-times"
+                outlined
+                onClick={hideDeleteItineraryDialog}
+            />
+            <Button
+                label="Yes"
+                icon="pi pi-check"
+                severity="danger"
+                onClick={deleteItinerary}
+            />
+        </React.Fragment>
+    );
+
+    const itineraryDialogFooter = (
+        <React.Fragment>
+            <Button
+                label="Cancel"
+                icon="pi pi-times"
+                outlined
+                onClick={hideItineraryDialog}
+            />
+            <Button
+                label="Save"
+                icon="pi pi-check"
+                onClick={handleItineraryDialog}
+            />
+        </React.Fragment>
+    );
 
     return (
         <div>
             <HeartyNavbar></HeartyNavbar>
+            <Card>
+                <h4>
+                    Date: <Calendar id="eventDate"></Calendar>
+                </h4>
+                <Button
+                    label="Add New Itinerary"
+                    icon="pi pi-plus"
+                    onClick={showItineraryDialog}
+                ></Button>
+                <br />
+
+                <DataTable
+                    value={itineraries}
+                    header="Wedding Itineraries"
+                    tableStyle={{ minWidth: "60rem" }}
+                    // selection={selectedGuests}
+                    // onSelectionChange={(e) => setSelectedGuests(e.value)}
+                    dataKey="weddingItineraryId"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[5, 10, 25]}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+                >
+                    <Column header="ID" field="weddingItineraryId"></Column>
+                    <Column header="Event Name" field="eventName"></Column>
+                    <Column header="Event Date" field="eventDate"></Column>
+                    <Column
+                        header="Event Start Time"
+                        field="eventStartTime"
+                    ></Column>
+                    <Column
+                        header="Event End Time"
+                        field="eventEndTime"
+                    ></Column>
+                    <Column
+                        body={actionBodyTemplate}
+                        exportable={false}
+                    ></Column>
+                </DataTable>
+            </Card>
+
+            <Dialog
+                visible={itineraryDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="itinerary Details"
+                modal
+                className="p-fluid"
+                footer={itineraryDialogFooter}
+                onHide={hideItineraryDialog}
+            >
+                <div className="field">
+                    <label htmlFor="eventName" className="font-bold">
+                        Event Name
+                    </label>
+                    <InputText
+                        id="eventName"
+                        value={itinerary.eventName}
+                        onChange={(e) => onInputChange(e, "eventName")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !itinerary.eventName,
+                        })}
+                    />
+                    {submitted && !itinerary.eventName && (
+                        <small className="p-error">
+                            Event Name is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="eventDate" className="font-bold">
+                        Event Date
+                    </label>
+                    <Calendar
+                        id="eventDate"
+                        value={itinerary.eventDate}
+                        onChange={(e) => onInputChange(e, "eventDate")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !itinerary.eventDate,
+                        })}
+                    />
+                    {submitted && !itinerary.eventDate && (
+                        <small className="p-error">
+                            Event Date is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="eventStartTime" className="font-bold">
+                        Event Start Time
+                    </label>
+                    <Calendar
+                        id="eventStartTime"
+                        value={itinerary.eventStartTime}
+                        onChange={(e) => onInputChange(e, "eventStartTime")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !itinerary.eventStartTime,
+                        })}
+                        timeOnly
+                    />
+                    {submitted && !itinerary.eventStartTime && (
+                        <small className="p-error">
+                            Event Start Time is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="eventEndTime" className="font-bold">
+                        Event End Time
+                    </label>
+                    <Calendar
+                        id="eventEndTime"
+                        value={itinerary.eventEndTime}
+                        onChange={(e) => onInputChange(e, "eventEndTime")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !itinerary.eventEndTime,
+                        })}
+                        timeOnly
+                    />
+                    {submitted && !itinerary.eventEndTime && (
+                        <small className="p-error">
+                            Event End Time is required.
+                        </small>
+                    )}
+                </div>
+            </Dialog>
+
+            <Dialog
+                visible={deleteItineraryDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Confirm"
+                modal
+                footer={deleteItineraryDialogFooter}
+                onHide={hideDeleteItineraryDialog}
+            >
+                <div className="confirmation-content">
+                    <i
+                        className="pi pi-exclamation-triangle mr-3"
+                        style={{ fontSize: "2rem" }}
+                    />
+                    {itinerary && (
+                        <span>
+                            Are you sure you want to delete{" "}
+                            <b>{itinerary.eventName}</b>?
+                        </span>
+                    )}
+                </div>
+            </Dialog>
         </div>
     );
 }

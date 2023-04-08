@@ -12,7 +12,7 @@ import { LoginTokenContext } from "../../context/LoginTokenContext";
 export default function HeartyNavbar(props) {
     // array of MenuItems
     // see https://www.primefaces.org/primereact-v8/menumodel/
-    const [token, setToken] = useContext(LoginTokenContext);
+    // const [token, setToken] = useContext(LoginTokenContext);
 
     // gets projectId from URL parameters
     const { projectId } = useParams();
@@ -92,7 +92,7 @@ export default function HeartyNavbar(props) {
                         border: "#f561b0",
                         marginRight: "1rem",
                     }}
-                    onClick={() => setToken(false)} // set token to false
+                    // onClick={() => setToken(false)} // set token to false
                 />{" "}
             </Link>
 
