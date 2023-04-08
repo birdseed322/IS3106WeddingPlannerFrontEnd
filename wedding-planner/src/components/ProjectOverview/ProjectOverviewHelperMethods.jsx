@@ -1,3 +1,22 @@
+export const dateProcessor = (dateString) => {
+    if (typeof dateString === "string") {
+        // it works without this if-else but just in case sth goes wrong:
+        if (dateString[dateString.length - 1] == "]") {
+            return new Date(dateString.slice(0, -5));
+        } else {
+            return new Date(dateString);
+        }
+    } else {
+        return undefined;
+    }
+};
+
+export const dateFormatter = (dateObject) => {
+    if (dateObject == undefined) return '';
+    
+    return `${dateObject.getFullYear()}-${dateObject.getMonth()}-${dateObject.getDate()}`;
+}
+
 export const computeGuestInfo = (guestList) => {
     const guestInfo = {
         total: {
