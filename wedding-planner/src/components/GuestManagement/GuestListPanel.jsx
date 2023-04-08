@@ -27,12 +27,13 @@ function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setS
         Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
-            console.log(g);
             const temp = new Set();
             const candidate = [];
+            console.log("HERE");
             for (const table of tables) {
                 if (table.type === 'table') {
                     for (const guest of table.data.guests) {
+                        console.log("ADDD");
                         temp.add(guest.id);
                     }
                 }
@@ -42,6 +43,7 @@ function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setS
                     candidate.push(x);
                 }
             }
+            console.log(candidate.length);
             setFullGuests(candidate);
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });

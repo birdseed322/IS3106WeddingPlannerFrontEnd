@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, memo, FC } from 'react';
 import { Button } from 'primereact/button';
-import { Handle, Position, NodeResizer } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 import 'reactflow/dist/style.css';
 import table from './src/table.png';
 //{tableNumber, currOccupancy, capacity}

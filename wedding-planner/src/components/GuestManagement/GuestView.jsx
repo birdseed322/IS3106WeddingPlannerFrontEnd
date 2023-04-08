@@ -66,7 +66,7 @@ export default function GuestView() {
                     type : 'stage',
                     position: { x: locationX, y: locationY },
                     selected : false,
-                    style: { width: stageWidth, height: stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, 
+                    style: { width: stageWidth, height: stageHeight, backgroundColor : "rgb(242, 112, 156)"}, 
                     data: { tableNumber: tableNumber}
                 })
             }

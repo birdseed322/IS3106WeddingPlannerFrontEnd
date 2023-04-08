@@ -2,14 +2,14 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useContext } from "react";
+import React, { useContext, memo } from "react";
 import { Menubar } from "primereact/menubar";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Link, useParams } from "react-router-dom";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
 
-export default function HeartyNavbar(props) {
+function HeartyNavbar(props) {
     // array of MenuItems
     // see https://www.primefaces.org/primereact-v8/menumodel/
     const [token, setToken] = useContext(LoginTokenContext);
@@ -141,6 +141,7 @@ export default function HeartyNavbar(props) {
         />
     );
 }
+export default memo(HeartyNavbar);
 
 // example items
 // const items = [
