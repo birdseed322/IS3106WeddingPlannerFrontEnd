@@ -28,6 +28,7 @@ import MainTable from "../components/GuestManagement/MainTable.jsx";
 
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 import Schedule from "../components/VendorView/Schedule Page/Schedule.jsx";
+import SpecificRequestPage from "../components/VendorView/Specific Request Page/SpecificRequestPage.jsx";
 function TempEndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
@@ -42,6 +43,7 @@ function TempEndPoints() {
                         <Route exact path="/login" element={<Login />} />
                         <Route exact path="/vendorlogin" element={<VendorLogin />} />
                         <Route exact path="/vendor/requests" element={<VendorRequest />} />
+                        <Route exact path="/vendor/request/:id" element={<SpecificRequestPage />} />
                         <Route exact path="/vendor/schedule" element={<Schedule />} />
                         <Route
                             exact
