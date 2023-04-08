@@ -10,7 +10,6 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { classNames } from "primereact/utils";
 import { Card } from "primereact/card";
-import { BigDecimal } from "js-big-decimal";
 import { Dropdown } from "primereact/dropdown";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
