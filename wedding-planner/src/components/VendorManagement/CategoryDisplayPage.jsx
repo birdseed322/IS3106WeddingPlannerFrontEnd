@@ -13,7 +13,6 @@ import {
   list,
 } from "firebase/storage";
 import { storage } from "../firebase";
-
 //import Api from './VendorAPI';
 
 const CategoryDisplayPage = () => {
@@ -30,8 +29,11 @@ const CategoryDisplayPage = () => {
 
   useEffect(() => {
     //getAllProfilePictures();
-    //getAllVendorsInCategory();
-     Promise.all([getAllVendorsInCategory(), getAllProfilePictures()]) 
+     getAllVendorsInCategory();
+     //Promise.all([getAllVendorsInCategory(), getAllProfilePictures()]) 
+  }, []);
+  useEffect(() => {
+    getAllProfilePictures();  
   }, []);
 
   const getAllProfilePictures = () => {

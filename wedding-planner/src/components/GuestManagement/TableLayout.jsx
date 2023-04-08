@@ -22,6 +22,7 @@ export default function TableLayout() {
     const [selectedGuests, setSelectedGuests] = useState([]);
     const [nodes, setNodes] = useState([]);
     const [tableID, setTableID] = useState(null);
+    const [updateGuest, setUpdateGuest] = useState(false);
     const onNodesChange = useCallback((changes) => {
         setNodes((nds) => applyNodeChanges(changes, nds))
     }, []);
@@ -46,6 +47,7 @@ export default function TableLayout() {
         }
         setNodes((nds) => _nodes);
         setSelectedNode(null);
+        setUpdateGuest(!updateGuest);
     };
     const saveTables = () => {
         const toSaveTables = [];
@@ -84,6 +86,7 @@ export default function TableLayout() {
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save stages ' , life: 3000 });
         }); 
+        setUpdateGuest(!updateGuest);
     }
     useEffect(() => {     
         TableApi.getTables(projectId).then((response) => {
@@ -112,9 +115,10 @@ export default function TableLayout() {
         }).then((t) => {
             const temp = [];
             for (const unit of t) {
-                const {id, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
+                const {stageId, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
+                console.log(unit);
                 temp.push({
-                    id : '' + id,
+                    id : '-' + stageId,
                     type : 'stage',
                     position: { x: locationX, y: locationY },
                     selected : false,
@@ -151,7 +155,8 @@ export default function TableLayout() {
                         </ReactFlow>
                     </div>
                     <OptionsPanel nodes={nodes} setNodes={setNodes} changeFocus={changeFocus} saveTables={saveTables} setSelectedTable={setSelectedNode}></OptionsPanel>
-                    <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} setSelectedTable={setSelectedNode}></GuestListPanel>     
+                    <GuestListPanel setParentGuests={setSelectedGuests} tables={nodes} setTables={setNodes} selectedTable={selectedNode} 
+                        setSelectedTable={setSelectedNode} updateGuest={updateGuest} setUpdateGuest={setUpdateGuest}></GuestListPanel>     
            </ReactFlowProvider>
         </>
     );  

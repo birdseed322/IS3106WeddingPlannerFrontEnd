@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Splitter, SplitterPanel } from "primereact/splitter";
 import { Panel } from "primereact/panel";
 import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
 import { Button } from "primereact/button";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  listAll,
-  list,
-} from "firebase/storage";
+import {ref, getDownloadURL, listAll} from "firebase/storage";
 import { storage } from "../firebase";
 import { Galleria } from "primereact/galleria";
+import VendorAPI from './VendorManagementAPI';
+import { Toast } from 'primereact/toast';
+
+
 
 const VendorDetailPage = () => {
   const { vendorName } = useParams(); //vendor name assumed to be unique for now
+  const { projectId } = useParams(); 
+  const toast = useRef(null);
+
   //ensure that the 'vendorName' param is the same as the :vendorName in the endpoint
-  console.log("endpoint extracted = " + vendorName);
+  //console.log("endpoint extracted = " + vendorName);
+
 
   let chosenVendor = {
     email: "",
@@ -75,14 +77,21 @@ const VendorDetailPage = () => {
     );
   };
 
-  const thumbnailTemplate = (item) => {
-    return (
-      <img
-        src={item.thumbnailImageSrc}
-        style={{ display: "block" }}
-      />
-    );
-  };
+  const addToProject = () => {
+    return VendorAPI.fetchWeddingDetails(projectId)
+    .then((response) => response.json())
+     // .then((data) => console.log(typeof data.weddingDate)); //string
+     .then((data) => {
+      const request = {
+        quotationURL: "testing",
+        quotedPrice: 0,
+        requestDate: data.weddingDate,
+        requestDetails: "Small gig",
+      }
+      VendorAPI.createRequest(request);
+      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Request Created', life: 3000 });
+     })
+    }
 
   return (
     <div>
@@ -92,10 +101,17 @@ const VendorDetailPage = () => {
         title={vendorName}
         style={{ backgroundColor: "#BABDFF", width: "100%" }}
       >
+        <Toast ref={toast} />
+        <Button
+          style={{ float: "right" }}
+          label="Send a Request"
+          className="p-button-raised p-button-rounded"
+          onClick={() => addToProject()}
+        />
         <p className="m-0">Category: {vendor.category.toLowerCase()}</p>
         <p className="m-0">Vendor Name: {vendor.username}</p>
       </Card>
-      <Splitter style={{ height: "780px"}}>
+      <Splitter style={{ height: "780px" }}>
         <SplitterPanel size={80} minSize={70}>
           <Panel header={"More about: " + vendor.username}>
             {vendor.description}
@@ -108,17 +124,18 @@ const VendorDetailPage = () => {
                 value={imageUrls}
                 numVisible={5}
                 circular
-                style={{ maxWidth: "540px", maxHeight:"400px" }}
+                style={{ maxWidth: "540px", maxHeight: "400px" }}
                 showThumbnails={false}
                 showItemNavigators
                 item={itemTemplate}
-                thumbnail={thumbnailTemplate}
               />
             </div>
           </Panel>
           <br />
           <br />
-          <Panel header="Pricing">For pricing information, visit the webside on the right</Panel>
+          <Panel header="Pricing">
+            For pricing information, visit the webside on the right
+          </Panel>
         </SplitterPanel>
         <SplitterPanel size={20} minSize={15}>
           <Panel header="Contacts">
@@ -143,10 +160,6 @@ const VendorDetailPage = () => {
             </p>
           </Panel>
         </SplitterPanel>
-        <Button
-          label="Add to Wedding"
-          className="p-button-raised p-button-rounded"
-        />
       </Splitter>
     </div>
   );

@@ -13,13 +13,13 @@ const EmailAPI = {
                     return error;
             })
     },
-    sendEmail(bride, groom, venue, date, rsvp, list, details) {
+    sendEmail(weddingName, venue, date, rsvp, list, details) {
         return fetch(`https://api.elasticemail.com/v2/email/send?` +  new URLSearchParams({ 
                     apikey: "3E17C4814513FBE9D7B1B9DA5A45A4E025F48D680732DFD6685D596AF426F670A239C1203AEE09AFCB9A2A73AF7D6E26",
                     attachments : "",
                     bodyAmp : "",
                     bodyHtml:  "<div id = email style={justify-content: center, align-items : center, margin : auto, text-align: center, font-family: Garamond, max-width: 60%}> <h1>Wedding Invitation</h1>" +
-                    "<h2> You are hereby invited to " + bride + " and " + groom +"'s wedding</h2><h2> Venue : "+ venue + "</h2><h2> Date :   " + date + "</h2><h2> RSVP:  <a href=\"" + rsvp + "\">RSVP Here</a> </h2>  </div>" 
+                    "<h2> You are hereby invited to " + weddingName + "</h2><h2> Venue : "+ venue + "</h2><h2> Date :   " + date + "</h2><h2> RSVP:  <a href=\"" + rsvp + "\">RSVP Here</a> </h2>  </div>" 
                     + "<h2> Details :  <a href=\"" + details + "\"> Details </a> </h2>  </div>",
                     bodyText: "",
                     channel: "",

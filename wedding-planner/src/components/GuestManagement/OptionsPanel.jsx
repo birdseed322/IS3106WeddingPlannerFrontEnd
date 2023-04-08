@@ -98,7 +98,7 @@ export default function OptionsPanel({nodes, setNodes, changeFocus, saveTables, 
                 response.json().then((idObject) => {
                     _stage.id= idObject.STAGEID;
                     const toAdd = {
-                        id : '' + _stage.id,
+                        id : '-' + _stage.id,
                         type : 'stage',
                         position: { x: _stage.locationX, y: _stage.locationY }, // backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"
                         style: { width: _stage.stageWidth, height: _stage.stageHeight, backgroundImage : "linear-gradient(to right, rgb(242, 112, 156), rgb(255, 182, 193))"}, //www.makeuseof.com/css-background-gradients/#pink-fish

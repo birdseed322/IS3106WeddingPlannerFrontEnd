@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef ,memo  } from 'react';
 import { Panel } from 'primereact/panel';
 import { Ripple } from 'primereact/ripple';
 import {DataTable} from 'primereact/datatable';
@@ -13,7 +13,7 @@ import { Toast } from 'primereact/toast';
 import 'reactflow/dist/style.css';
 import { Routes, Route, useParams } from 'react-router-dom';
 
-export default function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable}) { //guests and the selectedTable props are related
+function GuestListPanel({setParentGuests, tables, setTables, selectedTable, setSelectedTable, updateGuest, setUpdateGuest}) { //guests and the selectedTable props are related
     const {projectId} = useParams();
     const toast = useRef(null);
     const dt = useRef(null);
@@ -27,6 +27,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
         Api.getAllGuests(projectId).then((response) => {
             return response.json();
         }).then((g) => {
+            console.log(g);
             const temp = new Set();
             const candidate = [];
             for (const table of tables) {
@@ -46,7 +47,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
             console.log(error);
         });
-    }, [tables]);
+    }, [updateGuest]);
     const deleteGuest = () => {
         if (selectedTable != null) {
             let _guests = [...selectedTable.data.guests];
@@ -62,6 +63,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             setSelectedTable(newUpdatedTable);
             setFullGuests(fg => fg.concat(toDelete));
             setToDelete(null);
+            setUpdateGuest(!updateGuest);
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
         } else {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
@@ -107,6 +109,7 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
                 setVisible(false);
             }
         }
+        setUpdateGuest(!updateGuest);
     }
     const footerContent = (
         <div className="card flex justify-content-center">
@@ -216,3 +219,4 @@ export default function GuestListPanel({setParentGuests, tables, setTables, sele
             </span>
     )
 }
+export default memo(GuestListPanel);

@@ -12,8 +12,8 @@ import table from './src/table.png';
     const Table = ({data, selected}) => {
         return (
             <>
-            <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} maxWidth={200} maxHeight={200}/>
             <div className="inline-block text-center">
+                <NodeResizer color="#ff0071" isVisible={selected} minWidth={200} minHeight={200} maxWidth={200} maxHeight={200}/>
                 <img className="z-1" src={table} height="200px" width="200px"></img>
                 <h2 className="inline-block mt-8 z-5 absolute m-auto left-0 right-0">Table {data.tableNumber}</h2>
                 <h3 style={{marginTop:"7.5rem"}} className="absolute inline-block z-5 left-0 right-0">{data.currOccupancy} / {data.capacity}</h3>
