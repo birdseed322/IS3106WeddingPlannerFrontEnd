@@ -65,3 +65,26 @@ export const computeGuestInfo = (guestList) => {
     
     return guestInfo;
 };
+
+export const computeRequestsInfo = (requestsList) => {
+    
+    const requestsInfo = {
+        pending: 0,
+        rejected: 0,
+        accepted: 0,
+        total: 0,
+    }
+    
+    requestsList.forEach((req) => {
+        requestsInfo.total++;
+        if (req.isAccepted == undefined) {
+            requestsInfo.pending++;
+        } else if (req.isAccepted == true) {
+            requestsInfo.accepted++;
+        } else {
+            requestsInfo.rejected++;
+        }
+    })
+    
+    return requestsInfo;
+}
