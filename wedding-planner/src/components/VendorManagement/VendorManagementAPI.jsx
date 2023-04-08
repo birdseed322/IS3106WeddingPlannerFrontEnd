@@ -1,10 +1,14 @@
 const WEDDING_SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/wedding-projects";
-const REQUEST_SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests";
+const REQUEST_SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/createRequest";
 
 const VendorApi = {
-           createRequest(data) {
-         
-           return fetch(`${REQUEST_SERVER_PREFIX}`, {
+           createRequest(data, projectId, vendorId) {
+            const createRequestUrl = REQUEST_SERVER_PREFIX+
+            `?projId=${projectId}`+ 
+            `&vendorId=${vendorId}`
+
+           return fetch(`${createRequestUrl}`,
+            {
                     headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
