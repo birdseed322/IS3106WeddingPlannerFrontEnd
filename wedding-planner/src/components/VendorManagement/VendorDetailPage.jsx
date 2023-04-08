@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Splitter, SplitterPanel } from "primereact/splitter";
 import { Panel } from "primereact/panel";
-import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
+import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import { Button } from "primereact/button";
 import {ref, getDownloadURL, listAll} from "firebase/storage";
 import { storage } from "../firebase";
@@ -95,7 +95,7 @@ const VendorDetailPage = () => {
 
   return (
     <div>
-      <PublicHeartyNavbar />
+      <HeartyNavbar />
       <br />
       <Card
         title={vendorName}
