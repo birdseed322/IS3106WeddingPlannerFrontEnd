@@ -1,23 +1,24 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Splitter, SplitterPanel } from "primereact/splitter";
 import { Panel } from "primereact/panel";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import { Button } from "primereact/button";
-import {ref, getDownloadURL, listAll} from "firebase/storage";
+import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { storage } from "../firebase";
 import { Galleria } from "primereact/galleria";
-import VendorAPI from './VendorManagementAPI';
-import { Toast } from 'primereact/toast';
-import { Tree } from 'primereact/tree';
-import { useNavigate } from "react-router-dom";
-
+import VendorAPI from "./VendorManagementAPI";
+import { Toast } from "primereact/toast";
+import { Tree } from "primereact/tree";
+import { Dialog } from "primereact/dialog";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const VendorDetailPage = () => {
   const { vendorName } = useParams(); //vendor name assumed to be unique for now
-  const { projectId } = useParams(); 
+  const { projectId } = useParams();
   const toast = useRef(null);
+  const [visible, setVisible] = useState(false);
 
   //ensure that the 'vendorName' param is the same as the :vendorName in the endpoint
   //console.log("endpoint extracted = " + vendorName);
@@ -40,27 +41,31 @@ const VendorDetailPage = () => {
   const imagesListRef = ref(storage, `Vendor/${vendorName}/Photos/`);
   const [vendor, setVendor] = useState(chosenVendor);
   const [imageUrls, setImageUrls] = useState([]);
-  const [selectedNodeKey, setSelectedNodeKey] = useState('');
+  const [selectedNodeKey, setSelectedNodeKey] = useState("");
+  const [details, setDetails] = useState("");
 
-  const nodes = [{
-    label:"Visit Website",
-    icon: "pi pi-link",
-    url: "www.google.com"
-
-  }, {
-    label:"Instagram",
-    icon: "pi pi-camera",
-    url: "www.google.com"
-  },{
-    label: "Facebook",
-    icon: "pi pi-facebook",
-    url: "www.google.com"
-  },{
-    label: "Whatsapp",
-    icon: "pi pi-whatsapp",
-    url: "www.google.com"
-  }
-];
+  const nodes = [
+    {
+      label: "Visit Website",
+      icon: "pi pi-link",
+      url: "www.google.com",
+    },
+    {
+      label: "Instagram",
+      icon: "pi pi-camera",
+      url: "www.google.com",
+    },
+    {
+      label: "Facebook",
+      icon: "pi pi-facebook",
+      url: "www.google.com",
+    },
+    {
+      label: "Whatsapp",
+      icon: "pi pi-whatsapp",
+      url: "www.google.com",
+    },
+  ];
 
   const SERVER_PREFIX =
     "http://localhost:8080/IS3106WeddingPlanner-war/webresources/vendors";
@@ -97,27 +102,39 @@ const VendorDetailPage = () => {
   };
 
   const addToProject = () => {
-    return VendorAPI.fetchWeddingDetails(projectId)
-    .then((response) => response.json())
-     // .then((data) => console.log(typeof data.weddingDate)); //string
-     .then((data) => {
-      const request = {
-        quotationURL: "testing",
-        quotedPrice: 0,
-        requestDate: data.weddingDate,
-        requestDetails: "Small gig",
-      }
-      VendorAPI.createRequest(request,projectId, vendor.userId);
-      toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Request Created', life: 3000 });
-     })
-    }
+    return (
+      VendorAPI.fetchWeddingDetails(projectId)
+        .then((response) => response.json())
+        // .then((data) => console.log(typeof data.weddingDate)); //string
+        .then((data) => {
+          const request = {
+            quotationURL: "testing",
+            quotedPrice: 0,
+            requestDate: data.weddingDate,
+            requestDetails: details,
+          };
+          VendorAPI.createRequest(request, projectId, vendor.userId);
+          toast.current.show({
+            severity: "success",
+            summary: "Successful",
+            detail: "Request Created",
+            life: 3000,
+          });
+          setVisible(false);
+          setDetails("");
+        })
+    );
+  };
 
-    const onSelect = (event) => {
-      let externalSite = "https://" + event.node.url;
-      window.open(externalSite);
-      toast.current.show({ severity: 'info', summary: 'Opening New Tab:', detail: event.node.url });
-  }
-  
+  const onSelect = (event) => {
+    let externalSite = "https://" + event.node.url;
+    window.open(externalSite);
+    toast.current.show({
+      severity: "info",
+      summary: "Opening New Tab:",
+      detail: event.node.url,
+    });
+  };
 
   return (
     <div>
@@ -132,8 +149,30 @@ const VendorDetailPage = () => {
           style={{ float: "right" }}
           label="Send a Request"
           className="p-button-raised p-button-rounded"
-          onClick={() => addToProject()}
+          onClick={() => setVisible(true)}
         />
+        <Dialog
+          visible={visible}
+          onHide={() => setVisible(false)}
+          header="Enter Request Details"
+          icon="pi pi-exclamation-triangle"
+        >
+          <label> Details: </label>
+          <br/>
+          <InputTextarea
+            value={details}
+            rows={5} cols={30}
+            onChange={(e) => setDetails(e.target.value)}
+          >
+            {" "}
+          </InputTextarea>
+          <br/>
+          <Button
+            label="Submit"
+            style={{ backgroundColor: "#f561b0", border: "#f561b0", float:"right" }}
+            onClick={() => addToProject()}
+          />
+        </Dialog>
         <p className="m-0">Category: {vendor.category.toLowerCase()}</p>
         <p className="m-0">Vendor Name: {vendor.username}</p>
       </Card>
@@ -165,12 +204,15 @@ const VendorDetailPage = () => {
         </SplitterPanel>
         <SplitterPanel size={20} minSize={15}>
           <Panel header="Contacts">
-          <div className="card flex justify-content-center">
-                <Tree value={nodes} selectionMode="single"
-                selectionKeys={selectedNodeKey} 
+            <div className="card flex justify-content-center">
+              <Tree
+                value={nodes}
+                selectionMode="single"
+                selectionKeys={selectedNodeKey}
                 onSelectionChange={(e) => setSelectedNodeKey(e.label)}
                 onSelect={onSelect}
-                className="w-full md:w-25rem" />
+                className="w-full md:w-25rem"
+              />
             </div>
           </Panel>
         </SplitterPanel>
