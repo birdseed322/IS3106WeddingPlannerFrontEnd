@@ -1,7 +1,8 @@
 import React from 'react';
 import CategoryBoxes from './CategoryBoxes';
 import SearchBar from './SearchBar';
-import PublicHeartyNavbar from '../HeartyNavbar/PublicHeartyNavbar'
+import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
+
 
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page. 
@@ -10,7 +11,7 @@ import PublicHeartyNavbar from '../HeartyNavbar/PublicHeartyNavbar'
 function SearchPage(){
     return (
         <div>
-            <PublicHeartyNavbar />
+            <HeartyNavbar />
             <br/>
             <br/>
             <SearchBar/>
