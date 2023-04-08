@@ -21,8 +21,19 @@ const WeddingChecklistAPI = {
         return fetch(`${SERVER_PREFIX}/checklist/${checklistId}`);
     },
 
-    createTask(data, checklistId) {
+    createParentTask(data, checklistId) {
         return fetch(`${SERVER_PREFIX}/${checklistId}`, {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+    },
+
+    createSubtask(data, parentTaskId) {
+        return fetch(`${SERVER_PREFIX}/subtask/${parentTaskId}`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -36,18 +47,41 @@ const WeddingChecklistAPI = {
         return fetch(`${SERVER_PREFIX}/tasks`);
     },
 
-    getAllSubTasks(parentTaskId) {
-        return fetch(`${SERVER_PREFIX}/subtasks/${parentTaskId}`);
+    getAllSubTasks() {
+        return fetch(`${SERVER_PREFIX}/subtasks`);
     },
 
-    updateTask(data) {
-        return fetch(`${SERVER_PREFIX}/update/task`, {
+    updateParentTask(data) {
+        return fetch(`${SERVER_PREFIX}/update/parentTask`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
             },
             method: "PUT",
             body: JSON.stringify(data),
+        });
+    },
+
+    updateSubtask(data) {
+        return fetch(`${SERVER_PREFIX}/update/subtask`, {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            method: "PUT",
+            body: JSON.stringify(data),
+        });
+    },
+
+    deleteParentTask(parentTaskId) {
+        return fetch(`${SERVER_PREFIX}/task/${parentTaskId}`, {
+            method: "DELETE",
+        });
+    },
+
+    deleteSubtask(subtaskId) {
+        return fetch(`${SERVER_PREFIX}/subtask/${subtaskId}`, {
+            method: "DELETE",
         });
     },
 };
