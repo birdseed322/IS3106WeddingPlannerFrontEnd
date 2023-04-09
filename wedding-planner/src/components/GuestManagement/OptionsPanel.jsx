@@ -25,7 +25,6 @@ function OptionsPanel({addStageFlag, setAddStageFlag, addTableFlag, setAddTableF
     const saveTables = () => {
         setSaveTablesFlag(!saveTablesFlag);
     }
-    const saveTablesParentSupplier = () => saveTablesParent();
     useEffect(() => {
         if (renderCount.current < 3) {
             renderCount.current = renderCount.current + 1;
@@ -49,7 +48,6 @@ function OptionsPanel({addStageFlag, setAddStageFlag, addTableFlag, setAddTableF
     const handleAddTable = () => {
         setAddTableFlag(!addTableFlag);
         setVisible(true);
-
     }
     useEffect(() => {
         if (renderCount.current < 3) {

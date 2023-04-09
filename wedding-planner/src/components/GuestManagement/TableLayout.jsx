@@ -130,21 +130,18 @@ export default function TableLayout() {
                     data: { tableNumber: tableNumber}
                 })
             }
-           setNodes((nodes) => nodes.concat(temp));
-           renderCount.current = renderCount.current + 1;
-           setRenderCountState(!renderCountState);
+           setNodes((nodes) => nodes.concat(temp));  
         }).catch(error => {
             toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load stages ' , life: 3000 });
             console.log(error);
         });    
     }, []); 
     useEffect(() => {
-        if (renderCount.current > 0) {
             Api.getAllGuests(projectId).then((response) => {
                 return response.json();
             }).then((g) => {
-                const temp = new Set();
                 const candidate = [];
+                 /*
                 for (const table of nodes) {
                     if (table.type === 'table') {
                         for (const guest of table.data.guests) {
@@ -156,17 +153,21 @@ export default function TableLayout() {
                     if (!temp.has(x.id)) {
                         candidate.push(x);
                     }
+                } */ 
+                for (const x of g) {
+                    if (x.guestTable == null || x.guestTable == undefined) {
+                        candidate.push(x);
+                    }
                 }
-                console.log(candidate.length);
                 setFullGuests(candidate);
+                console.log(candidate.length + " is the length");
             }).catch(error => {
                 toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
                 console.log(error);
             });
-       }
-    }, [renderCountState]);
+    }, []);
     const deleteGuest = useCallback((toDelete) => {
-        if (selectedNode != null) {
+        if (selectedNode != null && toDelete != null) {
             let _guests = [...selectedNode.data.guests];
             _guests = _guests.filter((guest) => guest.id !== toDelete.id);
             let _tables = [...nodes];
@@ -208,7 +209,6 @@ export default function TableLayout() {
                 for (const guest of selectedGuests) {
                     for (const g of fullGuests) {
                         if (g.id === guest.id) {
-                            console.log("YE");
                             setFullGuests((fullGuests) => fullGuests.filter(x => x.id != guest.id));
                         }
                     }
