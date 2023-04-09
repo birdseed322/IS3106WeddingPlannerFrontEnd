@@ -18,8 +18,7 @@ import Homepage from '../components/UnregisteredView/Homepage.jsx'
 import Contact from '../components/UnregisteredView/Contact.jsx'
 import SignUp from '../components/UnregisteredView/SignUp.jsx'
 import AboutUs from '../components/UnregisteredView/AboutUs.jsx'
-import VendorLogin from '../components/Login Page/VendorLogin.jsx'
-import ViewProfile from "../components/Profiles/ViewProfile.jsx";
+import VendorLogin from '../components/Login Page/VendorLogin.jsx';
 import EditProfile from '../components/Profiles/EditProfile.jsx'
 import ProjectDashboard from '../components/ProjectDashboard/ProjectDashboard.jsx'
 import LoginAPI from '../components/Login Page/LoginAPI.jsx'
