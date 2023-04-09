@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LoginTokenContext } from "../../../context/LoginTokenContext";
 import {
   DayPilotNavigator,
   DayPilotCalendar,
@@ -6,11 +7,14 @@ import {
 import { Card } from "primereact/card";
 import VendorNavbar from "../VendorNavbar/VendorNavbar";
 import { Button } from "primereact/button";
-import { Link, redirect } from "react-router-dom";
+import { Link, redirect, useSearchParams } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 
 function Schedule() {
-  const [startDate, setStartDate] = React.useState(new Date());
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [startDate, setStartDate] = React.useState(
+    searchParams.get("date") ? new Date(searchParams.get("date")) : new Date()
+  );
   const [selectedReq, setSelectedReq] = React.useState({
     start: "",
     end: "",
@@ -18,41 +22,61 @@ function Schedule() {
   });
   const [calendarVisible, setCalendarVisible] = React.useState(false);
   const [requestVisible, setRequestVisible] = React.useState(false);
-
-  const events = [
-    {
-      id: 1,
-      text: "Daniel and chapati",
-      start: "2023-03-25T10:00:00",
-      end: "2023-03-25T13:40:00",
-      url: "www.thiswillbringyousomewhereelse.com",
-      description: "Something about the wedding and stuff",
-    },
-    {
-      id: 2,
-      text: "Daniel and Someone else",
-      start: "2023-03-25T11:00:00",
-      end: "2023-03-25T16:40:00",
-      url: "www.thiswillbringyousomewhereelse.com",
-      description: "Something about the wedding and stuff",
-    },
-    {
-      id: 3,
-      text: "Daniel and chapati",
-      start: "2023-03-25T11:20:00",
-      end: "2023-03-25T13:40:00",
-      url: "www.thiswillbringyousomewhereelse.com",
-      description: "Something about the wedding and stuff",
-    },
-    {
-      id: 4,
-      text: "Daniel and Someone else",
-      start: "2023-03-25T15:00:00",
-      end: "2023-03-25T19:40:00",
-      url: "www.thiswillbringyousomewhereelse.com",
-      description: "Something about the wedding and stuff",
-    },
-  ];
+  const [requests, setRequests] = React.useState([]);
+  const [token, setToken] = useContext(LoginTokenContext);
+  React.useEffect(() => {
+    const apiUrl =
+      "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/vendorRequests/accepted/" +
+      token.userId;
+    fetch(apiUrl).then((res) => {
+      res.json().then((data) => {
+        let reformat = [];
+        data.forEach((event) => {
+          let x = {};
+          x.id = event.requestId;
+          x.text = event.weddingProject.name;
+          const weddingDate = new Date(
+            event.weddingProject.weddingDate.slice(0, -5)
+          );
+          //Meant to be march 4th
+          if (event.weddingProject.weddingEndTime) {
+            const endTime = new Date(
+              event.weddingProject.weddingEndTime.slice(0, -5)
+            );
+            x.end = new Date(
+              weddingDate.getFullYear(),
+              weddingDate.getMonth(),
+              weddingDate.getDate(),
+              endTime.getHours() + 8,
+              endTime.getMinutes()
+            );
+          } else {
+            x.end = new Date(
+              weddingDate.getFullYear(),
+              weddingDate.getMonth(),
+              weddingDate.getDate(),
+              31,
+              59
+            );
+          }
+          const startTime = new Date(
+            event.weddingProject.weddingStartTime.slice(0, -5)
+          );
+          x.start = new Date(
+            weddingDate.getFullYear(),
+            weddingDate.getMonth(),
+            weddingDate.getDate(),
+            startTime.getHours() + 8,
+            startTime.getMinutes()
+          );
+          x.description = event.requestDetails;
+          reformat.push(x);
+        });
+        setRequests(reformat);
+        console.log(reformat);
+      });
+    });
+  }, []);
 
   return (
     <div>
@@ -70,10 +94,9 @@ function Schedule() {
         <DayPilotCalendar
           viewType="Week"
           startDate={startDate}
-          events={events}
-          headerDateFormat= "d, dddd"
+          events={requests}
+          headerDateFormat="d, dddd"
           onEventClick={(args) => {
-            console.log(args.e.data);
             //Onclick maybe will open request pop up to view summary. With choice to enter to request page.
             setSelectedReq(args.e.data);
             setRequestVisible(true);
@@ -82,7 +105,7 @@ function Schedule() {
         />
         <Dialog
           visible={calendarVisible}
-          style={{ width: "25vw"}}
+          style={{ width: "25vw" }}
           onHide={() => setCalendarVisible(false)}
           draggable={false}
           header="Week Selection"
@@ -90,7 +113,6 @@ function Schedule() {
           <div className="m-auto w-min">
             <DayPilotNavigator
               onTimeRangeSelected={(args) => {
-                console.log("You clicked: " + args.day);
                 setStartDate(new Date(args.day));
               }}
               selectMode="week"

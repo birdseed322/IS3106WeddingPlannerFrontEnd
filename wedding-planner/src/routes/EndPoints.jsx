@@ -26,7 +26,7 @@ import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
 import { LoginTokenContext } from "../context/LoginTokenContext.jsx";
 import ProjectOverview from "../components/ProjectOverview/ProjectOverview.jsx";
-
+import SpecificRequestPage from "../components/VendorView/Specific Request Page/SpecificRequestPage.jsx";
 import RSVPForm from "../components/GuestManagement/RSVPForm.jsx";
 import TestingImageFunctions from "../components/testingImageFunctions.js";
 import AdminStatistics from "../components/AdminUserManagement/AdminStatistics/AdminStatistics.jsx";
@@ -124,6 +124,7 @@ function EndPoints() {
                                     />
                                     <Route path="tablelayout" element={<TableLayout />} />
                                     <Route path="guestlist" element={<GuestList />} />
+                                    <Route exact path="request/:id" element={<SpecificRequestPage />} />
                                     
                             </Route>
                             
@@ -140,11 +141,12 @@ function EndPoints() {
                         <BrowserRouter>
                             <Routes>
                                 <Route exact path="/" element={<VendorRequest />} />
-                                <Route exact path="/schedule" element={<Schedule />} />
+                                <Route exact path="/vendor/requests" element={<VendorRequest />} />
+                                <Route exact path="/vendor/request/:id" element={<SpecificRequestPage />} />
+                                <Route exact path="/vendor/schedule" element={<Schedule />} />
                             </Routes>
                         </BrowserRouter>
                     </LoginTokenContext.Provider>
-                    ;
                 </>
             );
 

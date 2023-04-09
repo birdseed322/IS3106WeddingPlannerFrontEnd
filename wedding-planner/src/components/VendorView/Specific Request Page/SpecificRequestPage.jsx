@@ -1,13 +1,14 @@
 import { Card } from "primereact/card";
 import { Timeline } from "primereact/timeline";
 import { TabView, TabPanel } from "primereact/tabview";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import VendorNavbar from "../VendorNavbar/VendorNavbar";
 import FinalisePriceAction from "./FinalisePriceAction";
 import PendingApprovalButtons from "./PendingApprovalButtons";
 import { Message } from "primereact/message";
 import PaymentAction from "./PaymentAction";
+import { LoginTokenContext } from "../../../context/LoginTokenContext";
 
 function SpecificRequestPage() {
   //Should only be accessible by the vendor and the wedding organiser that posted
@@ -18,6 +19,7 @@ function SpecificRequestPage() {
   let { id } = useParams();
   const [request, setRequest] = useState({});
   let actionToBeTaken = "";
+  const [token, setToken] = useContext(LoginTokenContext);
   const sampleRequest = {
     requestId: id,
     isAccepted: true,
@@ -37,14 +39,38 @@ function SpecificRequestPage() {
       id;
     fetch(apiUrl).then((res) => {
       res.json().then((data) => {
-        console.log(data);
+        const wedDate = new Date(Date.parse(data.requestDate));
+        const start = new Date(Date.parse(data.requestStart));
+        data.requestStart = new Date(
+          wedDate.getFullYear(),
+          wedDate.getMonth(),
+          wedDate.getDate(),
+          start.getHours(),
+          start.getMinutes()
+        ).toLocaleString("en-SG", { hour: "2-digit", minute: "2-digit" });
+        if (data.requestEnd) {
+          const end = new Date(Date.parse(data.requestEnd));
+          data.requestEnd = new Date(
+            wedDate.getFullYear(),
+            wedDate.getMonth(),
+            wedDate.getDate(),
+            end.getHours(),
+            end.getMinutes()
+          ).toLocaleString("en-SG", { hour: "2-digit", minute: "2-digit" });
+        }
+        data.requestDate = new Date(
+          Date.parse(data.requestDate)
+        ).toLocaleString("en-SG", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+
         setRequest(data);
       });
     });
   }, []);
 
-  const requestDateComp = new Date(request.requestStart);
-  console.log(request.requestStart);
   //If statements to construct the statuses that should be displayed on timeline
   let statuses = [];
   if (!Object.keys(request).includes("isAccepted")) {
@@ -75,7 +101,7 @@ function SpecificRequestPage() {
           statusEventName: "Paid",
           color: "#039643",
         });
-        if (today > requestDateComp) {
+        if (today > new Date(request.requestDate)) {
           statuses.push({
             statusEventName: "Event Completed",
             color: "#039643",
@@ -167,8 +193,8 @@ function SpecificRequestPage() {
       <Card className="h-full">
         <div className="grid">
           <div className="col">
-            <h1>{sampleRequest.weddingName}</h1>
-            <p className="mb-4">Organised By: WeddingOrganiserName</p>
+            <h1>{request.weddingName}</h1>
+            <p className="mb-4">Organised By: {request.weddingOrganiserName}</p>
             <hr className="w-11" />
             <h2>Description</h2>
             <p className="mb-4"> {request.requestDetails}</p>
@@ -199,47 +225,53 @@ function SpecificRequestPage() {
                 <h3>Event Date</h3>
                 <p>
                   <i className="pi pi-calendar mr-2"></i>
-                  {requestDateComp
-                    .toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                    })
-                    .replace(/\//g, "-")}
+                  {request.requestDate}
                 </p>
                 <h3>Start Time</h3>
                 <p>
                   <i className="pi pi-clock mr-2"></i>
-                  {requestDateComp.toLocaleTimeString([], {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
+                  {request.requestStart}
                 </p>
-                {/* <h3>End Time</h3>
+                {request.requestEnd ? (
+                  <>
+                    <h3>End Time</h3>
+                    <p>
+                      <i className="pi pi-clock  mr-2"></i>
+                      {request.requestEnd}
+                    </p>
+                  </>
+                ) : null}
+                <h3>Venue</h3>
                 <p>
-                  <i className="pi pi-clock  mr-2"></i>
-                  {requestDateComp.toLocaleTimeString([], {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </p> */}
+                  <i className="pi pi-map-marker mr-2"></i>
+                  {request.venue}
+                </p>
               </TabPanel>
               <TabPanel header="Actions">
-                {<h3>Current Status: {actionToBeTaken}</h3>}
-                {actionToBeTaken == "Pending Approval" ? (
+                {<h3>Status: {actionToBeTaken}</h3>}
+                {actionToBeTaken == "Pending Approval" &&
+                token.userType === "VENDOR" ? (
                   <PendingApprovalButtons
                     handleRequestResponse={handleRequestResponse}
                   />
+                ) : actionToBeTaken == "Pending Approval" ? (
+                  <>Waiting for vendor's response</>
                 ) : (
                   <></>
                 )}
-                {actionToBeTaken == "Finalising Price" ? (
+                {actionToBeTaken == "Finalising Price" &&
+                token.userType === "VENDOR" ? (
                   <FinalisePriceAction handleSetPrice={handleSetPrice} />
+                ) : actionToBeTaken == "Finalising Price" ? (
+                  <>Waiting for vendor's response</>
                 ) : (
                   <></>
                 )}
-                {actionToBeTaken == "Awaiting Payment" ? (
+                {actionToBeTaken == "Awaiting Payment" &&
+                token.userType === "WEDDING-ORGANISER" ? (
                   <PaymentAction handlePayment={handlePayment} />
+                ) : actionToBeTaken == "Awaiting Payment" ? (
+                  <>Waiting for wedding organiser's response</>
                 ) : (
                   <></>
                 )}
