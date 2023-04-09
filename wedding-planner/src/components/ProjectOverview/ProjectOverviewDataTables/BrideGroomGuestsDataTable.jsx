@@ -42,7 +42,7 @@ const BrideGroomGuestsDataTable = ({ guestNumberInfo }) => {
         const convertedGuestInfo = [copyBride, copyGroom, copyTotal];
 
         setFormattedInfo(convertedGuestInfo);
-    }, []);
+    }, [guestNumberInfo]);
 
     const idTemplate = (rowData) => {
         return <b>{rowData.id}</b>;

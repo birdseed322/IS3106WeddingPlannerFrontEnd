@@ -66,6 +66,7 @@ export default function ProjectOverview() {
     // ^ vendoTransObj is an object of the form: {vendor: VendorObject, transaction: TransactionObject}
     const [vendorsCostPieChartData, setVendorsCostPieChartData] = useState();
 
+
     // const [searchParams, setSearchParams] = useSearchParams();
     // console.log(searchParams.getAll("x"))
     // for (const x of searchParams.entries()) {
@@ -104,6 +105,7 @@ export default function ProjectOverview() {
     useEffect(() => {
         let fetchedProject;
 
+        // actually no need to use fetchedProject variable but if it works it worrks
         WeddingProjectAPI.getWeddingProjectById(projectId)
             .then((res) => res.json())
             .then((weddingProject) => {
@@ -115,8 +117,9 @@ export default function ProjectOverview() {
             .then(() => GuestListAPI.getAllGuests(fetchedProject.weddingProjectId))
             .then((res) => res.json())
             .then((guestList) => {
+                console.log('logging guestList')
+                console.log(guestList);
                 setProjectGuestList(guestList);
-                // fetchedGuestList = guestList;
             })
             .then(() => TableApi.getTables(fetchedProject.weddingProjectId))
             .then((res) => res.json())
@@ -126,8 +129,13 @@ export default function ProjectOverview() {
                 WeddingProjectAPI.getRequestsByWeddingProjectId(fetchedProject.weddingProjectId)
             )
             .then((res) => res.json())
-            .then((requests) => setProjectRequests(requests))
+            .then((requests) => {
+                // console.log('logging requests');
+                // console.log(requests);
+                setProjectRequests(requests)
+            })
             .catch(() => console.log("something went wrong with fetching requests"));
+            
     }, []);
 
     useEffect(() => {
@@ -228,6 +236,8 @@ export default function ProjectOverview() {
                         <div className="col-12 md:col-6">
                             <Accordion multiple activeIndex={[0,1]}>
                                 <AccordionTab className="m-1 someAccordionStyle" header="Vendors">
+                                    {projectHiredVendors.length == 0 && <p>You currently have not hired any vendors.</p>}
+                                    {projectHiredVendors.length != 0 && <>
                                     <p>Vendors hired: <b>{projectHiredVendors.length}</b></p>
                                     <p>
                                         Paid/Total cost of vendors:{" "}
@@ -246,6 +256,7 @@ export default function ProjectOverview() {
                                         />
                                     </Card>
                                     <p>maybe buttons that link to vendors</p>
+                                    </>}
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Requests Overview">
                                     <RequestsDataTable requestsInfo={projectRequestsInfo} />

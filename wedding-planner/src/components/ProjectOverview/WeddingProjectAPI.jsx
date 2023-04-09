@@ -23,6 +23,9 @@ const WeddingProjectAPI = {
         }
     },
     
+    getWeddingChecklistByWeddingProjectId(projectId) {
+      return fetch(`${NORMAL_WEBRESOURCES_PREFIX}/LogisticsManagement/WeddingChecklist/checklist/getByWeddingProject/${projectId}`);
+    },
     getRequestsByWeddingProjectId(projectId) {
       return fetch(`${NORMAL_WEBRESOURCES_PREFIX}/requests/weddingProjectRequests/${projectId}`);
     },

@@ -20,6 +20,8 @@ export const dateFormatter = (dateObject) => {
 };
 
 export const computeGuestInfo = (guestList) => {
+    console.log('confirm that computeGuestInfo is called');
+
     const guestInfo = {
         total: {
             confirmed: 0,
@@ -84,6 +86,9 @@ export const computeGuestInfo = (guestList) => {
         guestInfo.brideSide.notAttending + guestInfo.groomSide.notAttending;
     guestInfo.total.pending = guestInfo.brideSide.pending + guestInfo.groomSide.pending;
     guestInfo.total.notSent = guestInfo.brideSide.notSent + guestInfo.groomSide.notSent;
+    
+    console.log('logging right before returning guestInfo');
+    console.log(guestInfo);
 
     return guestInfo;
 };
@@ -187,7 +192,7 @@ export const generateVendorCostPieChartData = (vendoTransObjectData, setPieChart
 }
 
 export const requestAndComputeHiredVendors = async (requestsList, setHiredVendors) => {
-    const promises = requestsList.map((req) =>
+    const promises = requestsList.filter((req) => req.isAccepted).map((req) =>
         WeddingProjectAPI.getVendorOfRequest(req.requestId).then((res) => res.json())
     );
 
