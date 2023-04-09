@@ -12,7 +12,7 @@ import { LoginTokenContext } from "../../context/LoginTokenContext";
 export default function AdminHeartyNavbar(props) {
     // array of MenuItems
     // see https://www.primefaces.org/primereact-v8/menumodel/
-    // const [token, setToken] = useContext(LoginTokenContext);
+    const [token, setToken] = useContext(LoginTokenContext);
 
     // gets projectId from URL parameters
     const { projectId } = useParams();
@@ -39,7 +39,7 @@ export default function AdminHeartyNavbar(props) {
                 <Button
                     label="Logout"
                     style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
-                    // onClick={() => setToken(false)} // set token to false
+                    onClick={() => setToken(false)} // set token to false
                 />{" "}
             </Link>
             <Link to="/viewprofile" className="noUnderline">

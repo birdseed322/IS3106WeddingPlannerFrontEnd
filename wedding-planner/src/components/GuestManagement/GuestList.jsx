@@ -69,6 +69,7 @@ export default function GuestList() {
     };
 
     const hideDialog = () => {
+        setEditFlag(false);
         setSubmitted(false);
         setGuestDialog(false);
     };
@@ -84,8 +85,10 @@ export default function GuestList() {
     const hideSendInvitesDialog = () => {
         setSendInvitesDialog(false);
     }
-
+    const [editFlag, setEditFlag] = useState(false);
     const editGuest = (guest) => {
+        setEditFlag(true);
+        setTimeout(100);
         setGuest({ ...guest });
         setGuestDialog(true);
     };
@@ -214,7 +217,6 @@ export default function GuestList() {
     const saveGuest = () => { 
         setSubmitted(true);
         if (validateGuest(guest)) {
-            if (guest.name.trim()) {
                 let _guests = [...guests];
                 let _guest = { ...guest };
                 if (guest.id != null) {
@@ -256,8 +258,9 @@ export default function GuestList() {
                         }); 
                     }
                 }
-            }
         }
+        setEditFlag(false);
+    
     };
     const deleteSelectedGuests = () => {
         let _guests = guests.filter((val) => !selectedGuests.includes(val));
@@ -405,7 +408,7 @@ export default function GuestList() {
                 </DataTable>
             </div>
 
-            <Dialog visible={guestDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Guest Details" modal className="p-fluid" footer={guestDialogFooter} onHide={hideDialog}>
+            <Dialog visible={guestDialog} edit={editFlag} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Guest Details" modal className="p-fluid" footer={guestDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name" className="font-bold">
                         Name
@@ -441,9 +444,10 @@ export default function GuestList() {
                         <label htmlFor="numPax" className="font-bold">
                             Number of Pax.
                         </label>
-                        <InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required autoFocus className={classNames({ 'p-invalid': submitted && guest.numPax <= 0})} />
-                        {submitted && (guest.numPax <= 0) && <small className="p-error">Number of Pax is invalid.</small>}
-
+                        {!editFlag ? (<InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required autoFocus className={classNames({ 'p-invalid': submitted && guest.numPax <= 0})} />)
+                           : <InputNumber id="numPax" value={guest.numPax} onValueChange={(e) => onInputNumberChange(e, 'numPax')} required disabled={true} readOnly={true} /> 
+                        }
+                        {submitted && (guest.numPax <= 0) ? <small className="p-error">Number of Pax is invalid.</small> : <></>}
                     </div>
                 </div>
             </Dialog>

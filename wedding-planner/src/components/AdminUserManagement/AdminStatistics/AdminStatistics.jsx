@@ -42,7 +42,22 @@ export default function AdminStatistics() {
     const vendorsCategoryChartOptions = {
         animation: true,
     };
-
+    
+    const pieChartData = {
+        labels: ["Red", "Blue", "Yellow"],
+        datasets: [
+          {
+            label: "# of Votes",
+            data: [12, 19, 3],
+            backgroundColor: ["red", "blue", "yellow"],
+          },
+          {
+            label: "# of Views",
+            data: [10, 15, 5],
+            backgroundColor: ["orange", "purple", "green"],
+          },
+        ],
+      };
     return (
         <div id="appContainer">
             <AdminHeartyNavbar />
@@ -62,7 +77,10 @@ export default function AdminStatistics() {
                                 className="w-full"
                             />
                         </Card>
-                        <Card title="Transactions Information" className="col-4"></Card>
+                        <Card title="Transactions Information" className="col-4">
+                            <Chart type="bar" data={pieChartData} options={{animation : true}} className="w-full"/>
+                            
+                        </Card>
                         <Card title="Vendor Category Breakdown" className="col-4">
                             <Chart
                                 type="doughnut"

@@ -2,139 +2,146 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useContext } from "react";
-import { Menubar } from "primereact/menubar";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
-import { Link, useParams } from "react-router-dom";
-import { LoginTokenContext } from "../../context/LoginTokenContext";
+import React, { useContext, memo } from 'react'
+import { Menubar } from 'primereact/menubar'
+import { InputText } from 'primereact/inputtext'
+import { Button } from 'primereact/button'
+import { Link, useParams } from 'react-router-dom'
+import { LoginTokenContext } from '../../context/LoginTokenContext'
 
-export default function HeartyNavbar(props) {
-    // array of MenuItems
-    // see https://www.primefaces.org/primereact-v8/menumodel/
-    const [token, setToken] = useContext(LoginTokenContext);
+function HeartyNavbar(props) {
+  // array of MenuItems
+  // see https://www.primefaces.org/primereact-v8/menumodel/
+  const [token, setToken] = useContext(LoginTokenContext)
 
-    // gets projectId from URL parameters
-    const { projectId } = useParams();
+  // gets projectId from URL parameters
+  const { projectId } = useParams()
 
-    const items = [
+  const items = [
+    {
+      label: 'Project Overview',
+      icon: 'pi pi-fw pi-info-circle',
+      url: `/${projectId}`,
+      className: 'menuItemStyle',
+    },
+
+    {
+      label: 'Vendor Management',
+      icon: 'pi pi-fw pi-file',
+      className: 'menuItemStyle',
+      items: [
         {
-            label: "Project Overview",
-            icon: "pi pi-fw pi-info-circle",
-            url: `/${projectId}`,
-            className: "menuItemStyle",
+          label: 'Vendor Search Page',
+          icon: 'pi pi-search',
+          url: `/${projectId}/VendorSearchPage`,
         },
+      ],
+    },
+    {
+      label: 'Guest Management',
+      icon: 'pi pi-fw pi-users',
+      className: 'menuItemStyle',
+      items: [
+        {
+          label: 'Guest List',
+          icon: 'pi pi-fw pi-cog',
+          url: `/${projectId}/guestlist`,
+        },
+        {
+          label: 'Table Planner',
+          icon: 'pi pi-fw pi-power-off',
+          url: `/${projectId}/tablelayout`,
+        },
+      ],
+    },
+    {
+      label: 'Logistics Management',
+      icon: 'pi pi-table',
+      className: 'menuItemStyle',
+      items: [
+        {
+          label: 'Wedding Checklist',
+          icon: 'pi pi-check',
+          url: `/${projectId}/LogisticsManagement/WeddingChecklist`,
+        },
+        {
+          label: 'Budget Planner',
+          icon: 'pi pi-money-bill',
+          url: `/${projectId}/LogisticsManagement/WeddingBudgetPlanner`,
+        },
+        {
+          label: 'Wedding Itinerary',
+          icon: 'pi pi-calendar',
+          url: `/${projectId}/LogisticsManagement/WeddingItinerary`,
+        },
+      ],
+    },
+  ]
+  const end = (
+    // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
+    <>
+      <Link to="/" className="noUnderline">
+        <Button
+          icon="pi pi-undo"
+          label="Back to Projects"
+          severity="secondary"
+          text
+          style={{ marginRight: '1rem' }}
+        />
+      </Link>
+      <Link to="/login" className="noUnderline">
+        <Button
+          label="Logout"
+          icon="pi pi-sign-out"
+          style={{
+            backgroundColor: '#f561b0',
+            border: '#f561b0',
+            marginRight: '1rem',
+          }}
+          onClick={() => setToken(false)} // set token to false
+        />{' '}
+      </Link>
 
-        {
-            label: "Vendor Management",
-            icon: "pi pi-fw pi-file",
-            url: `/${projectId}`,
-            className: "menuItemStyle",
-        },
-        {
-            label: "Guest Management",
-            icon: "pi pi-fw pi-users",
-            className: "menuItemStyle",
-            items: [
-                {
-                    label: "Guest List",
-                    icon: "pi pi-fw pi-cog",
-                    url: `/${projectId}/guestlist`,
-                },
-                {
-                    label: "Table Planner",
-                    icon: "pi pi-fw pi-power-off",
-                    url: `/${projectId}/tablelayout`,
-                },
-            ],
-        },
-        {
-            label: "Logistics Management",
-            icon: "pi pi-table",
-            className: "menuItemStyle",
-            items: [
-                {
-                    label: "Wedding Checklist",
-                    icon: "pi pi-check",
-                    url: `/${projectId}/LogisticsManagement/WeddingChecklist`,
-                },
-                {
-                    label: "Budget Planner",
-                    icon: "pi pi-money-bill",
-                    url: `/${projectId}/LogisticsManagement/WeddingBudgetPlanner`,
-                },
-                {
-                    label: "Wedding Itinerary",
-                    icon: "pi pi-calendar",
-                    url: `/${projectId}/LogisticsManagement/WeddingItinerary`,
-                },
-            ],
-        },
-    ];
-    const end = (
-        // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
-        <>
-            <Link to="/" className="noUnderline">
-                <Button
-                    icon="pi pi-undo"
-                    label="Back to Projects"
-                    severity="secondary"
-                    text
-                    style={{ marginRight: "1rem" }}
-                />
-            </Link>
-            <Link to="/login" className="noUnderline">
-                <Button
-                    label="Logout"
-                    icon="pi pi-sign-out"
-                    style={{
-                        backgroundColor: "#f561b0",
-                        border: "#f561b0",
-                        marginRight: "1rem",
-                    }}
-                    onClick={() => setToken(false)} // set token to false
-                />{" "}
-            </Link>
-
-            {/*       <Link to="/viewprofile" className="noUnderline">
+      {/*       <Link to="/viewprofile" className="noUnderline">
         <Button
           icon="pi pi-user"
           rounded
-          style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
         />
       </Link> */}
-        </>
-    );
-    const start = (
-        <>
-            <Link to="/" className="noUnderline">
-                <span>
-                    <Button
-                        icon="pi pi-heart"
-                        rounded
-                        size="large"
-                        style={{
-                            backgroundColor: "#f561b0",
-                            border: "#f561b0",
-                        }}
-                    />
-                </span>
-            </Link>
-        </>
-    );
-    // height="40" className="mr-2"
-    //console.log(items)
-    // since we're only returning Menubar anyway, no need to wrap around a div or <>
-    return (
-        <Menubar
-            id="navbar"
-            className="p-4"
-            model={items}
-            start={start}
-            end={end}
-        />
-    );
+    </>
+  )
+  const start = (
+    <>
+      <Link to="/" className="noUnderline">
+        <span>
+          <Button
+            icon="pi pi-heart"
+            rounded
+            size="large"
+            style={{
+              backgroundColor: '#f561b0',
+              border: '#f561b0',
+            }}
+          />
+        </span>
+      </Link>
+    </>
+  )
+  // height="40" className="mr-2"
+  //console.log(items)
+  // since we're only returning Menubar anyway, no need to wrap around a div or <>
+  return (
+    <Menubar
+      id="navbar"
+      className="p-4"
+      model={items}
+      start={start}
+      end={end}
+    />
+  )
 }
+export default memo(HeartyNavbar)
 
 // example items
 // const items = [
