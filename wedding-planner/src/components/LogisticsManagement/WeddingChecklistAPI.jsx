@@ -21,6 +21,10 @@ const WeddingChecklistAPI = {
         return fetch(`${SERVER_PREFIX}/checklist/${checklistId}`);
     },
 
+    getWeddingChecklistByWeddingProjectId(projectId) {
+        return fetch(`${SERVER_PREFIX}/checklist/getByWeddingProject/${projectId}`);
+    },
+    
     createParentTask(data, checklistId) {
         return fetch(`${SERVER_PREFIX}/${checklistId}`, {
             headers: {
