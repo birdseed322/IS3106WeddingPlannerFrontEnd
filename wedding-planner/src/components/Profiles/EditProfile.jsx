@@ -1,32 +1,70 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import HeartyNavbar from '../HeartyNavbar/HeartyNavbar'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button } from 'primereact/button'
 import { Card } from 'primereact/card'
 import { classNames } from 'primereact/utils'
 import { InputText } from 'primereact/inputtext'
+import { LoginTokenContext } from '../../context/LoginTokenContext'
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
+const SERVER_PREFIX =
+  'http://localhost:8080/IS3106WeddingPlanner-war/webresources/wedding-organisers'
+const OrganiserAPI = {
+  getWeddingOrganiser(wId) {
+    return fetch(`${SERVER_PREFIX}/${wId}`).then((response) => response.json())
+  },
+  updateWeddingOrganiser(wId, weddingOrganiser) {
+    return fetch(`${SERVER_PREFIX}/${wId}`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'PUT',
+      body: JSON.stringify(weddingOrganiser),
+    })
+  },
+}
 
 function EditProfile() {
-  const wId = 9
+  const [token, setToken] = useContext(LoginTokenContext)
+  const wId = token.userId
   const navigate = useNavigate()
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    /*ProfileAPI.updateWeddingOrganiser(wId, {
-      username,
-      email,
-      password,
-    }).then((profile) => {
-      navigate('/')
-    })*/
-  }
-
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    OrganiserAPI.getWeddingOrganiser(wId).then((weddingOrganiser) => {
+      const { username, email, password } = weddingOrganiser
+      setUsername(username)
+      setEmail(email)
+      setPassword(password)
+    })
+  }, [wId])
+
+  const defaultValues = {
+    username: username,
+    email: email,
+    password: password,
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    OrganiserAPI.updateWeddingOrganiser(wId, {
+      username,
+      email,
+      password,
+      isBanned: false,
+    })
+      .then((profile) => {
+        navigate('/')
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error)
+      })
+  }
 
   return (
     <div>
@@ -41,7 +79,7 @@ function EditProfile() {
           }}
         >
           <h3 className="flex justify-content-center">Edit Profile</h3>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} defaultValue={defaultValues}>
             <div className="field pt-1">
               <span>
                 <label

@@ -37,6 +37,7 @@ import GuestQuery from '../components/GuestManagement/GuestQuery.jsx'
 import AdminSignUp from '../components/UnregisteredView/AdminSignUp.jsx'
 import VendorSignUp from '../components/UnregisteredView/VendorSignUp.jsx'
 import OrganiserSignUp from '../components/UnregisteredView/OrganiserSignUp.jsx'
+import VendorEditProfile from '../components/Profiles/VendorEditProfile.jsx'
 function EndPoints() {
   // for debugging, clear localStorage
   // localStorage.clear();
@@ -51,7 +52,7 @@ function EndPoints() {
       <LoginTokenContext.Provider value={[token, setToken]}>
         <BrowserRouter>
           <Routes>
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="signup" element={<SignUp />} />
             <Route path="/adminsignup" element={<AdminSignUp />} />
             <Route path="/vendorsingup" element={<VendorSignUp />} />
             <Route
@@ -157,6 +158,7 @@ function EndPoints() {
               <Routes>
                 <Route exact path="/" element={<VendorRequest />} />
                 <Route exact path="/schedule" element={<Schedule />} />
+                <Route path="editprofile" element={<VendorEditProfile />} />
               </Routes>
             </BrowserRouter>
           </LoginTokenContext.Provider>

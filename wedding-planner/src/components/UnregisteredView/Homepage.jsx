@@ -36,9 +36,10 @@ function Homepage() {
           creating the wedding of your dreams !
         </p>
       </div>
-      <div className="flex justify-content-center px-10 pt-5">
+      <div className="flex justify-content-center pt-5">
         <Link to="/login" className="p-2 noUnderline">
           <Button
+            size="large"
             label="Start Now"
             style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
           />{' '}

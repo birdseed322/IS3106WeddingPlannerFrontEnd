@@ -11,13 +11,9 @@ const WeddingProjectAPI = {
 
   // isCompleted here is optional, defaults to undefined
   getWeddingProjectsByWeddingOrganiserId(orgId, isCompleted) {
-    if (isCompleted == undefined) {
-      return fetch(`${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}`)
-    } else {
-      return fetch(
-        `${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}&isCompleted=${isCompleted}`,
-      )
-    }
+    return fetch(
+      `${SERVER_PREFIX}/query?wedding-organiser-id=${orgId}&isCompleted=${isCompleted}`,
+    )
   },
 
   // updateListOfVendors(vendors) {

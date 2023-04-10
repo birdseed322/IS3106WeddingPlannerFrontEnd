@@ -45,24 +45,22 @@ function VendorSignUp() {
         email,
         password,
         description,
-        banner,
         websiteUrl,
         instagramUrl,
         facebookUrl,
         whatsappUrl,
-        categoryType,
+        category,
       })
       .then((vendor) => {
         navigate('/login')
       })
   }
 
-  const [categoryType, setCategoryType] = useState('ENTERTAINMENT')
+  const [category, setCategory] = useState('ENTERTAINMENT')
   const [description, setDescription] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [banner, setBanner] = useState('')
   const [websiteUrl, setWebsiteUrl] = useState('')
   const [instagramUrl, setInstagramUrl] = useState('')
   const [facebookUrl, setFacebookUrl] = useState('')
@@ -143,20 +141,6 @@ function VendorSignUp() {
               </span>
             </div>
             <div className="field pt-2">
-              <label htmlFor="banner" className="pl-3 pr-1">
-                Banner
-              </label>
-              <span className="px-7">
-                <InputText
-                  className="px-5"
-                  id="inputBanner"
-                  required
-                  value={banner}
-                  onChange={(e) => setBanner(e.target.value)}
-                />
-              </span>
-            </div>
-            <div className="field pt-2">
               <label htmlFor="websiteUrl" className="pl-3 pr-1">
                 Website Url
               </label>
@@ -218,9 +202,9 @@ function VendorSignUp() {
                 <Dropdown
                   label="categoryType"
                   options={categoryTypeItems}
-                  value={categoryType}
+                  value={category}
                   onChange={(e) => {
-                    setCategoryType(e.value)
+                    setCategory(e.value)
                   }}
                 />
               </div>

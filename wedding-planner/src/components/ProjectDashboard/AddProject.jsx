@@ -8,7 +8,6 @@ import { classNames } from 'primereact/utils'
 import { useForm, Controller } from 'react-hook-form'
 import WeddingProjectAPI from '../ProjectOverview/WeddingProjectAPI'
 import { useNavigate, useParams } from 'react-router-dom'
-import jwt_decode from 'jwt-decode'
 import { LoginTokenContext } from '../../context/LoginTokenContext'
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
@@ -19,6 +18,8 @@ function AddProject() {
   const orgId = token.userId
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [Completed, setCompleted] = useState(false)
+
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -26,6 +27,7 @@ function AddProject() {
     WeddingProjectAPI.createWeddingProject(orgId, {
       name,
       description,
+      Completed,
     }).then((weddingProject) => {
       navigate('/')
     })
