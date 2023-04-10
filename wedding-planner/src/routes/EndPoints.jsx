@@ -20,6 +20,7 @@ import SignUp from "../components/UnregisteredView/SignUp.jsx";
 import AboutUs from "../components/UnregisteredView/AboutUs.jsx";
 import VendorLogin from "../components/Login Page/VendorLogin.jsx";
 import EditProfile from "../components/Profiles/EditProfile.jsx";
+import VendorEditProfile from "../components/Profiles/VendorEditProfile.jsx";
 import ProjectDashboard from "../components/ProjectDashboard/ProjectDashboard.jsx";
 import LoginAPI from "../components/Login Page/LoginAPI.jsx";
 import useToken from "../useToken.jsx";
