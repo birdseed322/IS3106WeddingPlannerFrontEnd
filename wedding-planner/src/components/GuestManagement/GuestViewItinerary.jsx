@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'; 
+import React, {useEffect, useState, useRef} from 'react'; 
 import { Timeline } from 'primereact/timeline';
 import GuestViewNavbar from '../HeartyNavbar/GuestViewNavbar';
 import flower from './src/flower.png';
@@ -7,7 +7,9 @@ import GuestQuery from './GuestQuery';
 import { Routes, Route, useParams } from 'react-router-dom';
 import GuestViewAPI from './GuestViewAPI.jsx';
 import moment from "moment";
+import { Toast } from 'primereact/toast';
 export default function GuestViewItinerary() {
+    const toast = useRef(null);
     const [events, setEvents] = useState([]);
     const {weddingId} = useParams();
     useEffect(() => {
@@ -29,12 +31,15 @@ export default function GuestViewItinerary() {
                     color : "ff66cc"
                 });
             }
-            setEvents(list);
+            setEvents(list);  
+        }).catch(error => {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load itinerary ' , life: 3000 });
         });
     }, []);
     if (sessionStorage.getItem("guestId") != null && weddingId != null) {
         return (
             <>
+            <Toast ref={toast} />
             <GuestViewNavbar></GuestViewNavbar>
             <div className="mt-10 p-8 top-0 min-h-full" style={{backgroundImage:`url(${flower})`, backgroundSize:"cover", backgroundRepeat:"repeat"}}> {/*background styles partly credits to chatgpt*/}
                 <ScrollPanel style={{ width: '100%', height: '40rem' }}>
