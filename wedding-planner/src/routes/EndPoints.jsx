@@ -18,17 +18,18 @@ import Homepage from '../components/UnregisteredView/Homepage.jsx'
 import Contact from '../components/UnregisteredView/Contact.jsx'
 import SignUp from '../components/UnregisteredView/SignUp.jsx'
 import AboutUs from '../components/UnregisteredView/AboutUs.jsx'
-import VendorLogin from '../components/Login Page/VendorLogin.jsx'
+import VendorLogin from '../components/Login Page/VendorLogin.jsx';
 import EditProfile from '../components/Profiles/EditProfile.jsx'
 import ProjectDashboard from '../components/ProjectDashboard/ProjectDashboard.jsx'
 import LoginAPI from '../components/Login Page/LoginAPI.jsx'
 import useToken from '../useToken.jsx'
 import { LoginTokenContext } from '../context/LoginTokenContext.jsx'
 import ProjectOverview from '../components/ProjectOverview/ProjectOverview.jsx'
-
+import SpecificRequestPage from "../components/VendorView/Specific Request Page/SpecificRequestPage.jsx";
 import RSVPForm from '../components/GuestManagement/RSVPForm.jsx'
 import TestingImageFunctions from '../components/testingImageFunctions.js'
 import AdminStatistics from '../components/AdminUserManagement/AdminStatistics/AdminStatistics.jsx'
+
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 import GuestView from '../components/GuestManagement/GuestView.jsx'
 import GuestViewItinerary from '../components/GuestManagement/GuestViewItinerary.jsx'
@@ -143,6 +144,7 @@ function EndPoints() {
                 />
                 <Route path="tablelayout" element={<TableLayout />} />
                 <Route path="guestlist" element={<GuestList />} />
+                <Route exact path="request/:id" element={<SpecificRequestPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
@@ -162,7 +164,6 @@ function EndPoints() {
               </Routes>
             </BrowserRouter>
           </LoginTokenContext.Provider>
-          ;
         </>
       )
 

@@ -26,7 +26,8 @@ export default function GuestViewItinerary() {
                 d.setMinutes(start.getMinutes());
                 list.push({
                     status : eventName,
-                    date : d.toLocaleDateString() + " " + d.toLocaleTimeString()
+                    date : d.toLocaleDateString() + " " + d.toLocaleTimeString(),
+                    color : "ff66cc"
                 });
             }
             setEvents(list);
