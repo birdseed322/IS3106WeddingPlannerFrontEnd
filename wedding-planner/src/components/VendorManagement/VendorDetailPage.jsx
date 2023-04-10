@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useLocation } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Splitter, SplitterPanel } from "primereact/splitter";
 import { Panel } from "primereact/panel";
@@ -13,6 +13,7 @@ import { Toast } from "primereact/toast";
 import { Tree } from "primereact/tree";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
+import { BreadCrumb } from 'primereact/breadcrumb';
 
 const VendorDetailPage = () => {
   const { vendorName } = useParams(); //vendor name assumed to be unique for now
@@ -155,10 +156,19 @@ const VendorDetailPage = () => {
     })
     }
   
-
+    const homePath = `http://localhost:3000/${projectId}/VendorSearchPage/`;
+    const categoryPath = homePath + `Category/${vendor.category}`
+    const location = useLocation();
+    const currPath = location.pathname
+    const home = { icon: 'pi pi-search', url: homePath}
+    const items = [
+        {label: 'Category', url: categoryPath},
+        {label: 'Vendor Details', url: currPath}
+    ];
   return (
     <div>
       <HeartyNavbar />
+      <BreadCrumb model={items} home={home}/>
       <br />
       <Card
         title={vendorName}

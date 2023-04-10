@@ -9,6 +9,7 @@ import PendingApprovalButtons from "./PendingApprovalButtons";
 import { Message } from "primereact/message";
 import PaymentAction from "./PaymentAction";
 import { LoginTokenContext } from "../../../context/LoginTokenContext";
+import HeartyNavbar from "../../HeartyNavbar/HeartyNavbar";
 
 function SpecificRequestPage() {
   //Should only be accessible by the vendor and the wedding organiser that posted
@@ -189,7 +190,7 @@ function SpecificRequestPage() {
 
   return (
     <>
-      <VendorNavbar />
+    {token.userType === "VENDOR" ?  <VendorNavbar /> : <HeartyNavbar/>}
       <Card className="h-full">
         <div className="grid">
           <div className="col">

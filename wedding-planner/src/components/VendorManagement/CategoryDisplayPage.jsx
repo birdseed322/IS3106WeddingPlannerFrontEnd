@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
-import { DataView, DataViewLayoutOptions } from "primereact/dataview";
+import { DataView } from "primereact/dataview";
 import SearchBar from "./SearchBar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { ref, uploadBytes, getDownloadURL, listAll, list } from "firebase/storage";
+import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { storage } from "../firebase";
 import { Image } from 'primereact/image';
+import { BreadCrumb } from 'primereact/breadcrumb';
+
 
 const CategoryDisplayPage = () => {
     const { vendorCategory } = useParams(); //category name assumed to be unique
@@ -115,10 +117,18 @@ const CategoryDisplayPage = () => {
     const itemTemplate = (product) => {
         return GridItem(product);
     };
-
+    const location = useLocation();
+    const currPath = location.pathname
+    const categoryPath =  location.pathname.substring(0, currPath.lastIndexOf('/'))
+    const homePath = location.pathname.substring(0, categoryPath.lastIndexOf('/'));
+    const home = { icon: 'pi pi-search', url: homePath}
+    const items = [
+        {label: 'Category', url: currPath}
+    ];
     return (
         <div>
             <HeartyNavbar />
+            <BreadCrumb model={items} home={home}/>
             <br />
             <br />
             <SearchBar />

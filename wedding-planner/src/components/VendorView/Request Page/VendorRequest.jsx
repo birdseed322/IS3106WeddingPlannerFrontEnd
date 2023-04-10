@@ -61,12 +61,10 @@ function VendorRequest() {
             message: (
               <>
                 <div>
-                  Do you want to accept this request? You currently have {res.clashes} event(s) on that 
+                  Do you want to accept this request? You currently have{" "}
+                  {res.clashes} event(s) on that
                 </div>
-                <Link to={"/vendor/schedule?date=" + res.clashDate}>
-                day
-                </Link>
-                .
+                <Link to={"/vendor/schedule?date=" + res.clashDate}>day</Link>.
               </>
             ),
             header: "Acceptance Confirmation",
@@ -138,42 +136,6 @@ function VendorRequest() {
       }
     });
   }
-  // const pendingRequests = [
-  //   {
-  //     requestId: 19,
-  //     isAccepted: false,
-  //     quotationURL: "www.someurl.com",
-  //     quotedPrice: null,
-  //     requestDate: new Date("2/3/23"),
-  //     requestDetails:
-  //       "Lorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuff",
-  //   },
-  //   {
-  //     requestId: 20,
-  //     isAccepted: false,
-  //     quotationURL: "www.someotherurl.com",
-  //     quotedPrice: null,
-  //     requestDate: new Date("2/3/23"),
-  //     requestDetails: "Lorem ipsum and some other stuff",
-  //   },
-  //   {
-  //     requestId: 21,
-  //     isAccepted: false,
-  //     quotationURL: "www.someurl.com",
-  //     quotedPrice: null,
-  //     requestDate: new Date("2/3/23"),
-  //     requestDetails:
-  //       "Lorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuffLorem ipsum and some stuff",
-  //   },
-  //   {
-  //     requestId: 22,
-  //     isAccepted: false,
-  //     quotationURL: "www.someotherurl.com",
-  //     quotedPrice: null,
-  //     requestDate: new Date("2/3/23"),
-  //     requestDetails: "Lorem ipsum and some other stuff",
-  //   },
-  // ];
 
   //Data table formatting
   const dateBodyTemplate = (rowData) => {
