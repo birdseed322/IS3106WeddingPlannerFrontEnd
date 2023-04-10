@@ -32,6 +32,7 @@ import VendorSignUp from "../components/UnregisteredView/VendorSignUp.jsx";
 import OrganiserSignUp from "../components/UnregisteredView/OrganiserSignUp.jsx";
 import SignUp from "../components/UnregisteredView/SignUp.jsx";
 function TempEndPoints() {
+<<<<<<< HEAD
     // for debugging, clear localStorage
     // localStorage.clear();
     const { token, setToken } = useToken();
@@ -122,6 +123,78 @@ function TempEndPoints() {
             </BrowserRouter>
         </>
     );
+=======
+  // for debugging, clear localStorage
+  // localStorage.clear();
+  const { token, setToken } = useToken()
+  return (
+    <>
+      <LoginTokenContext.Provider value={token}></LoginTokenContext.Provider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/rsvpForm/:weddingId"
+            element={<RSVPForm></RSVPForm>}
+          ></Route>
+          <Route exact path="/" element={<ProjectDashboard />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/vendorlogin" element={<VendorLogin />} />
+          <Route exact path="/vendor/requests" element={<VendorRequest />} />
+          <Route
+            exact
+            path="/vendor/request/:id"
+            element={<SpecificRequestPage />}
+          />
+          <Route exact path="/vendor/schedule" element={<Schedule />} />
+          <Route
+            exact
+            path="/AdminUserManagement"
+            element={<AdminUserManagement />}
+          />
+          <Route exact path="/" element={<ProjectDashboard />} />
+          <Route
+            exact
+            path="/LogisticsManagement/WeddingChecklist"
+            element={<WeddingChecklist />}
+          />
+          <Route
+            exact
+            path="/LogisticsManagement/WeddingBudgetPlanner"
+            element={<WeddingBudgetPlanner />}
+          />
+          <Route
+            exact
+            path="/LogisticsManagement/WeddingItinerary"
+            element={<WeddingItinerary />}
+          />
+          <Route exact path="/VendorSearchPage" element={<SearchPage />} />
+          <Route
+            path="/VendorSearchPage/VendorName/:vendorName"
+            element={<VendorDetailpage />}
+          />
+          <Route
+            path="/VendorSearchPage/Category/:vendorCategory"
+            element={<CategoryDisplayPage />}
+          />
+          <Route exact path="/tablelayout" element={<MainTable />} />
+          <Route exact path="/guestlist" element={<GuestList />} />
+          <Route exact path="/homepage" element={<Homepage />} />
+          <Route exact path="/aboutuspage" element={<AboutUs />} />
+          <Route exact path="/contactpage" element={<Contact />} />
+          <Route exact path="/signup" element={<SignUp />} />
+          <Route exact path="/signup/vendorsignup" element={<VendorSignUp />} />
+          <Route
+            exact
+            path="/signup/organisersignup"
+            element={<OrganiserSignUp />}
+          />
+          <Route exact path="/signup/adminsignup" element={<AdminSignUp />} />
+          <Route exact path="/editprofile" element={<EditProfile />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  )
+>>>>>>> a1108f3bad7964432fe973b3a7539c9987bd9b29
 }
 
 export default TempEndPoints;

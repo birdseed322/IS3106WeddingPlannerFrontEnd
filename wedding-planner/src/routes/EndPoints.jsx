@@ -18,17 +18,18 @@ import Homepage from '../components/UnregisteredView/Homepage.jsx'
 import Contact from '../components/UnregisteredView/Contact.jsx'
 import SignUp from '../components/UnregisteredView/SignUp.jsx'
 import AboutUs from '../components/UnregisteredView/AboutUs.jsx'
-import VendorLogin from '../components/Login Page/VendorLogin.jsx'
+import VendorLogin from '../components/Login Page/VendorLogin.jsx';
 import EditProfile from '../components/Profiles/EditProfile.jsx'
 import ProjectDashboard from '../components/ProjectDashboard/ProjectDashboard.jsx'
 import LoginAPI from '../components/Login Page/LoginAPI.jsx'
 import useToken from '../useToken.jsx'
 import { LoginTokenContext } from '../context/LoginTokenContext.jsx'
 import ProjectOverview from '../components/ProjectOverview/ProjectOverview.jsx'
-
+import SpecificRequestPage from "../components/VendorView/Specific Request Page/SpecificRequestPage.jsx";
 import RSVPForm from '../components/GuestManagement/RSVPForm.jsx'
 import TestingImageFunctions from '../components/testingImageFunctions.js'
 import AdminStatistics from '../components/AdminUserManagement/AdminStatistics/AdminStatistics.jsx'
+
 // Component to handle routing. Take note of the format of the pathing and how to add a Route (url endpoint). Login component is created as an example.
 import GuestView from '../components/GuestManagement/GuestView.jsx'
 import GuestViewItinerary from '../components/GuestManagement/GuestViewItinerary.jsx'
@@ -37,6 +38,7 @@ import GuestQuery from '../components/GuestManagement/GuestQuery.jsx'
 import AdminSignUp from '../components/UnregisteredView/AdminSignUp.jsx'
 import VendorSignUp from '../components/UnregisteredView/VendorSignUp.jsx'
 import OrganiserSignUp from '../components/UnregisteredView/OrganiserSignUp.jsx'
+import VendorEditProfile from '../components/Profiles/VendorEditProfile.jsx'
 function EndPoints() {
   // for debugging, clear localStorage
   // localStorage.clear();
@@ -51,7 +53,7 @@ function EndPoints() {
       <LoginTokenContext.Provider value={[token, setToken]}>
         <BrowserRouter>
           <Routes>
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="signup" element={<SignUp />} />
             <Route path="/adminsignup" element={<AdminSignUp />} />
             <Route path="/vendorsingup" element={<VendorSignUp />} />
             <Route
@@ -115,6 +117,14 @@ function EndPoints() {
         <LoginTokenContext.Provider value={[token, setToken]}>
           <BrowserRouter>
             <Routes>
+              <Route path="/guestview/:weddingId">
+                <Route index element={<GuestQuery></GuestQuery>} />
+                <Route
+                  path="itinerary"
+                  element={<GuestViewItinerary></GuestViewItinerary>}
+                />
+                <Route path="seatplan" element={<GuestView></GuestView>} />
+              </Route>
               <Route path="/" element={<ProjectDashboard />} />
               <Route path="editprofile" element={<EditProfile />} />
               <Route path="/:projectId/">
@@ -142,6 +152,7 @@ function EndPoints() {
                 />
                 <Route path="tablelayout" element={<TableLayout />} />
                 <Route path="guestlist" element={<GuestList />} />
+                <Route exact path="request/:id" element={<SpecificRequestPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
@@ -157,10 +168,10 @@ function EndPoints() {
               <Routes>
                 <Route exact path="/" element={<VendorRequest />} />
                 <Route exact path="/schedule" element={<Schedule />} />
+                <Route path="editprofile" element={<VendorEditProfile />} />
               </Routes>
             </BrowserRouter>
           </LoginTokenContext.Provider>
-          ;
         </>
       )
 

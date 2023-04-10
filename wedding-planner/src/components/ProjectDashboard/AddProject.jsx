@@ -1,35 +1,37 @@
-import { Button } from "primereact/button";
-import { Card } from "primereact/card";
-import React, { useContext, useEffect, useState } from "react";
-import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
-import { classNames } from "primereact/utils";
-import { useForm, Controller } from "react-hook-form";
-import WeddingProjectAPI from "../ProjectOverview/WeddingProjectAPI";
-import { useNavigate, useParams } from "react-router-dom";
-import jwt_decode from "jwt-decode";
-import { LoginTokenContext } from "../../context/LoginTokenContext";
+import { Button } from 'primereact/button'
+import { Card } from 'primereact/card'
+import React, { useContext, useEffect, useState } from 'react'
+import { Dialog } from 'primereact/dialog'
+import { InputText } from 'primereact/inputtext'
+import { InputTextarea } from 'primereact/inputtextarea'
+import { classNames } from 'primereact/utils'
+import { useForm, Controller } from 'react-hook-form'
+import WeddingProjectAPI from '../ProjectOverview/WeddingProjectAPI'
+import { useNavigate, useParams } from 'react-router-dom'
+import { LoginTokenContext } from '../../context/LoginTokenContext'
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
 
 function AddProject() {
-    const [token, setToken] = useContext(LoginTokenContext);
-    const orgId = token.userId;
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const navigate = useNavigate();
+  const [token, setToken] = useContext(LoginTokenContext)
+  const orgId = token.userId
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [Completed, setCompleted] = useState(false)
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        WeddingProjectAPI.createWeddingProject(orgId, {
-            name,
-            description,
-        }).then((weddingProject) => {
-            navigate("/");
-        });
-    };
+  const navigate = useNavigate()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    WeddingProjectAPI.createWeddingProject(orgId, {
+      name,
+      description,
+      Completed,
+    }).then((weddingProject) => {
+      navigate('/')
+    })
+  }
 
     return (
         <div

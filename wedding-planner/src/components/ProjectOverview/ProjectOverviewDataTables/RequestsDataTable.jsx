@@ -14,7 +14,7 @@ const RequestsDataTable = ({ requestsInfo }) => {
 
         // return list containing only this 1 row object
         setFormattedInfo([rowObject]);
-    }, []);
+    }, [requestsInfo]);
 
     const idTemplate = (rowData) => {
         return <b>{rowData.id}</b>;

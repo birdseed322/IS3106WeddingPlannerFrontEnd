@@ -8,8 +8,9 @@ export default function ProjectNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
   const [value, setValue] = useState('')
+
   // height="40" className="mr-2"
-  // const [token, setToken] = useContext(LoginTokenContext);
+  const [token, setToken] = useContext(LoginTokenContext)
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
   return (
     <div id="navbar" className="m-3">
@@ -43,11 +44,13 @@ export default function ProjectNavbar(props) {
         <Link to="/login" className="noUnderline">
           <Button
             label="Logout"
+            icon="pi pi-sign-out"
             style={{
               backgroundColor: '#f561b0',
               border: '#f561b0',
+              marginRight: '1rem',
             }}
-            // onClick={() => setToken(false)}
+            onClick={() => setToken(false)} // set token to false
           />{' '}
         </Link>
         <Link to="/editprofile" className="noUnderline px-3">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card } from "primereact/card";
 import RequestFooter from "./RequestFooter";
 import VendorNavbar from "../VendorNavbar/VendorNavbar";
@@ -9,6 +9,7 @@ import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
+import { LoginTokenContext } from "../../../context/LoginTokenContext";
 
 function VendorRequest() {
   //When rendering the data table for the requests, the headers should include: S/N? Request id. Event Date. View button. Quoted price. W.O?
@@ -18,12 +19,11 @@ function VendorRequest() {
   const [vendorConfirmedRequests, setVendorConfirmedRequests] = React.useState(
     []
   );
-  //Pull vendorId from the sessionStorage
-  const vendorId = 2;
+  const [token, setToken] = useContext(LoginTokenContext);
   React.useEffect(() => {
     const apiUrl =
       "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/vendorRequests/" +
-      vendorId;
+      token.userId;
     fetch(apiUrl).then((res) => {
       res.json().then((data) => {
         let pendingReq = [];
@@ -37,7 +37,7 @@ function VendorRequest() {
         }
         setVendorPendingRequests(pendingReq);
         setVendorConfirmedRequests(acceptedReq);
-        console.log(acceptedReq)
+        console.log(acceptedReq);
       });
     });
   }, []);
@@ -47,7 +47,7 @@ function VendorRequest() {
       "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/checkSchedule?requestId=" +
       id +
       "&vendorId=" +
-      vendorId;
+      token.userId;
     const reqUrl =
       "http://localhost:8080/IS3106WeddingPlanner-war/webresources/requests/vendorRequests/" +
       id;
@@ -58,13 +58,21 @@ function VendorRequest() {
           //Open acknowledgement dialog box pop up
           console.log("There is a clash. opening up dialog box");
           confirmDialog({
-            message:
-              "Do you want to accept this request? You currently have " +
-              res.clashes +
-              " event(s) on that day.",
+            message: (
+              <>
+                <div>
+                  Do you want to accept this request? You currently have {res.clashes} event(s) on that 
+                </div>
+                <Link to={"/vendor/schedule?date=" + res.clashDate}>
+                day
+                </Link>
+                .
+              </>
+            ),
             header: "Acceptance Confirmation",
             icon: "pi pi-info-circle",
             acceptClassName: "p-button-success",
+            draggable: false,
             accept: () => {
               fetch(reqUrl, {
                 method: "PUT",
@@ -169,9 +177,10 @@ function VendorRequest() {
 
   //Data table formatting
   const dateBodyTemplate = (rowData) => {
+    //may need to change
     return new Date(
-      rowData.requestDate.replace("[UTC]", "")
-    ).toLocaleDateString("en-US", {
+      rowData.weddingProject.weddingDate.replace("[UTC]", "")
+    ).toLocaleDateString("en-SG", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -210,11 +219,13 @@ function VendorRequest() {
 
   const pendingActionTemplate = (rowData) => {
     return (
-      <RequestFooter
-        reqId={rowData.requestId}
-        handleAccept={handleAccept}
-        handleReject={handleReject}
-      />
+      <>
+        <RequestFooter
+          reqId={rowData.requestId}
+          handleAccept={handleAccept}
+          handleReject={handleReject}
+        />
+      </>
     );
   };
 

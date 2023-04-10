@@ -42,7 +42,7 @@ const BrideGroomGuestsDataTable = ({ guestNumberInfo }) => {
         const convertedGuestInfo = [copyBride, copyGroom, copyTotal];
 
         setFormattedInfo(convertedGuestInfo);
-    }, []);
+    }, [guestNumberInfo]);
 
     const idTemplate = (rowData) => {
         return <b>{rowData.id}</b>;
@@ -50,7 +50,7 @@ const BrideGroomGuestsDataTable = ({ guestNumberInfo }) => {
 
     const headerText = (
         <div style={{ textAlign: "center" }}>
-            <b>Guest Status</b>
+            <b>Guests Status</b>
         </div>
     );
     return (

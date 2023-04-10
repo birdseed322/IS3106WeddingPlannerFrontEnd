@@ -2,13 +2,9 @@ import React, {useState, useEffect, useRef, useContext } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { ProductService } from './ProductService';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
 import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { RadioButton } from 'primereact/radiobutton';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
@@ -17,10 +13,8 @@ import { Tag } from 'primereact/tag';
 import HeartyNavbar from '../HeartyNavbar/HeartyNavbar.jsx';
 import Api from './GuestListAPI.jsx';
 import EmailAPI from './EmailAPI.jsx';
-import ReactDOMServer from 'react-dom/server';
 import validateGuest from './Validations/GuestValidation.jsx';
-import { Routes, Route, useParams } from 'react-router-dom';
-import { LoginTokenContext } from "../../context/LoginTokenContext";
+import {useParams } from 'react-router-dom';
 import WeddingProjectAPI from '../ProjectOverview/WeddingProjectAPI';
 import moment from "moment";
 export default function GuestList() {
@@ -53,7 +47,7 @@ export default function GuestList() {
         }).then((g) => {
             setGuests(g);
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
             console.log(error);
         });
     }, []);
@@ -112,7 +106,7 @@ export default function GuestList() {
         }).catch(error => {
             setDeleteGuestDialog(false);
             setGuest(emptyGuest);
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Delete Guest', life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Delete Guest', life: 3000 });
         })
     };
 
@@ -202,10 +196,10 @@ export default function GuestList() {
                                 throw new Error();
                             }
                         }).catch(e => {
-                            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
+                            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error in updating guests rsvp', life: 3000 });
                         })
                 }).catch(error => {
-                    toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Error in sending invites', life: 3000 });
                 });
             } 
         }).catch(error => {
@@ -234,7 +228,7 @@ export default function GuestList() {
                     }).catch((error) => {
                         setGuestDialog(false);  
                         setTimeout(300, () => setGuest(emptyGuest));  
-                        toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Update Guest : ', life: 3000 });   
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Update Guest : ', life: 3000 });   
                     })
                 } else {
                     if (validateGuest(_guest)) {
@@ -254,7 +248,7 @@ export default function GuestList() {
                         }).catch(error => {   
                             setGuestDialog(false);  
                             setTimeout(200, () => setGuest(emptyGuest));                   
-                            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });   
+                            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Create Guest', life: 3000 });   
                         }); 
                     }
                 }

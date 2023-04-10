@@ -1,12 +1,14 @@
 import { Button } from "primereact/button";
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PublicHeartyNavbar from "../HeartyNavbar/PublicHeartyNavbar";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import LoginAPI from "./LoginAPI";
 import { Dropdown } from "primereact/dropdown";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
+import { Message } from "primereact/message";
+
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
 
@@ -24,6 +26,8 @@ function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [userType, setUserType] = useState("ADMIN");
+
+    const [errorMsg, setErrorMsg] = useState("");
     // Title component
     // lazy to style in external css, but if we want to
     // we can select card titles with p-card-title.
@@ -33,15 +37,18 @@ function Login() {
     //   </div>
     // )
 
+    const navigate = useNavigate();
     function handleLoginSuccessOrFail(successOrFailPromise) {
         return successOrFailPromise.then((successOrFailString) => {
             if (successOrFailString == "success") {
-                // do some redirect to relevant page, but I think it should be done from the Router element
+                navigate("/"); // go to some default page
                 console.log("success");
+                setErrorMsg(""); // just in case lol
                 return "success";
             } else {
                 // stay on login page
                 console.log("fail");
+                setErrorMsg("Wrong username or password!");
                 return "fail";
             }
         });
@@ -51,10 +58,7 @@ function Login() {
         switch (userType) {
             case "ADMIN":
                 handleLoginSuccessOrFail(
-                    LoginAPI.loginSucceedOrNot(
-                        LoginAPI.loginAdmin(username, password)
-                        // setToken
-                    )
+                    LoginAPI.loginSucceedOrNot(LoginAPI.loginAdmin(username, password), setToken)
                 );
                 break;
             case "WEDDING-ORGANISER":
@@ -67,10 +71,7 @@ function Login() {
                 break;
             case "VENDOR":
                 handleLoginSuccessOrFail(
-                    LoginAPI.loginSucceedOrNot(
-                        LoginAPI.loginVendor(username, password)
-                        // setToken
-                    )
+                    LoginAPI.loginSucceedOrNot(LoginAPI.loginVendor(username, password), setToken)
                 );
                 break;
         }
@@ -79,21 +80,24 @@ function Login() {
     const footer = (
         <span className="flex justify-content-center ">
             <div>
-                <Link
-                    to="/"
+                <div className="flex justify-content-center">
+                    {errorMsg && <Message severity="error" text={errorMsg} />}
+                </div>
+
+                <div
+                    // to="/"
                     className="flex justify-content-center noUnderline"
                 >
                     <Button
                         label="Login"
+                        type="button" // this prevents automatic submission. either that or i can do event.preventDefault in the onClick
                         style={{
                             backgroundColor: "#f561b0",
                             border: "#f561b0",
                         }}
-                        onClick={() =>
-                            doLogin(userType, username, password, setToken)
-                        }
+                        onClick={() => doLogin(userType, username, password, setToken)}
                     />{" "}
-                </Link>
+                </div>
                 <div className="flex justify-content-center px-5 mt-5">
                     <p className="px-1">Don't Have an Account ?</p>
                     <Link to="/signup" className="noUnderline">
@@ -126,12 +130,14 @@ function Login() {
                             <p className="flex-1 mt-1">Username: </p>
                             <InputText
                                 value={username}
+                                autoComplete="username"
                                 onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
                         <div className="flex justify-content-center mt-3">
                             <p className="flex-1 mt-2">Password: </p>
                             <InputText
+                                type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
