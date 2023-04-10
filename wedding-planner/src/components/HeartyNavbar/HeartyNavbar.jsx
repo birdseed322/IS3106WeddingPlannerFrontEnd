@@ -34,7 +34,11 @@ function HeartyNavbar(props) {
           label: 'Vendor Search Page',
           icon: 'pi pi-search',
           url: `/${projectId}/VendorSearchPage`,
-        },
+        }, {
+          label: 'My requests',
+          icon: 'pi pi-comment',
+          url: `/${projectId}/requests`
+        }
       ],
     },
     {
