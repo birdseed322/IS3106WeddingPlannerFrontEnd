@@ -155,36 +155,36 @@ function ProjectDashboard() {
     )
   }
 
-  function handleShowCard() {
-    setShowCard(true)
-  }
+    function handleShowCard() {
+        setShowCard(true);
+    }
 
-  const header = (
-    <div
-      className="table-header"
-      style={{
-        backgroundColor: '#f561b0',
-        color: '#ffffff',
-        borderColor: '#f561b0',
-        padding: '15px',
-      }}
-    >
-      Current Projects
-    </div>
-  )
-  const header2 = (
-    <div
-      className="table-header"
-      style={{
-        backgroundColor: '#f561b0',
-        color: '#ffffff',
-        borderColor: '#f561b0',
-        padding: '15px',
-      }}
-    >
-      Completed Projects
-    </div>
-  )
+    const header = (
+        <div
+            className="table-header"
+            style={{
+                backgroundColor: "#f561b0",
+                color: "#ffffff",
+                borderColor: "#f561b0",
+                padding: "15px",
+            }}
+        >
+            Current Projects
+        </div>
+    );
+    const header2 = (
+        <div
+            className="table-header"
+            style={{
+                backgroundColor: "#f561b0",
+                color: "#ffffff",
+                borderColor: "#f561b0",
+                padding: "15px",
+            }}
+        >
+            Completed Projects
+        </div>
+    );
 
   return (
     <div>
