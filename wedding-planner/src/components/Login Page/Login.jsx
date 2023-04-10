@@ -52,24 +52,24 @@ function Login() {
             case "ADMIN":
                 handleLoginSuccessOrFail(
                     LoginAPI.loginSucceedOrNot(
-                        LoginAPI.loginAdmin(username, password),
-                        setToken
+                        LoginAPI.loginAdmin(username, password)
+                        // setToken
                     )
                 );
                 break;
             case "WEDDING-ORGANISER":
                 handleLoginSuccessOrFail(
                     LoginAPI.loginSucceedOrNot(
-                        LoginAPI.loginWeddingOrganiser(username, password),
-                        setToken
+                        LoginAPI.loginWeddingOrganiser(username, password)
+                        // setToken
                     )
                 );
                 break;
             case "VENDOR":
                 handleLoginSuccessOrFail(
                     LoginAPI.loginSucceedOrNot(
-                        LoginAPI.loginVendor(username, password),
-                        setToken
+                        LoginAPI.loginVendor(username, password)
+                        // setToken
                     )
                 );
                 break;

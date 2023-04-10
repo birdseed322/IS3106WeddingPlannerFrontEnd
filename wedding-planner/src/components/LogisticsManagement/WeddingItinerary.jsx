@@ -225,7 +225,7 @@ export default function WeddingItinerary() {
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <h4>
-                    Date: <Calendar id="eventDate"></Calendar>
+                    Date: <Calendar id="eventDate" showIcon></Calendar>
                 </h4>
                 <Button
                     label="Add New Itinerary"

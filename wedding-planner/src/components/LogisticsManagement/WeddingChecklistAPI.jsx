@@ -51,6 +51,10 @@ const WeddingChecklistAPI = {
         return fetch(`${SERVER_PREFIX}/subtasks`);
     },
 
+    // getAllSubTasks(weddingParentTaskId) {
+    //     return fetch(`${SERVER_PREFIX}/subtasks/${weddingParentTaskId}`);
+    // },
+
     updateParentTask(data) {
         return fetch(`${SERVER_PREFIX}/update/parentTask`, {
             headers: {
