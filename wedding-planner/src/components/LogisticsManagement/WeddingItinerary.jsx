@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
 
 import { Card } from "primereact/card";
 import { Calendar } from "primereact/calendar";
@@ -14,14 +15,15 @@ import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 
 export default function WeddingItinerary() {
     let emptyItinerary = {
-        eventDate: null,
-        eventEndTime: null,
+        eventDate: "",
+        eventEndTime: "",
         eventName: "",
-        eventStartTime: null,
+        eventStartTime: "",
         weddingItineraryId: null,
     };
 
-    const [weddingProjectId, setWeddingProjectId] = useState(1);
+    const { projectId } = useParams();
+
     const [itinerary, setItinerary] = useState(emptyItinerary);
     const [itineraries, setItineraries] = useState([]);
     const [itineraryDialog, setItineraryDialog] = useState(false);
@@ -46,7 +48,7 @@ export default function WeddingItinerary() {
     }, []);
 
     const reloadData = () => {
-        WeddingItineraryAPI.getAllItineraries()
+        WeddingItineraryAPI.getItinerariesByWeddingProject(projectId)
             .then((res) => {
                 return res.json();
             })
@@ -146,17 +148,17 @@ export default function WeddingItinerary() {
                 setItineraryDialog(false);
             });
         } else {
-            WeddingItineraryAPI.createNewItinerary(
-                parsedCopy,
-                weddingProjectId
-            ).then((response) => {
-                response.json().then((idObject) => {
-                    _itinerary.weddingItineraryId = idObject.WEDDINGITINERARYID;
-                    _itineraries.push(_itinerary);
-                    setItineraries(_itineraries);
-                    setItineraryDialog(false);
-                });
-            });
+            WeddingItineraryAPI.createNewItinerary(parsedCopy, projectId).then(
+                (response) => {
+                    response.json().then((idObject) => {
+                        _itinerary.weddingItineraryId =
+                            idObject.WEDDINGITINERARYID;
+                        _itineraries.push(_itinerary);
+                        setItineraries(_itineraries);
+                        setItineraryDialog(false);
+                    });
+                }
+            );
         }
     };
 

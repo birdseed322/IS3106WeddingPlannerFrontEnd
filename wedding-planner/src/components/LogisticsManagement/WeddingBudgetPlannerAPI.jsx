@@ -32,6 +32,12 @@ const WeddingBudgetPlannerAPI = {
         return fetch(`${SERVER_PREFIX}/budget/${weddingBudgetListId}`);
     },
 
+    getBudgetByWeddingProject(weddingProjectId) {
+        return fetch(
+            `${SERVER_PREFIX}/getBudgetByWeddingProject/${weddingProjectId}`
+        );
+    },
+
     retrieveAllItems() {
         return fetch(`${SERVER_PREFIX}/items`);
     },

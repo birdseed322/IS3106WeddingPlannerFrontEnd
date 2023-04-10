@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useParams } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
@@ -30,6 +31,7 @@ export default function WeddingBudgetPlanner() {
     };
 
     const { weddingProjectId } = useParams();
+
     const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
     const [budget, setBudget] = useState(emptyBudget);
     const [budgets, setBudgets] = useState([]);
@@ -41,23 +43,23 @@ export default function WeddingBudgetPlanner() {
     const [deleteItemDialog, setDeleteItemDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    useEffect(() => reloadData(), []);
+    // useEffect(() => reloadData(), []);
 
-    const reloadData = () => {
-        WeddingBudgetPlannerAPI.retrieveAllItems()
-            .then((res) => {
-                return res.json();
-            })
-            .then((items) => {
-                setItems(items);
-                console.log(items);
-            });
-    };
+    // const reloadData = () => {
+    //     WeddingBudgetPlannerAPI.retrieveAllItems()
+    //         .then((res) => {
+    //             return res.json();
+    //         })
+    //         .then((items) => {
+    //             setItems(items);
+    //             console.log(items);
+    //         });
+    // };
 
     useEffect(() => budgetData(), []);
 
     const budgetData = () => {
-        WeddingBudgetPlannerAPI.retrieveAllBudgets()
+        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(weddingProjectId)
             .then((res) => {
                 return res.json();
             })
