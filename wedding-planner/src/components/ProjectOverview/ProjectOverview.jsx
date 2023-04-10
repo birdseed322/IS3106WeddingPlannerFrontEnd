@@ -255,28 +255,37 @@ export default function ProjectOverview() {
                                     <p>maybe buttons that links to guestlist & tables</p>
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Tasks & Budget">
-                                    {Object.keys(projectWeddingChecklist).length == 0 && <p>You do not have any tasks set.</p>}
-                                    {Object.keys(projectWeddingChecklist).length != 0 && <>
-                                    <p>
-                                        Current task progress:{" "}
-                                        <b>
-                                        {
-                                            projectWeddingChecklist.weddingParentTasks.filter(
-                                                (task) => task.isDone
-                                            ).length
-                                        }
-                                        </b>
-                                        {" "}
-                                        out of
-                                        {" "}
-                                        <b>{projectWeddingChecklist.weddingParentTasks.length}</b> 
-                                        {" "}
-                                        main tasks done
-                                    </p>
-                                    </>}
+                                    {/* check if the checklist parent tasks list is undefined , or if it exists, then check if it has any parent tasks*/}
+                                    {(projectWeddingChecklist.weddingParentTasks == undefined || projectWeddingChecklist.weddingParentTasks.length == 0) && (
+                                        <p>You do not have any tasks set.</p>
+                                    )}
+                                    {/* checking the opposite of the above*/}
+                                    {projectWeddingChecklist.weddingParentTasks != undefined &&
+                                        projectWeddingChecklist.weddingParentTasks.length > 0  && (
+                                            <>
+                                                <p>
+                                                    Current task progress:{" "}
+                                                    <b>
+                                                        {
+                                                            projectWeddingChecklist.weddingParentTasks.filter(
+                                                                (task) => task.isDone
+                                                            ).length
+                                                        }
+                                                    </b>{" "}
+                                                    out of{" "}
+                                                    <b>
+                                                        {
+                                                            projectWeddingChecklist
+                                                                .weddingParentTasks.length
+                                                        }
+                                                    </b>{" "}
+                                                    main tasks done
+                                                </p>
+                                            </>
+                                        )}
+                                        
                                     <p>Budget set: $X</p>
                                     <p>Current cost: $Y</p>
-                                    
                                 </AccordionTab>
                             </Accordion>
                         </div>
