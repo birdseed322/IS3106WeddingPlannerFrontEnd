@@ -90,6 +90,13 @@ function TempEndPoints() {
           <Route exact path="/aboutuspage" element={<AboutUs />} />
           <Route exact path="/contactpage" element={<Contact />} />
           <Route exact path="/signup" element={<SignUp />} />
+          <Route exact path="/signup/vendorsignup" element={<VendorSignUp />} />
+          <Route
+            exact
+            path="/signup/organisersignup"
+            element={<OrganiserSignUp />}
+          />
+          <Route exact path="/signup/adminsignup" element={<AdminSignUp />} />
           <Route exact path="/editprofile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
