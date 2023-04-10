@@ -7,13 +7,15 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { ref, uploadBytes, getDownloadURL, listAll, list } from "firebase/storage";
 import { storage } from "../firebase";
-//import Api from './VendorAPI';
+import { Image } from 'primereact/image';
 
 const CategoryDisplayPage = () => {
     const { vendorCategory } = useParams(); //category name assumed to be unique
     const [vendors, setVendors] = useState([]);
     const { projectId } = useParams();
     const [profilePicUrl, setProfilePicUrl] = useState([]);
+    const icon = (<i className="pi pi-check"></i>)
+
     //const vendorProfilePic = ref(storage, `Vendor/${vendorName}/ProfilePic/`);
     //i want it to be Vendor/${vendorName}/ProfilePic/
 
@@ -93,9 +95,10 @@ const CategoryDisplayPage = () => {
                     </div>
                     <div className="flex flex-column align-items-center gap-3 py-5">
                         <div className="text-2xl font-bold">
-                            <img
-                                className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
+                            <Image
                                 src={getSpecificUrl(vendors.username)}
+                                template={icon}
+                                preview width="210"
                             />
                         </div>
                     </div>
