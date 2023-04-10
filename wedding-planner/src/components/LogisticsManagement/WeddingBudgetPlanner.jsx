@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useParams } from "react";
 
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
@@ -29,7 +29,7 @@ export default function WeddingBudgetPlanner() {
         weddingBudgetItemId: null,
     };
 
-    const [weddingProjectId, setWeddingProjectId] = useState(3);
+    const { weddingProjectId } = useParams();
     const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
     const [budget, setBudget] = useState(emptyBudget);
     const [budgets, setBudgets] = useState([]);
@@ -66,20 +66,6 @@ export default function WeddingBudgetPlanner() {
                 console.log(budgets);
             });
     };
-
-    // const groupedItems = items.reduceRight((acc, curr) => {
-    //     const category = curr.category;
-    //     if (!acc[category]) {
-    //         acc[category] = [];
-    //     }
-    //     acc[category].push(curr);
-    //     return acc;
-    // }, {});
-
-    // const groupRows = Object.entries(groupedItems).map(([category, items]) => ({
-    //     category,
-    //     items,
-    // }));
 
     const onItemPaidChange = (e, rowData) => {
         const newItems = [...items];

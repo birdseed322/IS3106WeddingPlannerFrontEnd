@@ -33,57 +33,60 @@ function AddProject() {
     })
   }
 
-  return (
-    <div
-      style={{
-        minWidth: '450px',
-        maxWidth: '700px',
-        minHeight: '150px',
-        maxHeight: '350px',
-      }}
-    >
-      <h2 className="flex justify-content-center">New Project</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="field pt-1">
-          <span>
-            <label
-              htmlFor="name"
-              className={classNames({
-                'px-3': true,
-              })}
-            >
-              Project Name
-            </label>
-            <InputText
-              id="inputName"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </span>
+    return (
+        <div
+            style={{
+                minWidth: "450px",
+                maxWidth: "700px",
+                minHeight: "150px",
+                maxHeight: "350px",
+            }}
+        >
+            <h2 className="flex justify-content-center">New Project</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="field pt-1">
+                    <span>
+                        <label
+                            htmlFor="name"
+                            className={classNames({
+                                "px-3": true,
+                            })}
+                        >
+                            Project Name
+                        </label>
+                        <InputText
+                            id="inputName"
+                            required
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </span>
+                </div>
+                <div className="field">
+                    <label htmlFor="description" className="px-3">
+                        Description
+                    </label>
+                    <span className="px-3">
+                        <InputTextarea
+                            className="px-2"
+                            id="inputDescription"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </span>
+                </div>
+                <span className="flex justify-content-center pb-3">
+                    <Button
+                        label="Add Project"
+                        style={{
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
+                    />{" "}
+                </span>
+            </form>
         </div>
-        <div className="field">
-          <label htmlFor="description" className="px-3">
-            Description
-          </label>
-          <span className="px-3">
-            <InputTextarea
-              className="px-2"
-              id="inputDescription"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </span>
-        </div>
-        <span className="flex justify-content-center pb-3">
-          <Button
-            label="Add Project"
-            style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
-          />{' '}
-        </span>
-      </form>
-    </div>
-  )
+    );
 }
 
-export default AddProject
+export default AddProject;

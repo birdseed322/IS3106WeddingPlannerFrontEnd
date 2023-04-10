@@ -49,7 +49,7 @@ export default function GuestView() {
            setNodes((nodes) => nodes.concat(temp));
 
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
             console.log(error);
         });
         TableApi.getStages(weddingId).then((response) => {
@@ -72,7 +72,7 @@ export default function GuestView() {
             }
            setNodes((nodes) => nodes.concat(temp));
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load stages ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load stages ' , life: 3000 });
             console.log(error);
         });
         

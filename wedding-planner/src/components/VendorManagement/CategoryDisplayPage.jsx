@@ -120,8 +120,8 @@ const CategoryDisplayPage = () => {
             <br />
             <SearchBar />
             <div className="card">
-                <h1> CategoryDisplayPage, category name = {vendorCategory} </h1>
                 <div className="card flex justify-content-center"></div>
+                <br/>
                 <DataView value={vendors} itemTemplate={itemTemplate} />
             </div>
         </div>

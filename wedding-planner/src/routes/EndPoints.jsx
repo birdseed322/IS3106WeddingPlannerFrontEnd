@@ -117,6 +117,14 @@ function EndPoints() {
         <LoginTokenContext.Provider value={[token, setToken]}>
           <BrowserRouter>
             <Routes>
+              <Route path="/guestview/:weddingId">
+                <Route index element={<GuestQuery></GuestQuery>} />
+                <Route
+                  path="itinerary"
+                  element={<GuestViewItinerary></GuestViewItinerary>}
+                />
+                <Route path="seatplan" element={<GuestView></GuestView>} />
+              </Route>
               <Route path="/" element={<ProjectDashboard />} />
               <Route path="editprofile" element={<EditProfile />} />
               <Route path="/:projectId/">

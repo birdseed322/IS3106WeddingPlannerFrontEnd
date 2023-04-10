@@ -1,265 +1,747 @@
 import React, { useState, useEffect } from "react";
+
+import { Card } from "primereact/card";
+import { Button } from "primereact/button";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { classNames } from "primereact/utils";
+
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import WeddingChecklistAPI from "./WeddingChecklistAPI";
 
 export default function WeddingChecklist() {
     let emptyParentTask = {
+        weddingTaskParentId: null,
         taskDescription: "",
         isDone: false,
+        weddingSubtasks: [
+            {
+                weddingSubtaskId: null,
+                subtaskDescription: "",
+                isDone: false,
+            },
+        ],
     };
 
-    let emptySubtask = {
-        taskDescription: "",
-        isDone: false,
-    };
-
+    const [checklistId, setChecklistId] = useState(1);
     const [parentTask, setParentTask] = useState(emptyParentTask);
     const [parentTasks, setParentTasks] = useState([]);
-    const [subtask, setSubtask] = useState(emptySubtask);
+    const [taskDialog, setTaskDialog] = useState(false);
+    const [subtaskDialog, setSubtaskDialog] = useState(false);
+    const [newTaskDialog, setNewTaskDialog] = useState(false);
+    const [subtask, setSubtask] = useState(emptyParentTask.weddingSubtasks[0]);
     const [subtasks, setSubtasks] = useState([]);
+    const [newSubtasks, setNewSubtasks] = useState([]);
+    const [submitted, setSubmitted] = useState(false);
+    const [expandedRows, setExpandedRows] = useState(null);
 
-    useEffect(() => reloadParentData(), []);
+    const [deleteTaskDialog, setDeleteTaskDialog] = useState(false);
+    const [deleteSubtaskDialog, setDeleteSubtaskDialog] = useState(false);
 
-    const reloadParentData = () => {
+    useEffect(() => {
+        reloadData();
+        updateTaskStatus(parentTask);
+    }, []);
+
+    const reloadData = () => {
         WeddingChecklistAPI.getAllParentTasks()
             .then((res) => {
-                {
-                    console.log(res);
-                    console.log(res.json());
-                }
+                console.log(res);
+                return res.json();
             })
             .then((parentData) => {
                 setParentTasks(parentData);
+                console.log(parentTasks);
             });
     };
 
-    useEffect(() => reloadSubtaskData(), []);
+    const updateTaskStatus = (parentTask) => {
+        console.log("called");
+        let _parentTask = { ...parentTask };
+        console.log(parentTask);
+        let _parentTasks = [...parentTasks];
+        let allSubtaskDone = true;
 
-    const reloadSubtaskData = () => {
-        WeddingChecklistAPI.getAllSubTasks()
-            .then((res) => {
-                console.log(res);
-                console.log(res.json());
-            })
-            .then((subtaskData) => {
-                setSubtasks(subtaskData);
+        if (_parentTask.weddingSubtasks.length !== 0) {
+            for (let subtask of _parentTask.weddingSubtasks) {
+                if (!subtask.isDone) {
+                    allSubtaskDone = false;
+                    break;
+                }
+            }
+        }
+
+        _parentTask.isDone = allSubtaskDone;
+
+        delete _parentTask.weddingSubtasks;
+
+        const jsonified = JSON.stringify(_parentTask);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        _parentTask = { ...parentTask };
+
+        if (parentTask.weddingParentTaskId != null) {
+            const index = findIndexById(parentTask.weddingParentTaskId);
+            WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
+                _parentTasks[index] = _parentTask;
+                setParentTask(_parentTask);
+                setParentTasks(_parentTasks);
+                setTaskDialog(false);
             });
+        }
     };
 
-    return <HeartyNavbar></HeartyNavbar>;
+    const rowExpansionTemplate = (data) => {
+        return (
+            <div className="p-3">
+                <DataTable value={data.weddingSubtasks}>
+                    <Column field=""></Column>
+                    <Column field=""></Column>
+                    <Column field="subtaskDescription"></Column>
+                    <Column field="isDone"></Column>
+                    <Column
+                        body={actionSubtaskBodyTemplate}
+                        exportable={false}
+                    ></Column>
+                </DataTable>
+            </div>
+        );
+    };
+
+    const allowExpansion = (rowData) => {
+        return rowData.weddingSubtasks.length > 0;
+    };
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button
+                    icon="pi pi-pencil"
+                    rounded
+                    outlined
+                    className="mr-2"
+                    onClick={() => editTask(rowData)}
+                />
+                <Button
+                    icon="pi pi-trash"
+                    rounded
+                    outlined
+                    severity="danger"
+                    onClick={() => confirmDeleteTask(rowData)}
+                />
+            </React.Fragment>
+        );
+    };
+
+    const actionSubtaskBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button
+                    icon="pi pi-pencil"
+                    rounded
+                    outlined
+                    className="mr-2"
+                    onClick={() => editSubtask(rowData)}
+                />
+                <Button
+                    icon="pi pi-trash"
+                    rounded
+                    outlined
+                    severity="danger"
+                    onClick={() => confirmDeleteSubtask(rowData)}
+                />
+            </React.Fragment>
+        );
+    };
+
+    const editTask = (task) => {
+        setParentTask({ ...task });
+        setTaskDialog(true);
+    };
+
+    const editSubtask = (subtask) => {
+        setSubtask({ ...subtask });
+        setSubtaskDialog(true);
+    };
+
+    const confirmDeleteTask = (task) => {
+        setParentTask(task);
+        setDeleteTaskDialog(true);
+    };
+
+    const confirmDeleteSubtask = (subtask) => {
+        setSubtask(subtask);
+        setDeleteSubtaskDialog(true);
+    };
+
+    const deleteTask = () => {
+        let _tasks = parentTasks.filter(
+            (val) => val.weddingParentTaskId !== parentTask.weddingParentTaskId
+        );
+        WeddingChecklistAPI.deleteParentTask(
+            parentTask.weddingParentTaskId
+        ).then(() => {
+            setParentTasks(_tasks);
+            setDeleteTaskDialog(false);
+            setParentTask(emptyParentTask);
+        });
+    };
+
+    const deleteSubtask = () => {
+        console.log(subtasks);
+        let _subtasks = parentTask.weddingSubtasks.filter(
+            (val) =>
+                val.weddingSubtaskId !==
+                parentTask.weddingSubtasks.weddingSubtaskId
+        );
+        console.log(_subtasks);
+
+        WeddingChecklistAPI.deleteSubtask(subtask.weddingSubtaskId).then(() => {
+            console.log(subtasks);
+            setSubtasks(_subtasks);
+            console.log(subtasks);
+            setDeleteSubtaskDialog(false);
+            setSubtask(emptyParentTask.weddingSubtasks);
+            reloadData();
+        });
+    };
+
+    const hideDeleteTaskDialog = () => {
+        setDeleteTaskDialog(false);
+    };
+
+    const hideDeleteSubtaskDialog = () => {
+        setDeleteSubtaskDialog(false);
+    };
+
+    const deleteTaskDialogFooter = (
+        <React.Fragment>
+            <Button
+                label="No"
+                icon="pi pi-times"
+                outlined
+                onClick={hideDeleteTaskDialog}
+            />
+            <Button
+                label="Yes"
+                icon="pi pi-check"
+                severity="danger"
+                onClick={deleteTask}
+            />
+        </React.Fragment>
+    );
+
+    const deleteSubtaskDialogFooter = (
+        <React.Fragment>
+            <Button
+                label="No"
+                icon="pi pi-times"
+                outlined
+                onClick={hideDeleteSubtaskDialog}
+            />
+            <Button
+                label="Yes"
+                icon="pi pi-check"
+                severity="danger"
+                onClick={deleteSubtask}
+            />
+        </React.Fragment>
+    );
+
+    const findIndexById = (id) => {
+        let index = -1;
+
+        for (let i = 0; i < parentTasks.length; i++) {
+            if (parentTasks[i].weddingParentTaskId === id) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    };
+
+    const findIndexBySubtaskId = (id) => {
+        let index = -1;
+
+        for (let i = 0; i < subtasks.length; i++) {
+            if (subtasks[i].weddingSubtaskId === id) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    };
+
+    const onInputChange = (e, name) => {
+        const val = (e.target && e.target.value) || "";
+        let _parentTask = { ...parentTask };
+
+        _parentTask[`${name}`] = val;
+
+        setParentTask(_parentTask);
+    };
+
+    const onInputNewSubtaskChange = (e, index) => {
+        console.log("called");
+        const value = e.target && e.target.value;
+        // addNewSubtask(value);
+        setNewSubtasks((prevSubtasks) => {
+            const updatedSubtasks = [...prevSubtasks];
+            updatedSubtasks[index] = {
+                ...updatedSubtasks[index],
+                subtaskDescription: value,
+            };
+            return updatedSubtasks;
+        });
+        console.log(newSubtasks);
+    };
+
+    const onInputSubtaskChange = (e, name) => {
+        const val = (e.target && e.target.value) || "";
+        let _subtask = { ...subtask };
+
+        _subtask[`${name}`] = val;
+
+        setSubtask(_subtask);
+    };
+
+    const openNewTaskDialog = () => {
+        setParentTask(emptyParentTask);
+        setNewTaskDialog(true);
+        setSubmitted(false);
+    };
+
+    const hideNewTaskDialog = () => {
+        setNewTaskDialog(false);
+        setSubmitted(true);
+    };
+
+    const hideTaskDialog = () => {
+        setTaskDialog(false);
+        setSubmitted(false);
+    };
+
+    const hideSubtaskDialog = () => {
+        setSubtaskDialog(false);
+        setSubmitted(false);
+    };
+
+    const addNewSubtask = () => {
+        setNewSubtasks((prevSubtasks) => [
+            ...prevSubtasks,
+            { subtaskDescription: "" },
+        ]);
+    };
+
+    const handleNewTaskDialog = () => {
+        setSubmitted(true);
+        let _task = { ...parentTask };
+        let _tasks = [...parentTasks];
+
+        delete _task.weddingSubtasks;
+
+        const jsonified = JSON.stringify(_task);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        _task = { ...parentTask };
+        console.log(_task);
+
+        WeddingChecklistAPI.createParentTask(parsedCopy, checklistId).then(
+            (response) => {
+                response.json().then((idObject) => {
+                    _task.weddingParentTaskId = idObject.WEDDINGPARENTTASKID;
+                    _tasks.push(_task);
+                    setParentTask(_task);
+                    setParentTasks(_tasks);
+
+                    newSubtasks.map((subtask) => {
+                        let _subtask = { ...subtask };
+                        let _subtasks = [...subtasks];
+
+                        const jsonified2 = JSON.stringify(_subtask);
+                        const parsedCopy2 = JSON.parse(jsonified2);
+                        console.log(parsedCopy2);
+
+                        WeddingChecklistAPI.createSubtask(
+                            parsedCopy2,
+                            _task.weddingParentTaskId
+                        ).then((response) =>
+                            response.json().then((idObject) => {
+                                _subtask.weddingSubtaskId =
+                                    idObject.WEDDINGSUBTASKID;
+                                _subtasks.push(_subtask);
+                                setSubtasks(_subtasks);
+                            })
+                        );
+                        reloadData();
+                    });
+                    reloadData();
+                    setNewTaskDialog(false);
+                });
+            }
+        );
+    };
+
+    const handleTaskDialog = () => {
+        setSubmitted(true);
+        let _parentTask = { ...parentTask };
+        let _parentTasks = [...parentTasks];
+        console.log(_parentTask);
+        console.log(_parentTasks);
+
+        const jsonified = JSON.stringify(_parentTask);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        if (parentTask.weddingParentTaskId != null) {
+            const index = findIndexById(parentTask.weddingParentTaskId);
+            WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
+                _parentTasks[index] = _parentTask;
+                setParentTask(_parentTask);
+                setParentTasks(_parentTasks);
+                setTaskDialog(false);
+            });
+        }
+        // } else {
+        //     WeddingChecklistAPI.createParentTask(parsedCopy, checklistId).then(
+        //         (response) => {
+        //             response.json().then((idObject) => {
+        //                 _parentTask.weddingParentTaskId =
+        //                     idObject.WEDDINGPARENTTASKID;
+        //                 _parentTasks.push(_parentTask);
+        //                 setParentTasks(_parentTasks);
+        //                 setTaskDialog(false);
+        //             });
+        //         }
+        //     );
+        // }
+    };
+
+    const handleSubtaskDialog = () => {
+        setSubmitted(true);
+        let _subtask = { ...subtask };
+        let _subtasks = [...subtasks];
+        console.log(_subtask);
+        console.log(_subtasks);
+
+        const jsonified = JSON.stringify(_subtask);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        if (subtask.weddingSubtaskId != null) {
+            const index = findIndexBySubtaskId(subtask.weddingSubtaskId);
+            WeddingChecklistAPI.updateSubtask(parsedCopy).then(() => {
+                _subtasks[index] = _subtask;
+                setSubtasks(_subtasks);
+                updateTaskStatus(parentTask);
+                setSubtaskDialog(false);
+                reloadData();
+            });
+        } else {
+            WeddingChecklistAPI.createSubtask(parsedCopy, checklistId).then(
+                (response) => {
+                    response.json().then((idObject) => {
+                        _subtask.weddingSubtaskId = idObject.WEDDINGSUBTASKID;
+                        _subtasks.push(_subtask);
+                        setSubtasks(_subtasks);
+                        setSubtaskDialog(false);
+                    });
+                }
+            );
+        }
+    };
+
+    const newTaskFooter = (
+        <React.Fragment>
+            <Button
+                label="Cancel"
+                icon="pi pi-times"
+                outlined
+                onClick={hideNewTaskDialog}
+            />
+            <Button
+                label="Save"
+                icon="pi pi-check"
+                onClick={handleNewTaskDialog}
+            />
+        </React.Fragment>
+    );
+
+    const taskFooter = (
+        <React.Fragment>
+            <Button
+                label="Cancel"
+                icon="pi pi-times"
+                outlined
+                onClick={hideTaskDialog}
+            />
+            <Button
+                label="Save"
+                icon="pi pi-check"
+                onClick={handleTaskDialog}
+            />
+        </React.Fragment>
+    );
+
+    const subtaskFooter = (
+        <React.Fragment>
+            <Button
+                label="Cancel"
+                icon="pi pi-times"
+                outlined
+                onClick={hideSubtaskDialog}
+            />
+            <Button
+                label="Save"
+                icon="pi pi-check"
+                onClick={handleSubtaskDialog}
+            />
+        </React.Fragment>
+    );
+
+    return (
+        <>
+            <HeartyNavbar></HeartyNavbar>
+            <Card>
+                <div className=" flex justify-content-center">
+                    <h4>WeddingChecklist</h4>
+                </div>
+                <div className=" flex justify-content-center">
+                    <Button
+                        label="Add New Task"
+                        icon="pi pi-plus"
+                        onClick={openNewTaskDialog}
+                    ></Button>
+                </div>
+
+                <br />
+                <DataTable
+                    value={parentTasks}
+                    expandedRows={expandedRows}
+                    onRowToggle={(e) => setExpandedRows(e.data)}
+                    rowExpansionTemplate={rowExpansionTemplate}
+                    dataKey="weddingParentTaskId"
+                >
+                    <Column expander={allowExpansion}></Column>
+                    <Column
+                        field="taskDescription"
+                        header="Task Description"
+                    ></Column>
+                    <Column field="isDone" header="Status"></Column>
+                    <Column
+                        body={actionBodyTemplate}
+                        exportable={false}
+                    ></Column>
+                </DataTable>
+            </Card>
+
+            <Dialog
+                visible={newTaskDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Add Task"
+                modal
+                className="p-fluid"
+                onHide={hideNewTaskDialog}
+                footer={newTaskFooter}
+            >
+                <div className="field">
+                    <label htmlFor="taskDescription" className="font-bold">
+                        Task Description
+                    </label>
+                    <InputText
+                        id="taskDescription"
+                        value={parentTask.taskDescription}
+                        onChange={(e) => onInputChange(e, "taskDescription")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid":
+                                submitted && !parentTask.taskDescription,
+                        })}
+                    />
+                    {submitted && !parentTask.taskDescription && (
+                        <small className="p-error">
+                            Task Description is required.
+                        </small>
+                    )}
+                </div>
+                {newSubtasks.map((subtask, index) => (
+                    <>
+                        <div key={index} className="field">
+                            <label htmlFor={index} className="font-bold">
+                                Subtask {index + 1}
+                            </label>
+                            <InputText
+                                id={index}
+                                value={subtask.subtaskDescription}
+                                onChange={(e) =>
+                                    onInputNewSubtaskChange(e, index)
+                                }
+                                required
+                                autoFocus={index === newSubtasks.length - 1}
+                                className={classNames({
+                                    "p-invalid":
+                                        submitted &&
+                                        !subtask.subtaskDescription,
+                                })}
+                            />
+                            {submitted && !subtask.subtaskDescription && (
+                                <small className="p-error">
+                                    Subtask Description is required.
+                                </small>
+                            )}
+                        </div>
+                    </>
+                ))}
+                <Button
+                    label="Add Subtask"
+                    icon="pi pi-plus"
+                    onClick={addNewSubtask}
+                ></Button>
+            </Dialog>
+
+            <Dialog
+                visible={taskDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Add Task"
+                modal
+                className="p-fluid"
+                onHide={hideTaskDialog}
+                footer={taskFooter}
+            >
+                <div className="field">
+                    <label htmlFor="taskDescription" className="font-bold">
+                        Task Description
+                    </label>
+                    <InputText
+                        id="taskDescription"
+                        value={parentTask.taskDescription}
+                        onChange={(e) => onInputChange(e, "taskDescription")}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid":
+                                submitted && !parentTask.taskDescription,
+                        })}
+                    />
+                    {submitted && !parentTask.taskDescription && (
+                        <small className="p-error">
+                            Task Description is required.
+                        </small>
+                    )}
+                </div>
+            </Dialog>
+
+            <Dialog
+                visible={subtaskDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Add Task"
+                modal
+                className="p-fluid"
+                onHide={hideSubtaskDialog}
+                footer={subtaskFooter}
+            >
+                <div className="field">
+                    <label htmlFor="subtaskDescription" className="font-bold">
+                        Subtask Description
+                    </label>
+                    <InputText
+                        id="subtaskDescription"
+                        value={subtask.subtaskDescription}
+                        onChange={(e) =>
+                            onInputSubtaskChange(e, "subtaskDescription")
+                        }
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid":
+                                submitted && !subtask.subtaskDescription,
+                        })}
+                    />
+                    {submitted && !subtask.subtaskDescription && (
+                        <small className="p-error">
+                            Subtask Description is required.
+                        </small>
+                    )}
+                </div>
+                <div className="field">
+                    <label htmlFor="status" className="font-bold">
+                        Status
+                    </label>
+                    <InputText
+                        id="isDone"
+                        value={subtask.isDone}
+                        onChange={(e) => {
+                            onInputSubtaskChange(e, "isDone");
+                        }}
+                        required
+                        autoFocus
+                        className={classNames({
+                            "p-invalid": submitted && !subtask.isDone,
+                        })}
+                    />
+                    {submitted && !subtask.isDone && (
+                        <small className="p-error">
+                            Subtask Status is required.
+                        </small>
+                    )}
+                </div>
+            </Dialog>
+
+            <Dialog
+                visible={deleteTaskDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Confirm"
+                modal
+                footer={deleteTaskDialogFooter}
+                onHide={hideDeleteTaskDialog}
+            >
+                <div className="confirmation-content">
+                    <i
+                        className="pi pi-exclamation-triangle mr-3"
+                        style={{ fontSize: "2rem" }}
+                    />
+                    {parentTask && (
+                        <span>
+                            Are you sure you want to delete{" "}
+                            <b>{parentTask.taskDescription}</b>?
+                        </span>
+                    )}
+                </div>
+            </Dialog>
+
+            <Dialog
+                visible={deleteSubtaskDialog}
+                style={{ width: "32rem" }}
+                breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                header="Confirm"
+                modal
+                footer={deleteSubtaskDialogFooter}
+                onHide={hideDeleteSubtaskDialog}
+            >
+                <div className="confirmation-content">
+                    <i
+                        className="pi pi-exclamation-triangle mr-3"
+                        style={{ fontSize: "2rem" }}
+                    />
+                    {subtask && (
+                        <span>
+                            Are you sure you want to delete{" "}
+                            <b>{subtask.subtaskDescription}</b>?
+                        </span>
+                    )}
+                </div>
+            </Dialog>
+        </>
+    );
 }
-// import HeartyNavbar from '../HeartyNavbar/HeartyNavbar'
-// import React, { useState, useEffect } from 'react'
-// import { Link, useParams, useNavigate } from 'react-router-dom'
-// import WeddingChecklistAPI from './WeddingChecklistAPI'
-// import './WeddingChecklist.css'
-// import { Card } from 'primereact/card'
-// import { Button } from 'primereact/button'
-// import { Dialog } from 'primereact/dialog'
-// import { InputText } from 'primereact/inputtext'
-// import classNames from 'classnames'
-
-// export default function WeddingChecklist() {
-//   const [showDialog, setShowDialog] = useState(false)
-//   const [submitted, setSubmitted] = useState(false)
-
-//   const [taskName, setTaskName] = useState('')
-//   const [subTasks, setSubTasks] = useState([''])
-
-//   const createTaskDialog = () => {
-//     setShowDialog(true)
-//   }
-
-//   const onHide = () => {
-//     setShowDialog(!showDialog)
-//     setTaskName('')
-//     setSubmitted(false)
-//   }
-
-//   const onInputTaskChange = (e) => {
-//     setTaskName(e.target.value)
-//   }
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault()
-//     setSubmitted(true)
-
-//     // reset the form and hide the dialog
-//     if (taskName) {
-//       setSubTasks(subTaskList)
-//       setTaskName('')
-//       setSubTasks([])
-//       setSubmitted(false)
-//       setShowDialog(false)
-//     }
-//   }
-
-//   const [subTaskList, setSubTaskList] = useState([])
-
-//   const repetitiveInputText = subTasks.map((subTask, index) => (
-//     <>
-//       <br />
-//       <InputText
-//         key={index}
-//         value={subTask}
-//         onChange={(e) => {
-//           const newSubTasks = [...subTasks]
-//           newSubTasks[index] = e.target.value
-//           setSubTasks(newSubTasks)
-//         }}
-//         required
-//         autoFocus={index === 0}
-//         className={classNames({
-//           'p-invalid': submitted && !subTask,
-//         })}
-//       />
-//     </>
-//   ))
-
-//   return (
-//     <div id="appContainer">
-//       <HeartyNavbar />
-//       <div id="bodyContainer">
-//         <div style={{ display: 'flex' }}>
-//           <h2>Wedding Checklist</h2>
-//           <Button
-//             className="button"
-//             style={{
-//               width: '6.3em',
-//               height: '2em',
-//               margin: 'auto',
-//             }}
-//             onClick={createTaskDialog}
-//           >
-//             Add Task
-//           </Button>
-//         </div>
-//         <>
-//           <Checklist></Checklist>
-//         </>
-//       </div>
-
-//       <div id="footer">
-//         <h2> some text</h2>
-//       </div>
-
-//       <Dialog
-//         header="Add Task"
-//         visible={showDialog}
-//         onHide={onHide}
-//         modal
-//         draggable
-//         resizable
-//       >
-//         <form onSubmit={handleSubmit}>
-//           <div className="field">
-//             <label htmlFor="taskName" className="font-bold">
-//               Task Name
-//             </label>
-//             <InputText
-//               id="taskName"
-//               value={taskName}
-//               onChange={onInputTaskChange}
-//               required
-//               autoFocus
-//               className={classNames({
-//                 'p-invalid': submitted && !taskName,
-//               })}
-//             />
-//             {submitted && !taskName && (
-//               <small className="p-error">Task Name is required.</small>
-//             )}
-//           </div>
-//           <div className="field">
-//             <label htmlFor="subTasks" className="font-bold">
-//               SubTasks
-//             </label>
-//             <br />
-//             {repetitiveInputText}
-//             <Button
-//               icon="pi pi-plus"
-//               onClick={() => setSubTasks([...subTasks, ''])}
-//             ></Button>
-//           </div>
-//           <Button type="submit" label="Create Task" />
-//         </form>
-//       </Dialog>
-//     </div>
-//   )
-// }
-
-// function Checklist() {
-//   const [expanded, setExpanded] = useState(null)
-
-//   const handleCardClick = (index) => {
-//     if (index === expanded) {
-//       // If the card is already expanded, collapse it
-//       setExpanded(null)
-//     } else {
-//       // Otherwise, expand the clicked card
-//       setExpanded(index)
-//     }
-//   }
-
-//   // sample data
-//   const sampleChecklistData = [
-//     {
-//       title: 'Invite guests',
-//       subTitle: [{ title: 'Import guest list' }, { title: 'Send Invitations' }],
-//     },
-//     {
-//       title: 'Find catering provider',
-//       subTitle: [
-//         { title: 'Find at least 10 catering provider' },
-//         { title: 'Contact the catering provider' },
-//       ],
-//     },
-//   ]
-
-//   return (
-//     <div>
-//       <div style={{ padding: '10px' }}>
-//         {sampleChecklistData.map((data, index) => (
-//           <>
-//             <Card
-//               key={index}
-//               className={index === expanded ? 'expanded' : ''}
-//               title={
-//                 <div
-//                   style={{
-//                     width: '100%',
-//                     display: 'flex',
-//                     justifyContent: 'space-between',
-//                     alignItems: 'center',
-//                   }}
-//                 >
-//                   <span>{data.title}</span>
-//                   <span>
-//                     {index === expanded ? (
-//                       <Button
-//                         className="button p-cursor-pointer"
-//                         icon="pi pi-chevron-up"
-//                       />
-//                     ) : (
-//                       <Button
-//                         className="button p-cursor-pointer"
-//                         icon="pi pi-chevron-down"
-//                       />
-//                     )}
-//                   </span>
-//                 </div>
-//               }
-//               onClick={() => handleCardClick(index)}
-//             >
-//               {index === expanded &&
-//                 data.subTitle.map((nestedItem, nestedIndex) => (
-//                   <p key={nestedIndex}>{nestedItem.title}</p>
-//                 ))}
-//             </Card>
-//             <br />
-//           </>
-//         ))}
-//       </div>
-//     </div>
-//   )
-// }
