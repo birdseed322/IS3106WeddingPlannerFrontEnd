@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
 import PublicHeartyNavbar from '../HeartyNavbar/PublicHeartyNavbar'
 import { Card } from 'primereact/card'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from 'primereact/button'
-import { classNames } from 'primereact/utils'
-import { InputText } from 'primereact/inputtext'
-import { Dropdown } from 'primereact/dropdown'
 
 function SignUp() {
   return (
