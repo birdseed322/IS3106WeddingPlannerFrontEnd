@@ -64,10 +64,8 @@ const EmailAPI = {
                     method: "POST"
 
                     }).then(response => {
-                        //clearTimeout(timer);                    
                         return response;
                     }).catch(error => {
-                        //clearTimeout(timer);
                         throw error;
                     })
     }
