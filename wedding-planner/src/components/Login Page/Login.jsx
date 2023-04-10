@@ -54,7 +54,8 @@ function Login() {
         });
     }
 
-    function doLogin(userType, username, password, setToken) {
+    function doLogin(userType, username, password, setToken, event) {
+        event.preventDefault();
         switch (userType) {
             case "ADMIN":
                 handleLoginSuccessOrFail(
@@ -90,12 +91,12 @@ function Login() {
                 >
                     <Button
                         label="Login"
-                        type="button" // this prevents automatic submission. either that or i can do event.preventDefault in the onClick
+                        // type="button" // this prevents automatic submission. either that or i can do event.preventDefault in the onClick
                         style={{
                             backgroundColor: "#f561b0",
                             border: "#f561b0",
                         }}
-                        onClick={() => doLogin(userType, username, password, setToken)}
+                        onClick={(e) => doLogin(userType, username, password, setToken, e)}
                     />{" "}
                 </div>
                 <div className="flex justify-content-center px-5 mt-5">
