@@ -22,9 +22,7 @@ const WeddingItineraryAPI = {
     },
 
     getItinerariesByWeddingProject(weddingProjectId) {
-        return fetch(
-            `${SERVER_PREFIX}/getItinerariesByWeddingProject/${weddingProjectId}`
-        );
+        return fetch(`${SERVER_PREFIX}/getItinerariesByWeddingProject/${weddingProjectId}`);
     },
 
     updateItinerary(data) {
