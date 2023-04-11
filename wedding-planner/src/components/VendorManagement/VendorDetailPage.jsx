@@ -49,22 +49,22 @@ const VendorDetailPage = () => {
     {
       label: "Visit Website",
       icon: "pi pi-link",
-      url: "www.google.com",
+      url: "weddingmusic.com.sg/",
     },
     {
       label: "Instagram",
       icon: "pi pi-camera",
-      url: "www.google.com",
+      url: "www.instagram.com/weddingentertainment/?hl=en",
     },
     {
       label: "Facebook",
       icon: "pi pi-facebook",
-      url: "www.google.com",
+      url: "www.facebook.com/TheWeddingMusicCompany/",
     },
     {
       label: "Whatsapp",
       icon: "pi pi-whatsapp",
-      url: "www.google.com",
+      url: "wa.me/6593360639",
     },
   ];
 
