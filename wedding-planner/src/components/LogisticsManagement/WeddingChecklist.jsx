@@ -17,19 +17,6 @@ import {
     checkOffSubtask,
 } from "./WeddingChecklistHelperFunctions";
 
-const dateProcessor = (dateString) => {
-    if (typeof dateString === "string") {
-        // it works without this if-else but just in case sth goes wrong:
-        if (dateString[dateString.length - 1] == "]") {
-            return new Date(dateString.slice(0, -5));
-        } else {
-            return new Date(dateString);
-        }
-    } else {
-        return new Date(0); // return 0 so undefined doesnt crash the whole thing when trying to render before data is fetched
-    }
-};
-
 export default function WeddingChecklist() {
     let emptyParentTask = {
         weddingTaskParentId: null,
