@@ -48,10 +48,19 @@ export default function TableLayout() {
         for (const node of nodes) {
             if (!deletedNodes.includes(node)) {
                 _nodes.push(node);
+            } 
+        }
+        let guestsInDeletedNode = [];
+        for (const n of deletedNodes) {
+            if (n.type === "table") {
+                if (n.data.guests.length > 0) {
+                    guestsInDeletedNode = guestsInDeletedNode.concat(n.data.guests);
+                }
             }
         }
         setNodes((nds) => _nodes);
         setSelectedNode(null);
+        setFullGuests((g) => g.concat(guestsInDeletedNode));
     };
     const saveTables = useCallback(() => {
         const toSaveTables = [];

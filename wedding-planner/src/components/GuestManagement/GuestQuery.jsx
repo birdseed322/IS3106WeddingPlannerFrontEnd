@@ -23,6 +23,7 @@ export default function GuestQuery() {
         GuestViewAPI.getGuest(email, weddingId).then(response => {
             return response.json();
         }).then(g => {
+            console.log(g);
             if (g.id != null && g.id != undefined) {
                 const id = g.id;
                 sessionStorage.setItem("guestId", id);
@@ -42,8 +43,8 @@ export default function GuestQuery() {
     return (
         <div class="grid align-content-center justify-content-center text-center">
             <Toast ref={toast} className="z-5" style={{backgroundColor:"#FFFFFF"}}/>
-            <div class="col-4 mt-10"></div>
-                <div class="col-4 z-5 mt-6">
+            <div className="col-4 mt-10"></div>
+                <div className="col-4 z-5 mt-6">
                     <Card footer={footer} header={header} className="md:w-25rem opacity-95">
                         <div className='m-3'>
                             <label htmlFor="email" className="block mb-6 font-italic text-xl">Access Wedding Details</label>
@@ -51,9 +52,9 @@ export default function GuestQuery() {
                         </div>
                     </Card>
                 </div>            
-            <div class="col-4 mt-10"></div>
+            <div className="col-4 mt-10"></div>
             <div className="absolute top-0 z-0">
-                <video autoplay="true" loop="true" preload="auto" width="100%" height="100%" muted="true" >
+                <video autoPlay="true" loop="true" preload="auto" width="100%" height="100%" muted="true" >
                     <source src={background} type="video/mp4"></source>
                 </video>
             </div>
