@@ -57,3 +57,29 @@ export const generateUserCountData = (weddingOrganisersData, vendorsData, setUse
         };
         setUsersCountData(pieChartData);
 }
+
+export const generateTransactionsByCategoryData = (groupedTransactionsData, setTransactionsByCategory) => {
+    
+    // groupedTransactionsData is of the form:
+    // [{category: "FOOD", totalValue: 10}, {} , ...]
+    
+    const pieChartData = {
+        labels: groupedTransactionsData.map(pairObj => pairObj.category),
+        datasets: [
+            {
+                data: groupedTransactionsData.map(pairObj => pairObj.totalValue),
+                backGroundColor: [
+                    "rgb(255, 99, 132)",
+                    "rgb(54, 162, 235)",
+                    "rgb(255, 205, 86)",
+                    "lightgreen",
+                    "brown",
+                    "magenta",
+                ],
+                hoverOffset: 4,
+            }
+        ]
+    }
+    
+    setTransactionsByCategory(pieChartData);
+}

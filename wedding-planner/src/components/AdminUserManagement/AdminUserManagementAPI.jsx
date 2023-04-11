@@ -41,6 +41,10 @@ const AdminUserManagementAPI = {
             throw error;
         });
     },
+    
+    getTotalValueOfTransactionsGroupedByCategory() {
+        return fetch(`${SERVER_PREFIX}/transactions/getTotalValueGroupedByCategory`);
+    },
     // updateListOfWeddingOrganisers(organisers) {
     //     // this is super inefficient because it makes 1 request per org LMAO
     //     for (let organiser of organisers) {
