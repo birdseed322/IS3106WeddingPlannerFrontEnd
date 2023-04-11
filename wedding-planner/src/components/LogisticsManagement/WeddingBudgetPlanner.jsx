@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router";
 
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
@@ -12,6 +12,8 @@ import { InputNumber } from "primereact/inputnumber";
 import { classNames } from "primereact/utils";
 import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
+import { ToggleButton } from "primereact/togglebutton";
+import { Toast } from "primereact/toast";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import WeddingBudgetPlannerAPI from "./WeddingBudgetPlannerAPI";
@@ -20,6 +22,15 @@ export default function WeddingBudgetPlanner() {
     let emptyBudget = {
         weddingBudgetListId: null,
         budget: 0,
+        weddingBudgetItems: [
+            {
+                category: "",
+                cost: 0,
+                isPaid: false,
+                name: "",
+                weddingBudgetItemId: null,
+            },
+        ],
     };
 
     let emptyItem = {
@@ -30,11 +41,11 @@ export default function WeddingBudgetPlanner() {
         weddingBudgetItemId: null,
     };
 
-    const { weddingProjectId } = useParams();
+    const { projectId } = useParams();
 
-    const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
+    // const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
     const [budget, setBudget] = useState(emptyBudget);
-    const [budgets, setBudgets] = useState([]);
+    // const [budgets, setBudgets] = useState([]);
     const [item, setItem] = useState(emptyItem);
     const [items, setItems] = useState([]);
 
@@ -43,31 +54,27 @@ export default function WeddingBudgetPlanner() {
     const [deleteItemDialog, setDeleteItemDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    // useEffect(() => reloadData(), []);
+    const toast = useRef(null);
+    const dt = useRef(null);
 
-    // const reloadData = () => {
-    //     WeddingBudgetPlannerAPI.retrieveAllItems()
-    //         .then((res) => {
-    //             return res.json();
-    //         })
-    //         .then((items) => {
-    //             setItems(items);
-    //             console.log(items);
-    //         });
-    // };
-
-    useEffect(() => budgetData(), []);
-
-    const budgetData = () => {
-        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(weddingProjectId)
+    useEffect(() => {
+        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(projectId)
             .then((res) => {
+                if (res.status === 404) {
+                    throw new Error();
+                }
                 return res.json();
             })
-            .then((budgets) => {
-                setBudgets(budgets);
-                console.log(budgets);
+            .then((_budgets) => {
+                console.log(_budgets);
+                setBudget(_budgets);
+                setItems(_budgets.weddingBudgetItems);
+            })
+            .catch((exception) => {
+                console.log("something went wrong with fetching budget");
+                console.log(exception);
             });
-    };
+    }, []);
 
     const onItemPaidChange = (e, rowData) => {
         const newItems = [...items];
@@ -146,7 +153,8 @@ export default function WeddingBudgetPlanner() {
     };
 
     const onInputPaidChange = (e, payment) => {
-        const val = e.target.checked;
+        const val = e.value;
+        console.log(val);
         let _item = { ...item };
 
         _item[`${payment}`] = val;
@@ -180,18 +188,18 @@ export default function WeddingBudgetPlanner() {
         setSubmitted(false);
     };
 
-    const findIndexById = (id) => {
-        let index = -1;
+    // const findIndexById = (id) => {
+    //     let index = -1;
 
-        for (let i = 0; i < budgets.length; i++) {
-            if (budgets[i].weddingBudgetListId === id) {
-                index = i;
-                break;
-            }
-        }
+    //     for (let i = 0; i < budgets.length; i++) {
+    //         if (budgets[i].weddingBudgetListId === id) {
+    //             index = i;
+    //             break;
+    //         }
+    //     }
 
-        return index;
-    };
+    //     return index;
+    // };
 
     const findItemIndexById = (id) => {
         let index = -1;
@@ -209,33 +217,46 @@ export default function WeddingBudgetPlanner() {
     const handleBudgetDialog = () => {
         setSubmitted(true);
         let _budget = { ...budget };
-        let _budgets = [...budgets];
+        // let _budgets = [...budgets];
         console.log(_budget);
-        console.log(_budgets);
+        // console.log(_budgets);
 
         const jsonified = JSON.stringify(_budget);
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
         if (budget.weddingBudgetListId != null) {
-            const index = findIndexById(budget.weddingBudgetListId);
+            // const index = findIndexById(budget.weddingBudgetListId);
             WeddingBudgetPlannerAPI.updateBudget(parsedCopy).then(() => {
-                _budgets[index] = _budget;
-                setBudgets(_budgets);
+                // _budgets[index] = _budget;
+                setBudget(_budget);
                 setBudgetDialog(false);
-            });
-        } else {
-            WeddingBudgetPlannerAPI.createBudget(
-                parsedCopy,
-                weddingProjectId
-            ).then((response) => {
-                response.json().then((idObject) => {
-                    _budget.weddingBudgetListId = idObject.WEDDINGBUDGETLISTID;
-                    _budgets.push(_budget);
-                    setBudgets(_budgets);
-                    setBudgetDialog(false);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Budget Updated",
+                    life: 3000,
                 });
             });
+        } else {
+            WeddingBudgetPlannerAPI.createBudget(parsedCopy, projectId).then(
+                (response) => {
+                    console.log(response.status);
+                    response.json().then((idObject) => {
+                        _budget.weddingBudgetListId =
+                            idObject.WEDDINGBUDGETLISTID;
+                        // _budgets.push(_budget);
+                        setBudget(_budget);
+                        setBudgetDialog(false);
+                        toast.current.show({
+                            severity: "success",
+                            summary: "Successful",
+                            detail: "Budget Created",
+                            life: 3000,
+                        });
+                    });
+                }
+            );
         }
     };
 
@@ -256,17 +277,29 @@ export default function WeddingBudgetPlanner() {
                 _items[index] = _item;
                 setItems(_items);
                 setItemDialog(false);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Item Successfuly Updated",
+                    life: 3000,
+                });
             });
         } else {
             WeddingBudgetPlannerAPI.createItem(
                 parsedCopy,
-                weddingBudgetListId
+                budget.weddingBudgetListId
             ).then((response) => {
                 response.json().then((idObject) => {
                     _item.weddingBudgetItemId = idObject.WEDDINGBUDGETITEMID;
                     _items.push(_item);
                     setItems(_items);
                     setItemDialog(false);
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Item Created",
+                        life: 3000,
+                    });
                 });
             });
         }
@@ -291,6 +324,12 @@ export default function WeddingBudgetPlanner() {
                 setItems(_items);
                 setDeleteItemDialog(false);
                 setItem(emptyItem);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Item Deleted",
+                    life: 3000,
+                });
             }
         );
     };
@@ -377,6 +416,7 @@ export default function WeddingBudgetPlanner() {
     return (
         <div>
             <div>
+                <Toast ref={toast} />
                 <HeartyNavbar></HeartyNavbar>
                 <Card className="flex justify-content-center">
                     <h3>
@@ -423,7 +463,7 @@ export default function WeddingBudgetPlanner() {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
                 >
-                    <Column field="weddingBudgetItemId" header="No."></Column>
+                    {/* <Column field="weddingBudgetItemId" header="No."></Column> */}
                     <Column header="Category" field="category" />
                     <Column field="name" header="Event Name"></Column>
                     <Column
@@ -533,21 +573,13 @@ export default function WeddingBudgetPlanner() {
                     <label htmlFor="isPaid" className="font-bold">
                         Item Payment Status
                     </label>
-                    <Checkbox
+                    <ToggleButton
                         id="isPaid"
                         checked={item.isPaid}
                         onChange={(e) => onInputPaidChange(e, "isPaid")}
                         required
                         autoFocus
-                        className={classNames({
-                            "p-invalid": submitted && !item.isPaid,
-                        })}
                     />
-                    {submitted && !item.isPaid && (
-                        <small className="p-error">
-                            Item Payment Status is required.
-                        </small>
-                    )}
                 </div>
                 <div className="field">
                     <label htmlFor="category" className="font-bold">

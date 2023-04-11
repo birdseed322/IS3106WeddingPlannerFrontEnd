@@ -119,6 +119,7 @@ function EndPoints() {
                                 />
                                 <Route path="seatplan" element={<GuestView></GuestView>} />
                             </Route>
+                            <Route path="/rsvpForm/:weddingId" element={<RSVPForm></RSVPForm>}></Route>
                             <Route path="/" element={<ProjectDashboard />} />
                             <Route path="editprofile" element={<EditProfile />} />
                             <Route path="/:projectId/">

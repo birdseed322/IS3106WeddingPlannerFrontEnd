@@ -4,6 +4,7 @@ const SERVER_PREFIX = "http://localhost:8080/IS3106WeddingPlanner-war/webresourc
 const GuestViewAPI = {   
         getItinerary(wId) {
                 return fetch(`${SERVER_PREFIX}/wedding/${wId}`).then(response => {
+                        console.log(response);
                         if (response.status === 200) {
                                 return response;
                         } else {
