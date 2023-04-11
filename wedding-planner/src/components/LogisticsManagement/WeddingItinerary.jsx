@@ -73,6 +73,7 @@ export default function WeddingItinerary() {
                 });
 
                 setItineraries(updatedItineraries);
+                console.log(updatedItineraries);
             })
             .catch((error) => console.log(error));
     };
@@ -101,6 +102,7 @@ export default function WeddingItinerary() {
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || "";
         let _itinerary = { ...itinerary };
+        console.log(itinerary);
 
         _itinerary[`${name}`] = val;
 
@@ -130,6 +132,7 @@ export default function WeddingItinerary() {
 
         return index;
     };
+
     const handleItineraryDialog = () => {
         setSubmitted(true);
         let _itinerary = { ...itinerary };
@@ -139,6 +142,7 @@ export default function WeddingItinerary() {
 
         const jsonified = JSON.stringify(_itinerary);
         const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
 
         if (itinerary.weddingItineraryId != null) {
             const index = findIndexById(itinerary.weddingItineraryId);
@@ -146,6 +150,7 @@ export default function WeddingItinerary() {
                 _itineraries[index] = _itinerary;
                 setItineraries(_itineraries);
                 setItineraryDialog(false);
+                reloadData();
             });
         } else {
             WeddingItineraryAPI.createNewItinerary(parsedCopy, projectId).then(
@@ -227,7 +232,12 @@ export default function WeddingItinerary() {
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <h4>
-                    Date: <Calendar id="eventDate" showIcon></Calendar>
+                    Date:{" "}
+                    <Calendar
+                        id="eventDate"
+                        value={itinerary.eventDate}
+                        showIcon
+                    ></Calendar>
                 </h4>
                 <Button
                     label="Add New Itinerary"

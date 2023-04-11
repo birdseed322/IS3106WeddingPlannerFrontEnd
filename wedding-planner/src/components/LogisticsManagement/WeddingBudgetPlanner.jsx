@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
@@ -20,6 +20,15 @@ export default function WeddingBudgetPlanner() {
     let emptyBudget = {
         weddingBudgetListId: null,
         budget: 0,
+        weddingBudgetItems: [
+            {
+                category: "",
+                cost: 0,
+                isPaid: false,
+                name: "",
+                weddingBudgetItemId: null,
+            },
+        ],
     };
 
     let emptyItem = {
@@ -30,11 +39,11 @@ export default function WeddingBudgetPlanner() {
         weddingBudgetItemId: null,
     };
 
-    const { weddingProjectId } = useParams();
+    const { projectId } = useParams();
 
     const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
     const [budget, setBudget] = useState(emptyBudget);
-    const [budgets, setBudgets] = useState([]);
+    // const [budgets, setBudgets] = useState([]);
     const [item, setItem] = useState(emptyItem);
     const [items, setItems] = useState([]);
 
@@ -43,31 +52,19 @@ export default function WeddingBudgetPlanner() {
     const [deleteItemDialog, setDeleteItemDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    // useEffect(() => reloadData(), []);
-
-    // const reloadData = () => {
-    //     WeddingBudgetPlannerAPI.retrieveAllItems()
-    //         .then((res) => {
-    //             return res.json();
-    //         })
-    //         .then((items) => {
-    //             setItems(items);
-    //             console.log(items);
-    //         });
-    // };
-
-    useEffect(() => budgetData(), []);
-
-    const budgetData = () => {
-        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(weddingProjectId)
-            .then((res) => {
-                return res.json();
+    useEffect(() => {
+        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((_budgets) => {
+                setBudget(_budgets.budget);
+                setItems(_budgets.weddingBudgetItems);
+                console.log(budget);
             })
-            .then((budgets) => {
-                setBudgets(budgets);
-                console.log(budgets);
+            .catch((exception) => {
+                console.log("something went wrong with fetching budget");
+                console.log(exception);
             });
-    };
+    }, []);
 
     const onItemPaidChange = (e, rowData) => {
         const newItems = [...items];
@@ -180,18 +177,18 @@ export default function WeddingBudgetPlanner() {
         setSubmitted(false);
     };
 
-    const findIndexById = (id) => {
-        let index = -1;
+    // const findIndexById = (id) => {
+    //     let index = -1;
 
-        for (let i = 0; i < budgets.length; i++) {
-            if (budgets[i].weddingBudgetListId === id) {
-                index = i;
-                break;
-            }
-        }
+    //     for (let i = 0; i < budgets.length; i++) {
+    //         if (budgets[i].weddingBudgetListId === id) {
+    //             index = i;
+    //             break;
+    //         }
+    //     }
 
-        return index;
-    };
+    //     return index;
+    // };
 
     const findItemIndexById = (id) => {
         let index = -1;
@@ -209,33 +206,33 @@ export default function WeddingBudgetPlanner() {
     const handleBudgetDialog = () => {
         setSubmitted(true);
         let _budget = { ...budget };
-        let _budgets = [...budgets];
+        // let _budgets = [...budgets];
         console.log(_budget);
-        console.log(_budgets);
+        // console.log(_budgets);
 
         const jsonified = JSON.stringify(_budget);
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
         if (budget.weddingBudgetListId != null) {
-            const index = findIndexById(budget.weddingBudgetListId);
+            // const index = findIndexById(budget.weddingBudgetListId);
             WeddingBudgetPlannerAPI.updateBudget(parsedCopy).then(() => {
-                _budgets[index] = _budget;
-                setBudgets(_budgets);
+                // _budgets[index] = _budget;
+                setBudget(_budget);
                 setBudgetDialog(false);
             });
         } else {
-            WeddingBudgetPlannerAPI.createBudget(
-                parsedCopy,
-                weddingProjectId
-            ).then((response) => {
-                response.json().then((idObject) => {
-                    _budget.weddingBudgetListId = idObject.WEDDINGBUDGETLISTID;
-                    _budgets.push(_budget);
-                    setBudgets(_budgets);
-                    setBudgetDialog(false);
-                });
-            });
+            WeddingBudgetPlannerAPI.createBudget(parsedCopy, projectId).then(
+                (response) => {
+                    response.json().then((idObject) => {
+                        _budget.weddingBudgetListId =
+                            idObject.WEDDINGBUDGETLISTID;
+                        // _budgets.push(_budget);
+                        setBudget(_budget);
+                        setBudgetDialog(false);
+                    });
+                }
+            );
         }
     };
 
@@ -380,7 +377,7 @@ export default function WeddingBudgetPlanner() {
                 <HeartyNavbar></HeartyNavbar>
                 <Card className="flex justify-content-center">
                     <h3>
-                        Budget:{" "}
+                        Budget:
                         {budget.budget.toLocaleString("en-SG", {
                             style: "currency",
                             currency: "SGD",
