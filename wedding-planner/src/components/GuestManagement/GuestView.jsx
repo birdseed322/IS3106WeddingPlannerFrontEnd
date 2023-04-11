@@ -5,7 +5,7 @@ import 'reactflow/dist/style.css';
 import Table from './Table.jsx';
 import { Toast } from 'primereact/toast';
 import TableApi from './TableApi.jsx';
-import Stage from './Stage.jsx';
+import StaticStage from './StaticStage.jsx';
 import GuestViewNavbar from "../HeartyNavbar/GuestViewNavbar.jsx";
 import AssignedTable from "./AssignedTable.jsx";
 import { classNames } from 'primereact/utils';
@@ -18,7 +18,7 @@ export default function GuestView() {
     const onNodesChange = useCallback((changes) => {
         setNodes((nds) => applyNodeChanges(changes, nds))
     }, []);
-    const nodeTypes = useMemo(() => ({ table: Table, stage : Stage, assignedTable : AssignedTable}), []);
+    const nodeTypes = useMemo(() => ({ table: Table, stage : StaticStage, assignedTable : AssignedTable}), []);
     useEffect(() => {     
         TableApi.getTables(weddingId).then((response) => {
             return response.json();
@@ -57,7 +57,6 @@ export default function GuestView() {
             return response.json();
         }).then((t) => {
             const temp = [];
-            console.log("HERE");
             for (const unit of t) {
                 const {stageId, locationX, locationY, tableNumber, stageHeight, stageWidth} = unit;
                 console.log(stageId);

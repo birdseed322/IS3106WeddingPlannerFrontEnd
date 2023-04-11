@@ -110,15 +110,15 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
             <div
                 style={{
                     minWidth: "450px",
-                    maxWidth: "700px",
+                    maxWidth: "500px",
                     minHeight: "150px",
                     maxHeight: "350px",
                 }}
             >
                 {/* <h2 className="flex justify-content-center">New Project</h2> */}
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="field pt-1">
-                        <span>
+                    <div className="formgrid grid">
+                            <div className="field col-6 pt-1">
                             <label
                                 htmlFor="name"
                                 className={classNames({
@@ -128,10 +128,13 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
                             >
                                 Project Name
                             </label>
+                            {getFormErrorMessage("name")}
+                            </div>
+                            <div className="field col-6 pt-1">
                             <Controller
                                 name="name"
                                 control={control}
-                                rules={{ required: "Project name is required." }}
+                                rules={{ required: "Required" }}
                                 render={({ field, fieldState }) => (
                                     <InputText
                                         id={field.name}
@@ -139,20 +142,20 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
                                         autoFocus
                                         className={classNames({
                                             "p-invalid": fieldState.invalid,
-                                            "px-2": true,
+                                          //  "px-2": true,
                                         })}
                                     />
                                 )}
                             />
-                        </span>
+                            </div>
                         {/* below is the error text that shows up when there is an error */}
-                        {getFormErrorMessage("name")}
-                    </div>
-                    <div className="field">
+
+                    <div className="field col-6">
                         <label htmlFor="description" className="px-3">
                             Description{" "}
                         </label>
-                        <span className="px-3">
+                    </div>
+                    <div className="field col-6">
                             <Controller
                                 name="description"
                                 control={control}
@@ -160,14 +163,14 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
                                     <InputTextarea className="px-2" id={field.name} {...field} />
                                 )}
                             />
-                        </span>
                     </div>
 
-                    <div className="field">
+                    <div className="field col-6">
                         <label htmlFor="venue" className="px-3">
                             Venue{" "}
                         </label>
-                        <span className="px-3">
+                    </div>
+                    <div className="field col-6">
                             <Controller
                                 name="venue"
                                 control={control}
@@ -175,54 +178,58 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
                                     <InputTextarea className="px-2" id={field.name} {...field} />
                                 )}
                             />
-                        </span>
                     </div>
 
-                    <div className="field">
+                    <div className="field col-6">
                         <label htmlFor="weddingDate" className="px-3">
                             Wedding Date{" "}
                         </label>
-                        <span className="px-3">
+                    </div>
+                    <div className="field col-6">
                             <Controller
                                 name="weddingDate"
                                 control={control}
                                 render={({ field, fieldState }) => <Calendar {...field} />}
                             />
-                        </span>
                     </div>
 
-                    <div className="field">
+                    <div className="field col-6">
                         <label htmlFor="weddingStartTime" className="px-3">
                             Wedding Start Time{" "}
                         </label>
-                        <span className="px-3">
+                    </div>
+                    <div className="field col-6">
                             <Controller
                                 name="weddingStartTime"
                                 control={control}
                                 render={({ field, fieldState }) => <Calendar {...field} timeOnly />}
                             />
-                        </span>
                     </div>
 
-                    <div className="field">
+                    <div className="field col-6">
                         <label htmlFor="weddingEndTime" className="px-3">
                             Wedding End Time{" "}
                         </label>
-                        <span className="px-3">
+                    </div>
+                    <div className="field col-6">
                             <Controller
                                 name="weddingEndTime"
                                 control={control}
                                 render={({ field, fieldState }) => <Calendar {...field} timeOnly />}
                             />
-                        </span>
                     </div>
-
+                    <div className="field col-4">
+                    </div>
+                    <div className="field col-4">
                     <span className="flex justify-content-center pb-3">
                         <Button
                             label="Confirm Edit "
                             style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
                         />{" "}
                     </span>
+                                    </div>
+
+                    </div>
                 </form>
             </div>
         </div>
