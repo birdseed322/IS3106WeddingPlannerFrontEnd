@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -8,6 +8,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 import { Checkbox } from "primereact/checkbox";
+import { Toast } from "primereact/toast";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import WeddingChecklistAPI from "./WeddingChecklistAPI";
@@ -53,6 +54,7 @@ export default function WeddingChecklist() {
     const [deleteTaskDialog, setDeleteTaskDialog] = useState(false);
     const [deleteSubtaskDialog, setDeleteSubtaskDialog] = useState(false);
 
+    const toast = useRef(null);
     // Get the WeddingChecklistObject according to WeddingProject id from path param
 
     useEffect(() => {
@@ -223,6 +225,12 @@ export default function WeddingChecklist() {
             setParentTasks(_tasks);
             setDeleteTaskDialog(false);
             setNewParentTask(emptyParentTask);
+            toast.current.show({
+                severity: "success",
+                summary: "Successful",
+                detail: "Task Deleted",
+                life: 3000,
+            });
         });
     };
 
@@ -242,6 +250,12 @@ export default function WeddingChecklist() {
             setDeleteSubtaskDialog(false);
             setSubtask(emptyParentTask.weddingSubtasks);
             reloadData();
+            toast.current.show({
+                severity: "success",
+                summary: "Successful",
+                detail: "Subtask Deleted",
+                life: 3000,
+            });
         });
     };
 
@@ -417,6 +431,12 @@ export default function WeddingChecklist() {
                         );
                         reloadData();
                     });
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Task Created",
+                        life: 3000,
+                    });
                     reloadData();
                     setNewTaskDialog(false);
                 });
@@ -443,6 +463,12 @@ export default function WeddingChecklist() {
                 setNewParentTask(_parentTask);
                 setParentTasks(_parentTasks);
                 setTaskDialog(false);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Task Updated",
+                    life: 3000,
+                });
             });
         }
         // } else {
@@ -479,6 +505,12 @@ export default function WeddingChecklist() {
                 // updateTaskStatus(parentTask);
                 setSubtaskDialog(false);
                 reloadData();
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Subtask Updated",
+                    life: 3000,
+                });
             });
         } else {
             WeddingChecklistAPI.createSubtask(parsedCopy, checklistId).then(
@@ -488,6 +520,12 @@ export default function WeddingChecklist() {
                         _subtasks.push(_subtask);
                         setSubtasks(_subtasks);
                         setSubtaskDialog(false);
+                        toast.current.show({
+                            severity: "success",
+                            summary: "Successful",
+                            detail: "Subtask Created",
+                            life: 3000,
+                        });
                     });
                 }
             );
@@ -567,6 +605,7 @@ export default function WeddingChecklist() {
 
     return (
         <>
+            <Toast ref={toast} />
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <div className=" flex justify-content-center">

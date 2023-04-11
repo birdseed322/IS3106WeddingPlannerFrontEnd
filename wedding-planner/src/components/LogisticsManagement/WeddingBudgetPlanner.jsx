@@ -12,6 +12,7 @@ import { InputNumber } from "primereact/inputnumber";
 import { classNames } from "primereact/utils";
 import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
+import { ToggleButton } from "primereact/togglebutton";
 import { Toast } from "primereact/toast";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
@@ -152,7 +153,8 @@ export default function WeddingBudgetPlanner() {
     };
 
     const onInputPaidChange = (e, payment) => {
-        const val = e.target.checked;
+        const val = e.value;
+        console.log(val);
         let _item = { ...item };
 
         _item[`${payment}`] = val;
@@ -229,6 +231,12 @@ export default function WeddingBudgetPlanner() {
                 // _budgets[index] = _budget;
                 setBudget(_budget);
                 setBudgetDialog(false);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Budget Updated",
+                    life: 3000,
+                });
             });
         } else {
             WeddingBudgetPlannerAPI.createBudget(parsedCopy, projectId).then(
@@ -240,6 +248,12 @@ export default function WeddingBudgetPlanner() {
                         // _budgets.push(_budget);
                         setBudget(_budget);
                         setBudgetDialog(false);
+                        toast.current.show({
+                            severity: "success",
+                            summary: "Successful",
+                            detail: "Budget Created",
+                            life: 3000,
+                        });
                     });
                 }
             );
@@ -263,27 +277,30 @@ export default function WeddingBudgetPlanner() {
                 _items[index] = _item;
                 setItems(_items);
                 setItemDialog(false);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Item Successfuly Updated",
+                    life: 3000,
+                });
             });
         } else {
             WeddingBudgetPlannerAPI.createItem(
                 parsedCopy,
                 budget.weddingBudgetListId
             ).then((response) => {
-                if (response.status === 204) {
-                    response.json().then((idObject) => {
-                        _item.weddingBudgetItemId =
-                            idObject.WEDDINGBUDGETITEMID;
-                        _items.push(_item);
-                        setItems(_items);
-                        setItemDialog(false);
-                    });
+                response.json().then((idObject) => {
+                    _item.weddingBudgetItemId = idObject.WEDDINGBUDGETITEMID;
+                    _items.push(_item);
+                    setItems(_items);
+                    setItemDialog(false);
                     toast.current.show({
                         severity: "success",
                         summary: "Successful",
-                        detail: "Guest Deleted",
+                        detail: "Item Created",
                         life: 3000,
                     });
-                }
+                });
             });
         }
     };
@@ -307,6 +324,12 @@ export default function WeddingBudgetPlanner() {
                 setItems(_items);
                 setDeleteItemDialog(false);
                 setItem(emptyItem);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Item Deleted",
+                    life: 3000,
+                });
             }
         );
     };
@@ -550,21 +573,13 @@ export default function WeddingBudgetPlanner() {
                     <label htmlFor="isPaid" className="font-bold">
                         Item Payment Status
                     </label>
-                    <Checkbox
+                    <ToggleButton
                         id="isPaid"
                         checked={item.isPaid}
                         onChange={(e) => onInputPaidChange(e, "isPaid")}
                         required
                         autoFocus
-                        className={classNames({
-                            "p-invalid": submitted && !item.isPaid,
-                        })}
                     />
-                    {submitted && !item.isPaid && (
-                        <small className="p-error">
-                            Item Payment Status is required.
-                        </small>
-                    )}
                 </div>
                 <div className="field">
                     <label htmlFor="category" className="font-bold">
