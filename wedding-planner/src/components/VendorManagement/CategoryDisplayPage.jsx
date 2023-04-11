@@ -135,7 +135,7 @@ const CategoryDisplayPage = () => {
             <div className="card">
                 <div className="card flex justify-content-center"></div>
                 <br/>
-                <DataView value={vendors} itemTemplate={itemTemplate} />
+                <DataView value={vendors} itemTemplate={itemTemplate} paginator rows={6} />
             </div>
         </div>
     );
