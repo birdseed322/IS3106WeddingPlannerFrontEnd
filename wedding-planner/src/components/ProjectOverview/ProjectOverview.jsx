@@ -27,6 +27,7 @@ import {
 import BrideGroomDataTable from "./ProjectOverviewDataTables/BrideGroomGuestsDataTable";
 import EditProject from "./EditProject";
 import RequestsDataTable from "./ProjectOverviewDataTables/RequestsDataTable";
+import WeddingBudgetPlannerAPI from "../LogisticsManagement/WeddingBudgetPlannerAPI";
 
 const dateProcessor = (dateString) => {
     if (typeof dateString === "string") {
@@ -54,10 +55,18 @@ export default function ProjectOverview() {
         description: "emptyDesc",
         completed: false,
     };
+
+    const emptyBudget = {
+        //weddingBudgetListId: -1,
+        budget: 0,
+        weddingBudgetItems: [],
+    };
+
     const [currentProject, setCurrentProject] = useState(emptyProject);
     const [projectGuestList, setProjectGuestList] = useState([]);
     const [projectTables, setProjectTables] = useState([]);
     const [projectWeddingChecklist, setProjectWeddingChecklist] = useState({});
+    const [projectBudgetList, setProjectBudgetList] = useState(emptyBudget);
     const [projectRequests, setProjectRequests] = useState([]);
     const [projectHiredVendors, setProjectHiredVendors] = useState([]);
     const [projectVendorsPaidCostAndTotalCost, setProjectPaidCostAndTotalCost] = useState([]);
@@ -142,6 +151,15 @@ export default function ProjectOverview() {
                 console.log(weddingChecklist);
                 setProjectWeddingChecklist(weddingChecklist);
             });
+
+        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((budgetList) => {
+                console.log("logging budgetlist");
+                console.log(budgetList);
+                setProjectBudgetList(budgetList);
+            })
+            .catch((e) => console.log("sth went wrong w fetching budget: " + e));
     }, []);
 
     useEffect(() => {
@@ -256,12 +274,13 @@ export default function ProjectOverview() {
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Tasks & Budget">
                                     {/* check if the checklist parent tasks list is undefined , or if it exists, then check if it has any parent tasks*/}
-                                    {(projectWeddingChecklist.weddingParentTasks == undefined || projectWeddingChecklist.weddingParentTasks.length == 0) && (
+                                    {(projectWeddingChecklist.weddingParentTasks == undefined ||
+                                        projectWeddingChecklist.weddingParentTasks.length == 0) && (
                                         <p>You do not have any tasks set.</p>
                                     )}
                                     {/* checking the opposite of the above*/}
                                     {projectWeddingChecklist.weddingParentTasks != undefined &&
-                                        projectWeddingChecklist.weddingParentTasks.length > 0  && (
+                                        projectWeddingChecklist.weddingParentTasks.length > 0 && (
                                             <>
                                                 <p>
                                                     Current task progress:{" "}
@@ -283,9 +302,22 @@ export default function ProjectOverview() {
                                                 </p>
                                             </>
                                         )}
-                                        
-                                    <p>Budget set: $X</p>
-                                    <p>Current cost: $Y</p>
+
+                                    <p>
+                                        Budget set: <b>${projectBudgetList.budget}</b>
+                                    </p>
+                                    <p>
+                                        Current cost:{" "}
+                                        <b>
+                                            $
+                                            {projectBudgetList.weddingBudgetItems.reduce(
+                                                (prev, currObj) => {
+                                                    return prev + currObj.cost;
+                                                },
+                                                0
+                                            )}
+                                        </b>
+                                    </p>
                                 </AccordionTab>
                             </Accordion>
                         </div>

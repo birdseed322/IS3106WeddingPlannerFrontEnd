@@ -38,36 +38,38 @@ export const generateVendorCategoryData = (vendorsData, setVendorsCategoryData) 
         ],
     };
     setVendorsCategoryData(pieChartData);
-}
+};
 
 export const generateUserCountData = (weddingOrganisersData, vendorsData, setUsersCountData) => {
-        const pieChartData = {
-            labels: ["Wedding Organisers", "Vendors"],
-            datasets: [
-                {
-                    // label: "Vendor Categories",
-                    data: [weddingOrganisersData.length, vendorsData.length],
-                    backgroundColor: [
-                        "pink",
-                        "rgb(54, 162, 235)",
-                    ],
-                    hoverOffset: 4,
-                },
-            ],
-        };
-        setUsersCountData(pieChartData);
-}
-
-export const generateTransactionsByCategoryData = (groupedTransactionsData, setTransactionsByCategory) => {
-    
-    // groupedTransactionsData is of the form:
-    // [{category: "FOOD", totalValue: 10}, {} , ...]
-    
     const pieChartData = {
-        labels: groupedTransactionsData.map(pairObj => pairObj.category),
+        labels: ["Wedding Organisers", "Vendors"],
         datasets: [
             {
-                data: groupedTransactionsData.map(pairObj => pairObj.totalValue),
+                // label: "Vendor Categories",
+                data: [weddingOrganisersData.length, vendorsData.length],
+                backgroundColor: ["pink", "rgb(54, 162, 235)"],
+                hoverOffset: 4,
+            },
+        ],
+    };
+    setUsersCountData(pieChartData);
+};
+
+export const generateTransactionsByCategoryData = (
+    groupedTransactionsData,
+    setTransactionsByCategory
+) => {
+    // groupedTransactionsData is of the form:
+    // [{category: "FOOD", totalValue: 10}, {} , ...]
+
+    const pieChartData = {
+        labels: groupedTransactionsData.map(
+            (pairObj) =>
+                pairObj.category.charAt(0).toUpperCase() + pairObj.category.slice(1).toLowerCase()
+        ),
+        datasets: [
+            {
+                data: groupedTransactionsData.map((pairObj) => pairObj.totalValue),
                 backGroundColor: [
                     "rgb(255, 99, 132)",
                     "rgb(54, 162, 235)",
@@ -77,9 +79,9 @@ export const generateTransactionsByCategoryData = (groupedTransactionsData, setT
                     "magenta",
                 ],
                 hoverOffset: 4,
-            }
-        ]
-    }
-    
+            },
+        ],
+    };
+
     setTransactionsByCategory(pieChartData);
-}
+};
