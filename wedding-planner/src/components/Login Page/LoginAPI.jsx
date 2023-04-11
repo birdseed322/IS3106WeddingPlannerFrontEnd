@@ -73,11 +73,13 @@ const LoginAPI = {
                 
                 // the above is some multi-layered promise that still resolves to 'success'
                 
-            } else {
+            } else if (response.status == 403) {
 
                 // promise's reject case (i guess??)
-                return 'fail';
+                return 'banned';
 
+            } else {
+                return 'fail';
             }
         })
     }

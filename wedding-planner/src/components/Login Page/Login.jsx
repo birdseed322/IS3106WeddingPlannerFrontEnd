@@ -40,16 +40,18 @@ function Login() {
     const navigate = useNavigate();
     function handleLoginSuccessOrFail(successOrFailPromise) {
         return successOrFailPromise.then((successOrFailString) => {
+            console.log(`status of user is "${successOrFailString}"`)
             if (successOrFailString == "success") {
                 navigate("/"); // go to some default page
-                console.log("success");
                 setErrorMsg(""); // just in case lol
                 return "success";
-            } else {
+            } else if (successOrFailString == "fail") {
                 // stay on login page
-                console.log("fail");
                 setErrorMsg("Wrong username or password!");
                 return "fail";
+            } else {
+                setErrorMsg("User is banned!");
+                return "banned";
             }
         });
     }
