@@ -10,6 +10,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Fieldset } from "primereact/fieldset";
+import { Timeline } from "primereact/timeline";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import "primeflex/primeflex.css";
 import { classNames } from "primereact/utils";
@@ -22,12 +23,14 @@ import {
     fetchAndSetVendoTransObjectList,
     fetchAndSetVendorsTransactionsList,
     generateVendorCostPieChartData,
+    itineraryComparator,
     requestAndComputeHiredVendors,
 } from "./ProjectOverviewHelperMethods";
 import BrideGroomDataTable from "./ProjectOverviewDataTables/BrideGroomGuestsDataTable";
 import EditProject from "./EditProject";
 import RequestsDataTable from "./ProjectOverviewDataTables/RequestsDataTable";
 import WeddingBudgetPlannerAPI from "../LogisticsManagement/WeddingBudgetPlannerAPI";
+import WeddingItineraryAPI from "../LogisticsManagement/WeddingItineraryAPI";
 
 const dateProcessor = (dateString) => {
     if (typeof dateString === "string") {
@@ -67,6 +70,7 @@ export default function ProjectOverview() {
     const [projectTables, setProjectTables] = useState([]);
     const [projectWeddingChecklist, setProjectWeddingChecklist] = useState({});
     const [projectBudgetList, setProjectBudgetList] = useState(emptyBudget);
+    const [projectItineraryItems, setProjectItineraryItems] = useState([]);
     const [projectRequests, setProjectRequests] = useState([]);
     const [projectHiredVendors, setProjectHiredVendors] = useState([]);
     const [projectVendorsPaidCostAndTotalCost, setProjectPaidCostAndTotalCost] = useState([]);
@@ -160,6 +164,27 @@ export default function ProjectOverview() {
                 setProjectBudgetList(budgetList);
             })
             .catch((e) => console.log("sth went wrong w fetching budget: " + e));
+
+        WeddingItineraryAPI.getItinerariesByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((itineraries) => {
+
+                const processedItineraries = itineraries.map((item) => {
+                    return {
+                        weddingItineraryId: item.weddingItineraryId,
+                        eventName: item.eventName,
+                        eventDate: dateProcessor(item.eventDate),
+                        eventStartTime: dateProcessor(item.eventStartTime),
+                        eventEndTime: dateProcessor(item.eventEndTime)
+                    }
+                })
+                console.log("logging processed itineraries");
+                
+                processedItineraries.sort(itineraryComparator);
+                console.log(processedItineraries);
+                setProjectItineraryItems(processedItineraries);
+            })
+            .catch((e) => console.log("sth went wrong w fetching itineraries: " + e));
     }, []);
 
     useEffect(() => {
@@ -206,6 +231,14 @@ export default function ProjectOverview() {
         return <Toolbar start={startContent} end={endContent} />;
     };
 
+    
+    const timelineDateFormatter = (item) => (
+        <p>
+            <b>{item.eventDate.toLocaleDateString(undefined, {day: 'numeric', month: 'long'})}</b><br/>
+            {item.eventStartTime.toLocaleTimeString(undefined, {hour: 'numeric', minute: 'numeric'})}
+        </p>
+    )
+    
     return (
         <div id="appContainer">
             <HeartyNavbar />
@@ -253,6 +286,15 @@ export default function ProjectOverview() {
                     </Fieldset>
                     <Fieldset legend="Venue & Directions">
                         <p>{currentProject.venue}</p>
+                    </Fieldset>
+                    <Fieldset legend="Itinerary/Timeline">
+                        <Timeline
+                            value={projectItineraryItems}
+                            layout="horizontal"
+                            align="top"
+                            opposite={timelineDateFormatter}
+                            content={(item) => item.eventName}
+                        />
                     </Fieldset>
 
                     <div className="grid grid-nogutter">
@@ -339,12 +381,14 @@ export default function ProjectOverview() {
                                                     {" / "}${projectVendorsPaidCostAndTotalCost[1]}
                                                 </b>
                                             </p>
-                                            <Card title="Cost Breakdown By Vendor">
+                                            <Card
+                                                className="flex justify-content-center"
+                                                title="Cost Breakdown By Vendor"
+                                            >
                                                 <Chart
                                                     type="pie"
                                                     data={vendorsCostPieChartData}
                                                     options={{ animation: true }}
-                                                    className="w-full"
                                                 />
                                             </Card>
                                             <p>maybe buttons that link to vendors</p>

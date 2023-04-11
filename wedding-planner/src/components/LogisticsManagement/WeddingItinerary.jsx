@@ -388,6 +388,7 @@ export default function WeddingItinerary() {
                         onChange={(e) => onInputChange(e, "eventDate")}
                         required
                         autoFocus
+                        dateFormat="dd/mm/yy"
                         className={classNames({
                             "p-invalid": submitted && !itinerary.eventDate,
                         })}
