@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router";
 
 import { Button } from "primereact/button";
@@ -12,6 +12,7 @@ import { InputNumber } from "primereact/inputnumber";
 import { classNames } from "primereact/utils";
 import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import WeddingBudgetPlannerAPI from "./WeddingBudgetPlannerAPI";
@@ -41,7 +42,7 @@ export default function WeddingBudgetPlanner() {
 
     const { projectId } = useParams();
 
-    const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
+    // const [weddingBudgetListId, setWeddingBudgetListId] = useState(1);
     const [budget, setBudget] = useState(emptyBudget);
     // const [budgets, setBudgets] = useState([]);
     const [item, setItem] = useState(emptyItem);
@@ -52,13 +53,21 @@ export default function WeddingBudgetPlanner() {
     const [deleteItemDialog, setDeleteItemDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
+    const toast = useRef(null);
+    const dt = useRef(null);
+
     useEffect(() => {
         WeddingBudgetPlannerAPI.getBudgetByWeddingProject(projectId)
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 404) {
+                    throw new Error();
+                }
+                return res.json();
+            })
             .then((_budgets) => {
-                setBudget(_budgets.budget);
+                console.log(_budgets);
+                setBudget(_budgets);
                 setItems(_budgets.weddingBudgetItems);
-                console.log(budget);
             })
             .catch((exception) => {
                 console.log("something went wrong with fetching budget");
@@ -224,6 +233,7 @@ export default function WeddingBudgetPlanner() {
         } else {
             WeddingBudgetPlannerAPI.createBudget(parsedCopy, projectId).then(
                 (response) => {
+                    console.log(response.status);
                     response.json().then((idObject) => {
                         _budget.weddingBudgetListId =
                             idObject.WEDDINGBUDGETLISTID;
@@ -257,14 +267,23 @@ export default function WeddingBudgetPlanner() {
         } else {
             WeddingBudgetPlannerAPI.createItem(
                 parsedCopy,
-                weddingBudgetListId
+                budget.weddingBudgetListId
             ).then((response) => {
-                response.json().then((idObject) => {
-                    _item.weddingBudgetItemId = idObject.WEDDINGBUDGETITEMID;
-                    _items.push(_item);
-                    setItems(_items);
-                    setItemDialog(false);
-                });
+                if (response.status === 204) {
+                    response.json().then((idObject) => {
+                        _item.weddingBudgetItemId =
+                            idObject.WEDDINGBUDGETITEMID;
+                        _items.push(_item);
+                        setItems(_items);
+                        setItemDialog(false);
+                    });
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Guest Deleted",
+                        life: 3000,
+                    });
+                }
             });
         }
     };
@@ -374,10 +393,11 @@ export default function WeddingBudgetPlanner() {
     return (
         <div>
             <div>
+                <Toast ref={toast} />
                 <HeartyNavbar></HeartyNavbar>
                 <Card className="flex justify-content-center">
                     <h3>
-                        Budget:
+                        Budget:{" "}
                         {budget.budget.toLocaleString("en-SG", {
                             style: "currency",
                             currency: "SGD",
@@ -420,7 +440,7 @@ export default function WeddingBudgetPlanner() {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
                 >
-                    <Column field="weddingBudgetItemId" header="No."></Column>
+                    {/* <Column field="weddingBudgetItemId" header="No."></Column> */}
                     <Column header="Category" field="category" />
                     <Column field="name" header="Event Name"></Column>
                     <Column
