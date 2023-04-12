@@ -22,17 +22,31 @@ function Homepage() {
             border: '#f561b0',
           }}
         />
-        <p style={{ lineHeight: 1.5, textIndent: '0.25em', fontSize: '5em' }}>
+        <p
+          className="titleFont"
+          style={{
+            lineHeight: 1.5,
+            textIndent: '0.25em',
+            fontSize: '5em',
+            fontWeight: 'bold',
+          }}
+        >
           Hearty
         </p>
       </div>
       <div className="flex justify-content-center">
-        <p style={{ lineHeight: 3, textIndent: '2em', fontSize: '2em' }}>
+        <p
+          className="font"
+          style={{ lineHeight: 3, textIndent: '2em', fontSize: '2em' }}
+        >
           Have a hearty time with us
         </p>
       </div>
       <div className="flex justify-content-center">
-        <p style={{ lineHeight: 1, textIndent: '2em', fontSize: '2em' }}>
+        <p
+          className="font"
+          style={{ lineHeight: 1, textIndent: '2em', fontSize: '2em' }}
+        >
           creating the wedding of your dreams !
         </p>
       </div>

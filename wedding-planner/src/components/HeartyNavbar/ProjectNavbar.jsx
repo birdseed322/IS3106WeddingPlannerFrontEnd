@@ -1,16 +1,36 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Menubar } from 'primereact/menubar'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { Link } from 'react-router-dom'
 import { LoginTokenContext } from '../../context/LoginTokenContext'
+import { Avatar } from 'primereact/avatar'
+import { getDownloadURL, listAll, ref } from 'firebase/storage'
+import { storage } from '../firebase'
 export default function ProjectNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
-  const [value, setValue] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   // height="40" className="mr-2"
   const [token, setToken] = useContext(LoginTokenContext)
+  const wId = token.userId
+  const [imageUrl, setImageUrl] = useState([])
+
+  const imageListRef = ref(storage, `wedding-organisers/${wId}`)
+
+  useEffect(() => {
+    console.log('triggering image retreival from firebase')
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        // console.log(item);
+        //setImageUrls((prev) => [...prev, item]);
+        getDownloadURL(item).then((url) => {
+          setImageUrl(url)
+        })
+      })
+    })
+  }, [])
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
   return (
     <div id="navbar" className="m-3">
@@ -29,18 +49,20 @@ export default function ProjectNavbar(props) {
           </span>
         </Link>
         <span className="p-input  px-2.5">
-          <InputText value={value} onChange={(e) => setValue(e.target.value)} />
+          <InputText
+            value={searchTerm}
+            onChange={(e) => props.onSearch(e.target.value)}
+          />
           <Button
             icon="pi pi-search"
             style={{
               color: '#f561b0',
             }}
-            onClick={() => setValue('')}
             className="p-button-text"
           />
         </span>
       </div>
-      <div className="absolute right-0 inline-block">
+      <div className="absolute right-0 inline-block pt-1">
         <Link to="/login" className="noUnderline">
           <Button
             label="Logout"
@@ -53,14 +75,12 @@ export default function ProjectNavbar(props) {
             onClick={() => setToken(false)} // set token to false
           />{' '}
         </Link>
+
         <Link to="/editprofile" className="noUnderline px-3">
-          <Button
-            icon="pi pi-user"
-            rounded
-            style={{
-              backgroundColor: '#f561b0',
-              border: '#f561b0',
-            }}
+          <Avatar
+            image={imageUrl}
+            size="large"
+            shape="circle" // set token to false
           />
         </Link>
       </div>
