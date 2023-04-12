@@ -14,7 +14,7 @@ function VendorNavbar(props) {
   const vId = token.userId
   const [imageUrl, setImageUrl] = useState([])
 
-  const imageListRef = ref(storage, `vendors/${vId}/ProfilePic/`)
+  const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/`)
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
