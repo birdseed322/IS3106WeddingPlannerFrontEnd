@@ -1,8 +1,8 @@
 import { Card } from "primereact/card";
 import { Timeline } from "primereact/timeline";
 import { TabView, TabPanel } from "primereact/tabview";
-import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, useContext, useRef } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import VendorNavbar from "../VendorNavbar/VendorNavbar";
 import FinalisePriceAction from "./FinalisePriceAction";
 import PendingApprovalButtons from "./PendingApprovalButtons";
@@ -10,6 +10,7 @@ import { Message } from "primereact/message";
 import PaymentAction from "./PaymentAction";
 import { LoginTokenContext } from "../../../context/LoginTokenContext";
 import HeartyNavbar from "../../HeartyNavbar/HeartyNavbar";
+import { Toast } from "primereact/toast";
 
 function SpecificRequestPage() {
   //Should only be accessible by the vendor and the wedding organiser that posted
@@ -18,6 +19,8 @@ function SpecificRequestPage() {
   //Some check to see status of the transaction (Purpose of the status)
   //Still need render buttons based on identity of the user (WO or vendor)
   let { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const toast = useRef(null);
   const [request, setRequest] = useState({});
   let actionToBeTaken = "";
   const [token, setToken] = useContext(LoginTokenContext);
@@ -68,6 +71,36 @@ function SpecificRequestPage() {
         });
 
         setRequest(data);
+
+        if (searchParams.get("successfulPayment") == 1) {
+          toast.current.show({
+            severity: "success",
+            summary: "Successful Payment",
+            detail: "Request has been paid.",
+            life: 3000,
+          });
+        } else if (searchParams.get("successfulApproval") == 1) {
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Request has been successfully approved.",
+            life: 3000,
+          });
+        } else if (searchParams.get("successfulRejection") == 1) {
+          toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "Request has been successfully rejected.",
+            life: 3000,
+          });
+        } else if (searchParams.get("successfulPriceSet") == 1) {
+          toast.current.show({
+            severity: "success",
+            summary: "Price Set Successfully",
+            detail: "Price for request has been set.",
+            life: 3000,
+          });
+        }
       });
     });
   }, []);
@@ -150,8 +183,8 @@ function SpecificRequestPage() {
       body: JSON.stringify({ price }),
     }).then((response) => {
       if (response.status === 204) {
-        //Some growl
-        window.location.reload();
+        window.location.href =
+          window.location.pathname + "?successfulPriceSet=1";
       }
     });
   }
@@ -166,9 +199,15 @@ function SpecificRequestPage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ isAccepted: response }),
-    }).then((response) => {
-      if (response.status === 204) {
-        window.location.reload();
+    }).then((res) => {
+      if (res.status === 204) {
+        if (response) {
+          window.location.href =
+            window.location.pathname + "?successfulApproval=1";
+        } else {
+          window.location.href =
+            window.location.pathname + "?successfulRejection=1";
+        }
       }
     });
   }
@@ -180,17 +219,25 @@ function SpecificRequestPage() {
         id;
       fetch(reqUrl).then((response) => {
         if (response.status === 204) {
-          window.location.reload();
+          window.location.href =
+            window.location.pathname + "?successfulPayment=1";
         }
       });
     } else {
+      toast.current.show({
+        severity: "error",
+        summary: "Payment Failed",
+        detail: "Invalid payment amount entered. Please try again.",
+        life: 3000,
+      });
       console.log("payment failed");
     }
   }
 
   return (
     <>
-    {token.userType === "VENDOR" ?  <VendorNavbar /> : <HeartyNavbar/>}
+      <Toast ref={toast} />
+      {token.userType === "VENDOR" ? <VendorNavbar /> : <HeartyNavbar />}
       <Card className="h-full">
         <div className="grid">
           <div className="col">

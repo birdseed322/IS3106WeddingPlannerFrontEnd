@@ -35,12 +35,8 @@ export default function WeddingVendorsDataTable({ fetchedData }) {
         isBanned: false,
     };
 
-    //test data
-    // should be a ref hook here I think?
-    const usersData = useRef(fetchedData);
-
     // Products list (to be used as value in DataTable)
-    const [userObjects, setUserObjects] = useState(null);
+    const [userObjects, setUserObjects] = useState(fetchedData);
 
     // currently selected product and selected products.
     // the first one is for "temporary editing" during dialog boxes & selections
@@ -64,9 +60,12 @@ export default function WeddingVendorsDataTable({ fetchedData }) {
     const dt = useRef(null); // this is datatable
 
     // SETTING DEFAULT PRODUCTS
+    // SETTING DEFAULT PRODUCTS -- this is actually not needed
+    // since we can directly set table data to fetchedData
+    // but whats done is done, just leave it here
     useEffect(() => {
-        setUserObjects(usersData.current);
-    }, []);
+        setUserObjects(fetchedData);
+    }, [fetchedData]);
 
     // === helper method for currency ===
     const formatCurrency = (value) => {

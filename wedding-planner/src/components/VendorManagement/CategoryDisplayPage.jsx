@@ -32,10 +32,10 @@ const CategoryDisplayPage = () => {
 
     const getAllProfilePictures = (vendorsData) => {
         return vendorsData.forEach((vendor) => {
-            const vendorName = vendor.username;
+            const vendorId = vendor.userId;
             //console.log("vendor username type = " + typeof vendorName);
             //console.log("vendor username = " + vendorName)
-            const vendorProfilePic = ref(storage, `Vendor/${vendorName}/ProfilePic/`);
+            const vendorProfilePic = ref(storage, `Vendor/${vendorId}/ProfilePic/`);
             listAll(vendorProfilePic).then((response) => {
                 response.items.forEach((item) => {
                     getDownloadURL(item).then((url) => {
@@ -47,7 +47,7 @@ const CategoryDisplayPage = () => {
         }); //console.log("diwueniwun" + vendor.username)))
     };
 
-    function getSpecificUrl(username) {
+    function getSpecificUrl(userId) {
         for (let index = 0; index < profilePicUrl.length; index++) {
             const largeString = profilePicUrl[index];
             console.log("large string = " + largeString);
@@ -55,7 +55,9 @@ const CategoryDisplayPage = () => {
             const endIndex = largeString.indexOf("ProfilePic") - 3;
             const extractedString = largeString.substring(startIndex, endIndex);
             console.log("extracted string = " + extractedString);
-            if (username === extractedString) {
+            if (userId.toString() === extractedString) {
+                //console.log("USER ID = " + userId) 
+                //console.log("EXTRACTED STRING = " + extractedString) 
                 return largeString;
             }
         }
@@ -83,7 +85,7 @@ const CategoryDisplayPage = () => {
             //console.log("Step 1 type = " + typeof JSON.stringify(vendor));
             //console.log(" step 2 = " + JSON.parse(JSON.stringify(vendor)).username);
             //console.log("CLICKED THE BUTTON > " + vendorJson.username);
-            navigate(`/${projectId}/VendorSearchPage/VendorName/${vendor.username}`); //adds on to the current endpoint
+            navigate(`/${projectId}/VendorSearchPage/VendorId/${vendor.username}`); //adds on to the current endpoint
         }
 
         return (
@@ -98,7 +100,7 @@ const CategoryDisplayPage = () => {
                     <div className="flex flex-column align-items-center gap-3 py-5">
                         <div className="text-2xl font-bold">
                             <Image
-                                src={getSpecificUrl(vendors.username)}
+                                src={getSpecificUrl(vendors.userId)}
                                 template={icon}
                                 preview width="210"
                             />

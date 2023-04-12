@@ -10,6 +10,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Fieldset } from "primereact/fieldset";
+import { Timeline } from "primereact/timeline";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import "primeflex/primeflex.css";
 import { classNames } from "primereact/utils";
@@ -22,11 +23,14 @@ import {
     fetchAndSetVendoTransObjectList,
     fetchAndSetVendorsTransactionsList,
     generateVendorCostPieChartData,
+    itineraryComparator,
     requestAndComputeHiredVendors,
 } from "./ProjectOverviewHelperMethods";
 import BrideGroomDataTable from "./ProjectOverviewDataTables/BrideGroomGuestsDataTable";
 import EditProject from "./EditProject";
 import RequestsDataTable from "./ProjectOverviewDataTables/RequestsDataTable";
+import WeddingBudgetPlannerAPI from "../LogisticsManagement/WeddingBudgetPlannerAPI";
+import WeddingItineraryAPI from "../LogisticsManagement/WeddingItineraryAPI";
 
 const dateProcessor = (dateString) => {
     if (typeof dateString === "string") {
@@ -54,10 +58,19 @@ export default function ProjectOverview() {
         description: "emptyDesc",
         completed: false,
     };
+
+    const emptyBudget = {
+        //weddingBudgetListId: -1,
+        budget: 0,
+        weddingBudgetItems: [],
+    };
+
     const [currentProject, setCurrentProject] = useState(emptyProject);
     const [projectGuestList, setProjectGuestList] = useState([]);
     const [projectTables, setProjectTables] = useState([]);
     const [projectWeddingChecklist, setProjectWeddingChecklist] = useState({});
+    const [projectBudgetList, setProjectBudgetList] = useState(emptyBudget);
+    const [projectItineraryItems, setProjectItineraryItems] = useState([]);
     const [projectRequests, setProjectRequests] = useState([]);
     const [projectHiredVendors, setProjectHiredVendors] = useState([]);
     const [projectVendorsPaidCostAndTotalCost, setProjectPaidCostAndTotalCost] = useState([]);
@@ -142,6 +155,36 @@ export default function ProjectOverview() {
                 console.log(weddingChecklist);
                 setProjectWeddingChecklist(weddingChecklist);
             });
+
+        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((budgetList) => {
+                console.log("logging budgetlist");
+                console.log(budgetList);
+                setProjectBudgetList(budgetList);
+            })
+            .catch((e) => console.log("sth went wrong w fetching budget: " + e));
+
+        WeddingItineraryAPI.getItinerariesByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((itineraries) => {
+
+                const processedItineraries = itineraries.map((item) => {
+                    return {
+                        weddingItineraryId: item.weddingItineraryId,
+                        eventName: item.eventName,
+                        eventDate: dateProcessor(item.eventDate),
+                        eventStartTime: dateProcessor(item.eventStartTime),
+                        eventEndTime: dateProcessor(item.eventEndTime)
+                    }
+                })
+                console.log("logging processed itineraries");
+                
+                processedItineraries.sort(itineraryComparator);
+                console.log(processedItineraries);
+                setProjectItineraryItems(processedItineraries);
+            })
+            .catch((e) => console.log("sth went wrong w fetching itineraries: " + e));
     }, []);
 
     useEffect(() => {
@@ -188,6 +231,14 @@ export default function ProjectOverview() {
         return <Toolbar start={startContent} end={endContent} />;
     };
 
+    
+    const timelineDateFormatter = (item) => (
+        <p>
+            <b>{item.eventDate.toLocaleDateString(undefined, {day: 'numeric', month: 'long'})}</b><br/>
+            {item.eventStartTime.toLocaleTimeString(undefined, {hour: 'numeric', minute: 'numeric'})}
+        </p>
+    )
+    
     return (
         <div id="appContainer">
             <HeartyNavbar />
@@ -236,6 +287,15 @@ export default function ProjectOverview() {
                     <Fieldset legend="Venue & Directions">
                         <p>{currentProject.venue}</p>
                     </Fieldset>
+                    <Fieldset legend="Itinerary/Timeline">
+                        <Timeline
+                            value={projectItineraryItems}
+                            layout="horizontal"
+                            align="top"
+                            opposite={timelineDateFormatter}
+                            content={(item) => item.eventName}
+                        />
+                    </Fieldset>
 
                     <div className="grid grid-nogutter">
                         <div className="col-12 md:col-6">
@@ -256,12 +316,13 @@ export default function ProjectOverview() {
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Tasks & Budget">
                                     {/* check if the checklist parent tasks list is undefined , or if it exists, then check if it has any parent tasks*/}
-                                    {(projectWeddingChecklist.weddingParentTasks == undefined || projectWeddingChecklist.weddingParentTasks.length == 0) && (
+                                    {(projectWeddingChecklist.weddingParentTasks == undefined ||
+                                        projectWeddingChecklist.weddingParentTasks.length == 0) && (
                                         <p>You do not have any tasks set.</p>
                                     )}
                                     {/* checking the opposite of the above*/}
                                     {projectWeddingChecklist.weddingParentTasks != undefined &&
-                                        projectWeddingChecklist.weddingParentTasks.length > 0  && (
+                                        projectWeddingChecklist.weddingParentTasks.length > 0 && (
                                             <>
                                                 <p>
                                                     Current task progress:{" "}
@@ -283,9 +344,22 @@ export default function ProjectOverview() {
                                                 </p>
                                             </>
                                         )}
-                                        
-                                    <p>Budget set: $X</p>
-                                    <p>Current cost: $Y</p>
+
+                                    <p>
+                                        Budget set: <b>${projectBudgetList.budget}</b>
+                                    </p>
+                                    <p>
+                                        Current cost:{" "}
+                                        <b>
+                                            $
+                                            {projectBudgetList.weddingBudgetItems.reduce(
+                                                (prev, currObj) => {
+                                                    return prev + currObj.cost;
+                                                },
+                                                0
+                                            )}
+                                        </b>
+                                    </p>
                                 </AccordionTab>
                             </Accordion>
                         </div>
@@ -307,12 +381,14 @@ export default function ProjectOverview() {
                                                     {" / "}${projectVendorsPaidCostAndTotalCost[1]}
                                                 </b>
                                             </p>
-                                            <Card title="Cost Breakdown By Vendor">
+                                            <Card
+                                                className="flex justify-content-center"
+                                                title="Cost Breakdown By Vendor"
+                                            >
                                                 <Chart
                                                     type="pie"
                                                     data={vendorsCostPieChartData}
                                                     options={{ animation: true }}
-                                                    className="w-full"
                                                 />
                                             </Card>
                                             <p>maybe buttons that link to vendors</p>

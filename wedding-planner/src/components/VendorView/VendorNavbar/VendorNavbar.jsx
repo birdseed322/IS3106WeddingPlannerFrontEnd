@@ -1,24 +1,44 @@
-import React, { useRef, useContext } from 'react'
+import React, { useRef, useContext, useState, useEffect } from 'react'
 import { Menubar } from 'primereact/menubar'
 import heartyLogo from '../../../images/favicon-heart-3.png'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { Link } from 'react-router-dom'
 import { LoginTokenContext } from '../../../context/LoginTokenContext'
+import { getDownloadURL, listAll, ref } from 'firebase/storage'
+import { storage } from '../../firebase'
+import { Avatar } from 'primereact/avatar'
 
 function VendorNavbar(props) {
   const [token, setToken] = useContext(LoginTokenContext)
+  const vId = token.userId
+  const [imageUrl, setImageUrl] = useState([])
+
+  const imageListRef = ref(storage, `vendors/${vId}/ProfilePic/`)
+
+  useEffect(() => {
+    console.log('triggering image retreival from firebase')
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        // console.log(item);
+        //setImageUrls((prev) => [...prev, item]);
+        getDownloadURL(item).then((url) => {
+          setImageUrl(url)
+        })
+      })
+    })
+  }, [])
   const items = [
     {
       label: 'Schedule',
       icon: 'pi pi-fw pi-calendar',
-      url: '/vendor/schedule',
+      url: '/schedule',
       className: 'menuItemStyle',
     },
     {
       label: 'Requests',
       icon: 'pi pi-fw pi-book',
-      url: '/vendor/requests',
+      url: '/',
       className: 'menuItemStyle',
     },
   ]
@@ -34,10 +54,10 @@ function VendorNavbar(props) {
         />
       </Link>
       <Link to="/editprofile" className="noUnderline">
-        <Button
-          icon="pi pi-user"
-          rounded
-          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+        <Avatar
+          image={imageUrl}
+          size="large"
+          shape="circle" // set token to false
         />
       </Link>
     </>

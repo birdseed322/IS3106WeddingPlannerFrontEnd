@@ -189,7 +189,8 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
                             <Controller
                                 name="weddingDate"
                                 control={control}
-                                render={({ field, fieldState }) => <Calendar {...field} />}
+                                render={({ field, fieldState }) => <Calendar {...field} dateFormat="dd/mm/yy"
+                                />}
                             />
                     </div>
 

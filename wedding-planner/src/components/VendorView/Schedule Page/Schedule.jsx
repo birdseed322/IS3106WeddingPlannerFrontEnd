@@ -149,7 +149,7 @@ function Schedule() {
           <div className="flex justify-content-center">
             <Link
               className="no-underline"
-              to={"/vendor/request/" + selectedReq.id}
+              to={"/requests/" + selectedReq.id}
             >
               <Button label="View Request" />
             </Link>

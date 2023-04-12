@@ -9,7 +9,7 @@ import { Button } from "primereact/button";
 import { Link, useParams } from "react-router-dom";
 import { LoginTokenContext } from "../../../context/LoginTokenContext";
 import HeartyNavbar from "../../HeartyNavbar/HeartyNavbar";
-import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { FilterMatchMode } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
@@ -24,6 +24,7 @@ function WeddingOrganiserRequest() {
     "vendor.username": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     requestId: { value: null, matchMode: FilterMatchMode.EQUALS },
     "transaction.isPaid": { value: null, matchMode: FilterMatchMode.EQUALS },
+    isAccepted: { value: null, matchMode: FilterMatchMode.EQUALS },
     "vendor.category": { value: null, matchMode: FilterMatchMode.IN },
   });
   const [paymentStatuses] = useState(["Unpaid", "Paid"]);
@@ -38,6 +39,7 @@ function WeddingOrganiserRequest() {
           e.weddingProject.weddingDate = new Date(
             e.weddingProject.weddingDate.replace("[UTC]", "")
           );
+          e.requestDate = new Date(e.requestDate.replace("[UTC]", ""));
         });
         setRequests(data);
       });
@@ -47,7 +49,7 @@ function WeddingOrganiserRequest() {
   //Data table formatting
   const dateBodyTemplate = (rowData) => {
     //may need to change
-    return rowData.weddingProject.weddingDate.toLocaleDateString("en-SG", {
+    return rowData.requestDate.toLocaleDateString("en-SG", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -55,7 +57,9 @@ function WeddingOrganiserRequest() {
   };
 
   const quotedPriceTemplate = (rowData) => {
-    if (rowData.quotedPrice) {
+    if (!rowData.isAccepted) {
+      return null;
+   } else if (rowData.quotedPrice) {
       return rowData.quotedPrice.toLocaleString("en-US", {
         style: "currency",
         currency: "SGD",
@@ -66,22 +70,22 @@ function WeddingOrganiserRequest() {
   };
 
   const paymentStatusTemplate = (rowData) => {
-    if (rowData.transaction && rowData.transaction.isPaid) {
+    if (!rowData.isAccepted) {
+      return null;
+    } else if (rowData.transaction && rowData.transaction.isPaid) {
       return <Tag value="Paid" severity="success" />;
     } else {
       return <Tag value="Unpaid" severity="danger" />;
     }
   };
-
-  const confirmedActionTemplate = (rowData) => {
-    return (
-      <Link
-        className="no-underline"
-        to={"/vendor/request/" + rowData.requestId}
-      >
-        <Button label="View" severity="secondary" />
-      </Link>
-    );
+  const approvalStatus = (rowData) => {
+    if (rowData.isAccepted) {
+      return <Tag value="Approved" severity="success" />;
+    } else if (!rowData.isAccepted) {
+      return <Tag value="Rejected" severity="danger" />;
+    } else {
+      return "Pending";
+    }
   };
 
   const vendorNameTemplate = (rowData) => {
@@ -124,6 +128,30 @@ function WeddingOrganiserRequest() {
       />
     );
   };
+
+  const approvalStatusRowFilterTemplate = (options) => {
+    return (
+      <Dropdown
+        value={options.value ? "Approved" : options.value === null ? "" : "Rejected"}
+        options={["Approved", "Rejected"]}
+        onChange={(e) =>
+          options.filterApplyCallback(e.value === "Approved" ? true : false)
+        }
+        itemTemplate={approvalStatusItemTemplate}
+        placeholder="Select One"
+        className="p-column-filter"
+        showClear
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+
+  const approvalStatusItemTemplate = (option) => {
+    return (
+      <Tag value={option} severity={option === "Approved" ? "success" : "danger" } />
+    );
+  };
+
 
   const vendorUsernameRowFilterTemplate = (options) => {
     return (
@@ -214,6 +242,16 @@ function WeddingOrganiserRequest() {
           filterPlaceholder="Search by request Id"
         ></Column>
         <Column
+          field="isAccepted"
+          header="Approval Status"
+          body={approvalStatus}
+          sortable
+          style={{ width: "14%" }}
+          filter
+          filterField="isAccepted"
+          filterElement={approvalStatusRowFilterTemplate}
+        ></Column>
+        <Column
           field="quotedPrice"
           header="Quoted Price"
           body={quotedPriceTemplate}
@@ -232,8 +270,8 @@ function WeddingOrganiserRequest() {
           style={{ width: "14%" }}
         ></Column>
         <Column
-          field="weddingProject.weddingDate"
-          header="Event Date"
+          field="requestDate"
+          header="Creation Date"
           sortable
           body={dateBodyTemplate}
           style={{ width: "14%" }}

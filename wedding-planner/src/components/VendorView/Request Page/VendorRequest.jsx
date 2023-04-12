@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { Card } from "primereact/card";
 import RequestFooter from "./RequestFooter";
 import VendorNavbar from "../VendorNavbar/VendorNavbar";
@@ -10,15 +10,24 @@ import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 import { LoginTokenContext } from "../../../context/LoginTokenContext";
+import { FilterMatchMode } from "primereact/api";
+import { InputNumber } from "primereact/inputnumber";
+import { Dropdown } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
 
 function VendorRequest() {
   //When rendering the data table for the requests, the headers should include: S/N? Request id. Event Date. View button. Quoted price. W.O?
 
   //Implement use effect to make call to api to retrieve vendor requests. Use the id from the session storage to maintain state
+  const toast = useRef(null);
   const [vendorPendingRequests, setVendorPendingRequests] = React.useState([]);
   const [vendorConfirmedRequests, setVendorConfirmedRequests] = React.useState(
     []
   );
+  const [filters, setFilters] = React.useState({
+    requestId: { value: null, matchMode: FilterMatchMode.EQUALS },
+    "transaction.isPaid": { value: null, matchMode: FilterMatchMode.EQUALS },
+  });
   const [token, setToken] = useContext(LoginTokenContext);
   React.useEffect(() => {
     const apiUrl =
@@ -64,7 +73,7 @@ function VendorRequest() {
                   Do you want to accept this request? You currently have{" "}
                   {res.clashes} event(s) on that
                 </div>
-                <Link to={"/vendor/schedule?date=" + res.clashDate}>day</Link>.
+                <Link to={"/schedule?date=" + res.clashDate}>day</Link>.
               </>
             ),
             header: "Acceptance Confirmation",
@@ -89,6 +98,12 @@ function VendorRequest() {
                     ]);
                     return prev.filter((req) => req.requestId !== id);
                   });
+                  toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "Request has been successfully approved.",
+                    life: 3000,
+                  });
                 }
               });
             },
@@ -110,6 +125,12 @@ function VendorRequest() {
                   tempReq,
                 ]);
                 return prev.filter((req) => req.requestId !== id);
+              });
+              toast.current.show({
+                severity: "success",
+                summary: "Success",
+                detail: "Request has been successfully approved.",
+                life: 3000,
               });
             }
           });
@@ -133,6 +154,12 @@ function VendorRequest() {
         let newList = [...vendorPendingRequests];
         newList = newList.filter((req) => req.requestId !== id);
         setVendorPendingRequests(newList);
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Request has been successfully rejected.",
+          life: 3000,
+        });
       }
     });
   }
@@ -142,6 +169,17 @@ function VendorRequest() {
     //may need to change
     return new Date(
       rowData.weddingProject.weddingDate.replace("[UTC]", "")
+    ).toLocaleDateString("en-SG", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  };
+
+  const creationDateBodyTemplate = (rowData) => {
+    //may need to change
+    return new Date(
+      rowData.requestDate.replace("[UTC]", "")
     ).toLocaleDateString("en-SG", {
       year: "numeric",
       month: "2-digit",
@@ -170,10 +208,7 @@ function VendorRequest() {
 
   const confirmedActionTemplate = (rowData) => {
     return (
-      <Link
-        className="no-underline"
-        to={"/vendor/request/" + rowData.requestId}
-      >
+      <Link className="no-underline" to={"/requests/" + rowData.requestId}>
         <Button label="View" severity="secondary" />
       </Link>
     );
@@ -191,12 +226,52 @@ function VendorRequest() {
     );
   };
 
+  const requestIdRowFilterTemplate = (options) => {
+    return (
+      <InputNumber
+        value={options.value}
+        onChange={(e) => options.filterApplyCallback(e.value)}
+        placeholder="Search requestId"
+        className="p-column-filter"
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+
+  const paymentItemTemplate = (option) => {
+    return (
+      <Tag value={option} severity={option === "Paid" ? "success" : "danger"} />
+    );
+  };
+
+  const paymentRowFilterTemplate = (options) => {
+    return (
+      <Dropdown
+        value={options.value ? "Paid" : options.value === null ? "" : "Unpaid"}
+        options={["Paid", "Unpaid"]}
+        onChange={(e) =>
+          options.filterApplyCallback(e.value === "Paid" ? true : false)
+        }
+        itemTemplate={paymentItemTemplate}
+        placeholder="Select One"
+        className="p-column-filter"
+        showClear
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+
   return (
     <div>
+      <Toast ref={toast} />
       <VendorNavbar />
       <TabView>
         <TabPanel header="Pending Requests">
           <DataTable
+            paginator
+            rows={10}
+            filters={filters}
+            filterDisplay="row"
             value={vendorPendingRequests}
             tableStyle={{ minWidth: "50rem" }}
             emptyMessage="No requests found."
@@ -205,13 +280,23 @@ function VendorRequest() {
               field="requestId"
               header="Request ID"
               sortable
+              filter
+              filterElement={requestIdRowFilterTemplate}
+              filterPlaceholder="Search by request Id"
+              style={{ width: "25%" }}
+            ></Column>
+            <Column
+              field="weddingProject.weddingDate"
+              header="Event Date"
+              sortable
+              body={dateBodyTemplate}
               style={{ width: "25%" }}
             ></Column>
             <Column
               field="requestDate"
-              header="Event Date"
+              header="Creation Date"
               sortable
-              body={dateBodyTemplate}
+              body={creationDateBodyTemplate}
               style={{ width: "25%" }}
             ></Column>
             <Column
@@ -229,12 +314,19 @@ function VendorRequest() {
             value={vendorConfirmedRequests}
             tableStyle={{ minWidth: "50rem" }}
             emptyMessage="No requests found."
+            paginator
+            rows={10}
+            filters={filters}
+            filterDisplay="row"
           >
             <Column
               field="requestId"
               header="Request ID"
               sortable
               style={{ width: "25%" }}
+              filter
+              filterElement={requestIdRowFilterTemplate}
+              filterPlaceholder="Search by request Id"
             ></Column>
             <Column
               field="quotedPrice"
@@ -249,6 +341,10 @@ function VendorRequest() {
               sortable
               body={paymentStatusTemplate}
               style={{ width: "25%" }}
+              filterField="transaction.isPaid"
+              filter
+              filterElement={paymentRowFilterTemplate}
+              showFilterMenu={false}
             ></Column>
             <Column
               field="requestDate"
