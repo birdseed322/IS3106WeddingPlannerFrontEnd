@@ -39,7 +39,6 @@ const VendorDetailPage = () => {
     whatsappUrl: "",
   };
 
-  const imagesListRef = ref(storage, `Vendor/${vendorName}/Photos/`);
   const [vendor, setVendor] = useState(chosenVendor);
   const [imageUrls, setImageUrls] = useState([]);
   const [selectedNodeKey, setSelectedNodeKey] = useState("");
@@ -77,6 +76,7 @@ const VendorDetailPage = () => {
   }, []);
 
   useEffect(() => {
+    const imagesListRef = ref(storage, `Vendor/${vendor.userId}/Photos/`);
     console.log("triggering image retreival from firebase");
     listAll(imagesListRef).then((response) => {
       response.items.forEach((item) => {
@@ -88,7 +88,7 @@ const VendorDetailPage = () => {
         });
       });
     });
-  }, []);
+  }, [vendor]);
 
   //function which searches for vendor details given vendor name
   const getVendorDetails = () => {

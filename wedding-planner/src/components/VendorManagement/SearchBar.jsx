@@ -60,7 +60,7 @@ const SearchBar = () => {
         if (checkIfVendorExists()) {
           console.log("handling search for vendor! = " + search);
           //navigate(`${projectId}/VendorSearchPage/VendorName/${search}`); //adds on to the current endpoint
-          navigate(`/${projectId}/VendorSearchPage/VendorName/${search}`);
+          navigate(`/${projectId}/VendorSearchPage/VendorId/${search}`);
         } else {
           toast.current.show({
             severity: "warn",
