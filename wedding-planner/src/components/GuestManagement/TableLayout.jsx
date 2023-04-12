@@ -48,10 +48,19 @@ export default function TableLayout() {
         for (const node of nodes) {
             if (!deletedNodes.includes(node)) {
                 _nodes.push(node);
+            } 
+        }
+        let guestsInDeletedNode = [];
+        for (const n of deletedNodes) {
+            if (n.type === "table") {
+                if (n.data.guests.length > 0) {
+                    guestsInDeletedNode = guestsInDeletedNode.concat(n.data.guests);
+                }
             }
         }
         setNodes((nds) => _nodes);
         setSelectedNode(null);
+        setFullGuests((g) => g.concat(guestsInDeletedNode));
     };
     const saveTables = useCallback(() => {
         const toSaveTables = [];
@@ -82,13 +91,13 @@ export default function TableLayout() {
         TableApi.updateTables(toSaveTables, projectId).then(response => {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Tables saved ' , life: 3000 });
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save tables ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to save tables ' , life: 3000 });
         }); 
 
         TableApi.updateStages(toSaveStages, projectId).then(response => {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Stages saved ' , life: 3000 });
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to save stages ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to save stages ' , life: 3000 });
         }); 
        // setUpdateGuest(!updateGuest);
     }, [saveTablesFlag]);
@@ -111,7 +120,7 @@ export default function TableLayout() {
             }
             setNodes((nodes) => nodes.concat(temp));
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load tables ' , life: 3000 });
             console.log(error);
         });
         TableApi.getStages(projectId).then((response) => {
@@ -132,7 +141,7 @@ export default function TableLayout() {
             }
            setNodes((nodes) => nodes.concat(temp));  
         }).catch(error => {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load stages ' , life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load stages ' , life: 3000 });
             console.log(error);
         });    
     }, []); 
@@ -162,7 +171,7 @@ export default function TableLayout() {
                 setFullGuests(candidate);
                 console.log(candidate.length + " is the length");
             }).catch(error => {
-                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to load guests ' , life: 3000 });
                 console.log(error);
             });
     }, []);
@@ -181,7 +190,7 @@ export default function TableLayout() {
             setFullGuests(fg => fg.concat(toDelete));
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
         } else {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
         }
 
     }, [deleteGuestFlag]);
@@ -190,7 +199,7 @@ export default function TableLayout() {
             const temp = (selectedNode.data.guests.length > 0 ? selectedNode.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0)
                             + (selectedGuests.length > 0 ? selectedGuests.map(g => g.numPax).reduce((x,y) => x + y) : 0);
             if (temp > selectedNode.data.capacity) {
-                toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Over capacity' , life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Over capacity' , life: 3000 });
                 
             } else {
                 const updatedTable = {... selectedNode};
@@ -267,10 +276,10 @@ export default function TableLayout() {
                 throw new Error();    
             }
         }).catch(error => {   
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Table', life: 3000 });   
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Create Table', life: 3000 });   
         }); 
         } else {
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Table: Invalid Capacity ', life: 3000 });  
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Create Table: Invalid Capacity ', life: 3000 });  
         }
     }, [addTableFlag]);
 
@@ -313,7 +322,7 @@ export default function TableLayout() {
                 throw new Error();    
             }
         }).catch(error => {   
-            toast.current.show({ severity: 'danger', summary: 'Error', detail: 'Unable to Create Stage', life: 3000 });   
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Create Stage', life: 3000 });   
         }); 
         
     }, [addStageFlag]);

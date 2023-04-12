@@ -9,6 +9,7 @@ import WeddingVendorsDataTable from "./WeddingVendorsDataTable";
 import userApi from "./AdminUserManagementAPI";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
 import { Card } from "primereact/card";
+import { TabPanel, TabView } from "primereact/tabview";
 
 export default function AdminUserManagement() {
     // empty array so useEffect to set doc title only runs once
@@ -18,71 +19,62 @@ export default function AdminUserManagement() {
     }, []);
 
     const [token, setToken] = useContext(LoginTokenContext);
-
-    const [visibleTable, setVisibleTable] = useState("vendors");
     const [organisersData, setOrganisersData] = useState([]);
     const [vendorsData, setVendorsData] = useState([]);
 
     // fetches organisers & vendors data
     useEffect(() => {
-        const orgFutureFunction = () => {
-            return userApi
-                .getAllWeddingOrganisers()
-                .then((response) => response.json()) // convert json string into obj
-                .then((organisers) => setOrganisersData(organisers));
+        const orgFutureFunction = async () => {
+            const response = await userApi
+                .getAllWeddingOrganisers();
+            const organisers = await response.json();
+            return setOrganisersData(organisers);
         };
 
-        const vendorFutureFunction = () => {
-            return userApi
-                .getAllVendors()
-                .then((response) => response.json())
-                .then((vendors) => setVendorsData(vendors));
+        const vendorFutureFunction = async () => {
+            const response = await userApi
+                .getAllVendors();
+            const vendors = await response.json();
+            return setVendorsData(vendors);
         };
 
+        orgFutureFunction();
+        vendorFutureFunction();
         // https://stackoverflow.com/questions/35612428/call-async-await-functions-in-parallel
         // waits for both fetch to finish, and then triggers rerender
-        Promise.all([orgFutureFunction(), vendorFutureFunction()]).then(() =>
-            setVisibleTable("organisers")
-        );
+        // Promise.all([orgFutureFunction(), vendorFutureFunction()]).then(() =>
+        //     setVisibleTable("organisers")
+        // );
         // used the "cheap" way to rerender, no idea how else to do it
     }, []);
 
-    const toolbarButtons = (
-        <>
-            <Button
-                label="Wedding Organisers"
-                onClick={() => setVisibleTable("organisers")}
-            ></Button>
-            <Button label="Wedding Vendors" onClick={() => setVisibleTable("vendors")}></Button>
-        </>
-    );
+
     // note that HeartyNavbar has an id specified in its component jsx file
 
     return (
         <div id="appContainer">
             <AdminHeartyNavbar />
             <div id="bodyContainer">
-                <div className="grid">
+                {/* <div className="grid">
                     <Card className="col-10 col-offset-1">
                         Click on the corresponding button to view the corresponding group of users.
                         LOGGED IN ADMIN IS {token.username}
-                        <div>
-                            <Toolbar start={toolbarButtons} />
-                        </div>
                     </Card>
-                </div>
+                </div> */}
                 <div className="grid">
                     <div className="col-12">
-                        {visibleTable === "organisers" && (
+                        <TabView>
+                            <TabPanel header="Wedding Organisers">
                             <WeddingOrganisersDataTable
                                 fetchedData={organisersData}
                             ></WeddingOrganisersDataTable>
-                        )}
-                        {visibleTable === "vendors" && (
+                            </TabPanel>
+                            <TabPanel header="Vendors">
                             <WeddingVendorsDataTable
                                 fetchedData={vendorsData}
                             ></WeddingVendorsDataTable>
-                        )}
+                            </TabPanel>
+                        </TabView>
                     </div>
                 </div>
             </div>

@@ -10,6 +10,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Fieldset } from "primereact/fieldset";
+import { Timeline } from "primereact/timeline";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import "primeflex/primeflex.css";
 import { classNames } from "primereact/utils";
@@ -22,11 +23,14 @@ import {
     fetchAndSetVendoTransObjectList,
     fetchAndSetVendorsTransactionsList,
     generateVendorCostPieChartData,
+    itineraryComparator,
     requestAndComputeHiredVendors,
 } from "./ProjectOverviewHelperMethods";
 import BrideGroomDataTable from "./ProjectOverviewDataTables/BrideGroomGuestsDataTable";
 import EditProject from "./EditProject";
 import RequestsDataTable from "./ProjectOverviewDataTables/RequestsDataTable";
+import WeddingBudgetPlannerAPI from "../LogisticsManagement/WeddingBudgetPlannerAPI";
+import WeddingItineraryAPI from "../LogisticsManagement/WeddingItineraryAPI";
 
 const dateProcessor = (dateString) => {
     if (typeof dateString === "string") {
@@ -54,10 +58,19 @@ export default function ProjectOverview() {
         description: "emptyDesc",
         completed: false,
     };
+
+    const emptyBudget = {
+        //weddingBudgetListId: -1,
+        budget: 0,
+        weddingBudgetItems: [],
+    };
+
     const [currentProject, setCurrentProject] = useState(emptyProject);
     const [projectGuestList, setProjectGuestList] = useState([]);
     const [projectTables, setProjectTables] = useState([]);
-    const [projectWeddingChecklist, setProjectWeddingChecklist] = useState([]);
+    const [projectWeddingChecklist, setProjectWeddingChecklist] = useState({});
+    const [projectBudgetList, setProjectBudgetList] = useState(emptyBudget);
+    const [projectItineraryItems, setProjectItineraryItems] = useState([]);
     const [projectRequests, setProjectRequests] = useState([]);
     const [projectHiredVendors, setProjectHiredVendors] = useState([]);
     const [projectVendorsPaidCostAndTotalCost, setProjectPaidCostAndTotalCost] = useState([]);
@@ -65,7 +78,6 @@ export default function ProjectOverview() {
     const [projectVendoTransObjectList, setProjectVendoTransObjectList] = useState([]);
     // ^ vendoTransObj is an object of the form: {vendor: VendorObject, transaction: TransactionObject}
     const [vendorsCostPieChartData, setVendorsCostPieChartData] = useState();
-
 
     // const [searchParams, setSearchParams] = useSearchParams();
     // console.log(searchParams.getAll("x"))
@@ -117,7 +129,7 @@ export default function ProjectOverview() {
             .then(() => GuestListAPI.getAllGuests(fetchedProject.weddingProjectId))
             .then((res) => res.json())
             .then((guestList) => {
-                console.log('logging guestList')
+                console.log("logging guestList");
                 console.log(guestList);
                 setProjectGuestList(guestList);
             })
@@ -132,10 +144,47 @@ export default function ProjectOverview() {
             .then((requests) => {
                 // console.log('logging requests');
                 // console.log(requests);
-                setProjectRequests(requests)
+                setProjectRequests(requests);
             })
             .catch(() => console.log("something went wrong with fetching requests"));
-            
+
+        WeddingProjectAPI.getWeddingChecklistByWeddingProjectId(projectId)
+            .then((res) => res.json())
+            .then((weddingChecklist) => {
+                console.log("loggin weddingchecklist");
+                console.log(weddingChecklist);
+                setProjectWeddingChecklist(weddingChecklist);
+            });
+
+        WeddingBudgetPlannerAPI.getBudgetByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((budgetList) => {
+                console.log("logging budgetlist");
+                console.log(budgetList);
+                setProjectBudgetList(budgetList);
+            })
+            .catch((e) => console.log("sth went wrong w fetching budget: " + e));
+
+        WeddingItineraryAPI.getItinerariesByWeddingProject(projectId)
+            .then((res) => res.json())
+            .then((itineraries) => {
+
+                const processedItineraries = itineraries.map((item) => {
+                    return {
+                        weddingItineraryId: item.weddingItineraryId,
+                        eventName: item.eventName,
+                        eventDate: dateProcessor(item.eventDate),
+                        eventStartTime: dateProcessor(item.eventStartTime),
+                        eventEndTime: dateProcessor(item.eventEndTime)
+                    }
+                })
+                console.log("logging processed itineraries");
+                
+                processedItineraries.sort(itineraryComparator);
+                console.log(processedItineraries);
+                setProjectItineraryItems(processedItineraries);
+            })
+            .catch((e) => console.log("sth went wrong w fetching itineraries: " + e));
     }, []);
 
     useEffect(() => {
@@ -182,6 +231,14 @@ export default function ProjectOverview() {
         return <Toolbar start={startContent} end={endContent} />;
     };
 
+    
+    const timelineDateFormatter = (item) => (
+        <p>
+            <b>{item.eventDate.toLocaleDateString(undefined, {day: 'numeric', month: 'long'})}</b><br/>
+            {item.eventStartTime.toLocaleTimeString(undefined, {hour: 'numeric', minute: 'numeric'})}
+        </p>
+    )
+    
     return (
         <div id="appContainer">
             <HeartyNavbar />
@@ -196,17 +253,48 @@ export default function ProjectOverview() {
                 </Dialog>
                 <Card title={currentProject.name} header={headerToolbar}>
                     <Fieldset legend="Description">
-                    <p>{currentProject.description}</p>
+                        <p>{currentProject.description}</p>
                     </Fieldset>
                     <Fieldset legend="Date">
-                    <p>
-                        Date of wedding: <b>{dateProcessor(currentProject.weddingDate).toLocaleString(undefined, {year: 'numeric', month: 'numeric', day: 'numeric'})}</b> <br/>
-                        Start time: <b>{dateProcessor(currentProject.weddingStartTime).toLocaleString(undefined, {hour: "2-digit", minute: "2-digit"})} </b><br/>
-                        End time:<b> {dateProcessor(currentProject.weddingEndTime).toLocaleString(undefined, {hour: "2-digit", minute: "2-digit"})} </b><br/>
-                    </p>
+                        <p>
+                            Date of wedding:{" "}
+                            <b>
+                                {dateProcessor(currentProject.weddingDate).toLocaleString(
+                                    undefined,
+                                    { year: "numeric", month: "numeric", day: "numeric" }
+                                )}
+                            </b>{" "}
+                            <br />
+                            Start time:{" "}
+                            <b>
+                                {dateProcessor(currentProject.weddingStartTime).toLocaleString(
+                                    undefined,
+                                    { hour: "2-digit", minute: "2-digit" }
+                                )}{" "}
+                            </b>
+                            <br />
+                            End time:
+                            <b>
+                                {" "}
+                                {dateProcessor(currentProject.weddingEndTime).toLocaleString(
+                                    undefined,
+                                    { hour: "2-digit", minute: "2-digit" }
+                                )}{" "}
+                            </b>
+                            <br />
+                        </p>
                     </Fieldset>
                     <Fieldset legend="Venue & Directions">
-                    <p>{currentProject.venue}</p>
+                        <p>{currentProject.venue}</p>
+                    </Fieldset>
+                    <Fieldset legend="Itinerary/Timeline">
+                        <Timeline
+                            value={projectItineraryItems}
+                            layout="horizontal"
+                            align="top"
+                            opposite={timelineDateFormatter}
+                            content={(item) => item.eventName}
+                        />
                     </Fieldset>
 
                     <div className="grid grid-nogutter">
@@ -215,7 +303,7 @@ export default function ProjectOverview() {
                             {/* This shit is literally bugged and there are many ppl online complaining as well */}
                             {/* To customise it u have to go in-depth into the CSS, and do some descendant selectors */}
                             {/* someAccordionStyle example is in the App.css */}
-                            <Accordion multiple activeIndex={[0,1]}>
+                            <Accordion multiple activeIndex={[0, 1]}>
                                 <AccordionTab className="m-1" header="Guests & Tables">
                                     <BrideGroomDataTable
                                         guestNumberInfo={brideGroomAttendingGuestInfo}
@@ -227,36 +315,85 @@ export default function ProjectOverview() {
                                     <p>maybe buttons that links to guestlist & tables</p>
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Tasks & Budget">
-                                    <p>Current task progress: X out of Y tasks done</p>
-                                    <p>Budget set: $X</p>
-                                    <p>Current cost: $Y</p>
+                                    {/* check if the checklist parent tasks list is undefined , or if it exists, then check if it has any parent tasks*/}
+                                    {(projectWeddingChecklist.weddingParentTasks == undefined ||
+                                        projectWeddingChecklist.weddingParentTasks.length == 0) && (
+                                        <p>You do not have any tasks set.</p>
+                                    )}
+                                    {/* checking the opposite of the above*/}
+                                    {projectWeddingChecklist.weddingParentTasks != undefined &&
+                                        projectWeddingChecklist.weddingParentTasks.length > 0 && (
+                                            <>
+                                                <p>
+                                                    Current task progress:{" "}
+                                                    <b>
+                                                        {
+                                                            projectWeddingChecklist.weddingParentTasks.filter(
+                                                                (task) => task.isDone
+                                                            ).length
+                                                        }
+                                                    </b>{" "}
+                                                    out of{" "}
+                                                    <b>
+                                                        {
+                                                            projectWeddingChecklist
+                                                                .weddingParentTasks.length
+                                                        }
+                                                    </b>{" "}
+                                                    main tasks done
+                                                </p>
+                                            </>
+                                        )}
+
+                                    <p>
+                                        Budget set: <b>${projectBudgetList.budget}</b>
+                                    </p>
+                                    <p>
+                                        Current cost:{" "}
+                                        <b>
+                                            $
+                                            {projectBudgetList.weddingBudgetItems.reduce(
+                                                (prev, currObj) => {
+                                                    return prev + currObj.cost;
+                                                },
+                                                0
+                                            )}
+                                        </b>
+                                    </p>
                                 </AccordionTab>
                             </Accordion>
                         </div>
                         <div className="col-12 md:col-6">
-                            <Accordion multiple activeIndex={[0,1]}>
+                            <Accordion multiple activeIndex={[0, 1]}>
                                 <AccordionTab className="m-1 someAccordionStyle" header="Vendors">
-                                    {projectHiredVendors.length == 0 && <p>You currently have not hired any vendors.</p>}
-                                    {projectHiredVendors.length != 0 && <>
-                                    <p>Vendors hired: <b>{projectHiredVendors.length}</b></p>
-                                    <p>
-                                        Paid/Total cost of vendors:{" "}
-                                        <b>
-                                            ${projectVendorsPaidCostAndTotalCost[0]}
-                                            {" / "}
-                                            ${projectVendorsPaidCostAndTotalCost[1]}
-                                        </b>
-                                    </p>
-                                    <Card title="Cost Breakdown By Vendor">
-                                        <Chart
-                                            type="pie"
-                                            data={vendorsCostPieChartData}
-                                            options={{ animation: true }}
-                                            className="w-full"
-                                        />
-                                    </Card>
-                                    <p>maybe buttons that link to vendors</p>
-                                    </>}
+                                    {projectHiredVendors.length == 0 && (
+                                        <p>You currently have not hired any vendors.</p>
+                                    )}
+                                    {projectHiredVendors.length != 0 && (
+                                        <>
+                                            <p>
+                                                Vendors hired: <b>{projectHiredVendors.length}</b>
+                                            </p>
+                                            <p>
+                                                Paid/Total cost of vendors:{" "}
+                                                <b>
+                                                    ${projectVendorsPaidCostAndTotalCost[0]}
+                                                    {" / "}${projectVendorsPaidCostAndTotalCost[1]}
+                                                </b>
+                                            </p>
+                                            <Card
+                                                className="flex justify-content-center"
+                                                title="Cost Breakdown By Vendor"
+                                            >
+                                                <Chart
+                                                    type="pie"
+                                                    data={vendorsCostPieChartData}
+                                                    options={{ animation: true }}
+                                                />
+                                            </Card>
+                                            <p>maybe buttons that link to vendors</p>
+                                        </>
+                                    )}
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Requests Overview">
                                     <RequestsDataTable requestsInfo={projectRequestsInfo} />

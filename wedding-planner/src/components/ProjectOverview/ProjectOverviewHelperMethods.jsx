@@ -20,7 +20,7 @@ export const dateFormatter = (dateObject) => {
 };
 
 export const computeGuestInfo = (guestList) => {
-    console.log('confirm that computeGuestInfo is called');
+    console.log("confirm that computeGuestInfo is called");
 
     const guestInfo = {
         total: {
@@ -86,8 +86,8 @@ export const computeGuestInfo = (guestList) => {
         guestInfo.brideSide.notAttending + guestInfo.groomSide.notAttending;
     guestInfo.total.pending = guestInfo.brideSide.pending + guestInfo.groomSide.pending;
     guestInfo.total.notSent = guestInfo.brideSide.notSent + guestInfo.groomSide.notSent;
-    
-    console.log('logging right before returning guestInfo');
+
+    console.log("logging right before returning guestInfo");
     console.log(guestInfo);
 
     return guestInfo;
@@ -152,28 +152,27 @@ export const fetchAndSetVendoTransObjectList = async (requestsList, setVendoTran
 };
 
 export const computeAndSetVendorsPaidAndTotalCost = (vendoTransObjectData, setData) => {
-    const paidAndTotalCost = [0,0];
-    
-    vendoTransObjectData.forEach(({vendor, transaction}) => {
+    const paidAndTotalCost = [0, 0];
+
+    vendoTransObjectData.forEach(({ vendor, transaction }) => {
         paidAndTotalCost[1] += transaction.totalPrice;
         if (transaction.isPaid) {
             paidAndTotalCost[0] += transaction.totalPrice;
         }
-    })
-    
+    });
+
     setData(paidAndTotalCost);
-}
+};
 
 export const generateVendorCostPieChartData = (vendoTransObjectData, setPieChartData) => {
-    
     const vendorUsernameArray = [];
     const transactionCostArray = [];
-    
+
     vendoTransObjectData.forEach((pairObject) => {
         vendorUsernameArray.push(pairObject.vendor.username);
         transactionCostArray.push(pairObject.transaction.totalPrice);
-    })
-    
+    });
+
     const pieChartData = {
         labels: vendorUsernameArray,
         // labels: ['foo', 'bar', 'baz'],
@@ -183,22 +182,63 @@ export const generateVendorCostPieChartData = (vendoTransObjectData, setPieChart
                 data: transactionCostArray,
                 // data: [1,2,3],
                 // credit to chatGPT for coming up with this amazing solution for colours
-                backgroundColor: vendorUsernameArray.map((_, index) => `hsl(${220 + (index * 71) % 360}, 70%, 50%)`),
+                backgroundColor: vendorUsernameArray.map(
+                    (_, index) => `hsl(${220 + ((index * 71) % 360)}, 70%, 50%)`
+                ),
                 hoverOffset: 4,
             },
         ],
     };
     setPieChartData(pieChartData);
-}
+};
 
 export const requestAndComputeHiredVendors = async (requestsList, setHiredVendors) => {
-    const promises = requestsList.filter((req) => req.isAccepted).map((req) =>
-        WeddingProjectAPI.getVendorOfRequest(req.requestId).then((res) => res.json())
-    );
+    const promises = requestsList
+        .filter((req) => req.isAccepted)
+        .map((req) =>
+            WeddingProjectAPI.getVendorOfRequest(req.requestId).then((res) => res.json())
+        );
 
     const hiredVendorsList = await Promise.all(promises);
 
     setHiredVendors(hiredVendorsList);
     console.log("logging hired vendors");
     console.log(hiredVendorsList);
+};
+
+export const itineraryComparator = (a, b) => {
+    if (a == b) {
+        return 0;
+    }
+    const aEventDate = new Date(
+        a.eventDate.getFullYear(),
+        a.eventDate.getMonth(),
+        a.eventDate.getDate()
+    );
+    const bEventDate = new Date(
+        b.eventDate.getFullYear(),
+        b.eventDate.getMonth(),
+        b.eventDate.getDate()
+    );
+
+    if (aEventDate - bEventDate < 0) {
+        return -1;
+    } else if (aEventDate - bEventDate > 0) {
+        return 1;
+    } else {
+        const aEventStartTime = new Date(0);
+        aEventStartTime.setHours(a.eventStartTime.getHours());
+        aEventStartTime.setMinutes(a.eventStartTime.getMinutes());
+        const bEventStartTime = new Date(0);
+        bEventStartTime.setHours(b.eventStartTime.getHours());
+        bEventStartTime.setMinutes(b.eventStartTime.getMinutes());
+
+        if (aEventStartTime - bEventStartTime < 0) {
+            return -1;
+        } else if (aEventStartTime - bEventStartTime > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 };

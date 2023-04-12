@@ -2,81 +2,86 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useContext, memo } from 'react'
-import { Menubar } from 'primereact/menubar'
-import { InputText } from 'primereact/inputtext'
-import { Button } from 'primereact/button'
-import { Link, useParams } from 'react-router-dom'
-import { LoginTokenContext } from '../../context/LoginTokenContext'
+import React, { useContext, memo } from "react";
+import { Menubar } from "primereact/menubar";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Link, useParams } from "react-router-dom";
+import { LoginTokenContext } from "../../context/LoginTokenContext";
 
 function HeartyNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
-  const [token, setToken] = useContext(LoginTokenContext)
+  const [token, setToken] = useContext(LoginTokenContext);
 
   // gets projectId from URL parameters
-  const { projectId } = useParams()
+  const { projectId } = useParams();
 
   const items = [
     {
-      label: 'Project Overview',
-      icon: 'pi pi-fw pi-info-circle',
+      label: "Project Overview",
+      icon: "pi pi-fw pi-info-circle",
       url: `/${projectId}`,
-      className: 'menuItemStyle',
+      className: "menuItemStyle",
     },
 
     {
-      label: 'Vendor Management',
-      icon: 'pi pi-fw pi-file',
-      className: 'menuItemStyle',
+      label: "Vendor Management",
+      icon: "pi pi-fw pi-file",
+      className: "menuItemStyle",
       items: [
         {
-          label: 'Vendor Search Page',
-          icon: 'pi pi-search',
+          label: "Vendor Search Page",
+          icon: "pi pi-search",
           url: `/${projectId}/VendorSearchPage`,
+        },
+        {
+          label: "My requests",
+          icon: "pi pi-comment",
+          url: `/${projectId}/requests`,
         },
       ],
     },
     {
-      label: 'Guest Management',
-      icon: 'pi pi-fw pi-users',
-      className: 'menuItemStyle',
+      label: "Guest Management",
+      icon: "pi pi-fw pi-users",
+      className: "menuItemStyle",
       items: [
         {
-          label: 'Guest List',
-          icon: 'pi pi-fw pi-cog',
+          label: "Guest List",
+          icon: "pi pi-fw pi-cog",
           url: `/${projectId}/guestlist`,
         },
         {
-          label: 'Table Planner',
-          icon: 'pi pi-fw pi-power-off',
+          label: "Table Planner",
+          icon: "pi pi-fw pi-power-off",
           url: `/${projectId}/tablelayout`,
         },
       ],
     },
     {
-      label: 'Logistics Management',
-      icon: 'pi pi-table',
-      className: 'menuItemStyle',
+      label: "Logistics Management",
+      icon: "pi pi-table",
+      className: "menuItemStyle",
       items: [
         {
-          label: 'Wedding Checklist',
-          icon: 'pi pi-check',
+          label: "Wedding Checklist",
+          icon: "pi pi-check",
           url: `/${projectId}/LogisticsManagement/WeddingChecklist`,
         },
         {
-          label: 'Budget Planner',
-          icon: 'pi pi-money-bill',
+          label: "Budget Planner",
+          icon: "pi pi-money-bill",
           url: `/${projectId}/LogisticsManagement/WeddingBudgetPlanner`,
         },
         {
-          label: 'Wedding Itinerary',
-          icon: 'pi pi-calendar',
+          label: "Wedding Itinerary",
+          icon: "pi pi-calendar",
           url: `/${projectId}/LogisticsManagement/WeddingItinerary`,
         },
       ],
     },
-  ]
+  ];
   const end = (
     // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
     <>
@@ -86,7 +91,7 @@ function HeartyNavbar(props) {
           label="Back to Projects"
           severity="secondary"
           text
-          style={{ marginRight: '1rem' }}
+          style={{ marginRight: "1rem" }}
         />
       </Link>
       <Link to="/login" className="noUnderline">
@@ -94,12 +99,12 @@ function HeartyNavbar(props) {
           label="Logout"
           icon="pi pi-sign-out"
           style={{
-            backgroundColor: '#f561b0',
-            border: '#f561b0',
-            marginRight: '1rem',
+            backgroundColor: "#f561b0",
+            border: "#f561b0",
+            marginRight: "1rem",
           }}
           onClick={() => setToken(false)} // set token to false
-        />{' '}
+        />{" "}
       </Link>
 
       {/*       <Link to="/viewprofile" className="noUnderline">
@@ -110,7 +115,7 @@ function HeartyNavbar(props) {
         />
       </Link> */}
     </>
-  )
+  );
   const start = (
     <>
       <Link to="/" className="noUnderline">
@@ -120,14 +125,14 @@ function HeartyNavbar(props) {
             rounded
             size="large"
             style={{
-              backgroundColor: '#f561b0',
-              border: '#f561b0',
+              backgroundColor: "#f561b0",
+              border: "#f561b0",
             }}
           />
         </span>
       </Link>
     </>
-  )
+  );
   // height="40" className="mr-2"
   //console.log(items)
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
@@ -139,9 +144,9 @@ function HeartyNavbar(props) {
       start={start}
       end={end}
     />
-  )
+  );
 }
-export default memo(HeartyNavbar)
+export default memo(HeartyNavbar);
 
 // example items
 // const items = [

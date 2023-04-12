@@ -9,16 +9,18 @@ const AdminUserManagementAPI = {
     },
 
     updateOneVendor(vendor) {
-        return fetch(`${SERVER_PREFIX}/vendors`, {
+        return fetch(`${SERVER_PREFIX}/vendors/query?vendor-id=${vendor.userId}`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
             },
             method: "PUT",
             body: JSON.stringify(vendor),
+        }).catch(error => {
+            throw error;
         });
     },
-    
+        
     // updateListOfVendors(vendors) {
     //     // this is super inefficient because it makes 1 request per vendor LMAO
     //     for (let vendor of vendors) {
@@ -28,14 +30,20 @@ const AdminUserManagementAPI = {
     // },
     
     updateOneWeddingOrganiser(organiser) {
-        return fetch(`${SERVER_PREFIX}/wedding-organisers`, {
+        return fetch(`${SERVER_PREFIX}/wedding-organisers/${organiser.userId}`, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
             },
             method: "PUT",
             body: JSON.stringify(organiser),
+        }).catch(error => {
+            throw error;
         });
+    },
+    
+    getTotalValueOfTransactionsGroupedByCategory() {
+        return fetch(`${SERVER_PREFIX}/transactions/getTotalValueGroupedByCategory`);
     },
     // updateListOfWeddingOrganisers(organisers) {
     //     // this is super inefficient because it makes 1 request per org LMAO
