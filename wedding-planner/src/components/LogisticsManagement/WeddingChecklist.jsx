@@ -78,17 +78,17 @@ export default function WeddingChecklist() {
     //     updateTaskStatus(parentTask);
     // }, []);
 
-    const reloadData = () => {
-        WeddingChecklistAPI.getAllParentTasks()
-            .then((res) => {
-                console.log(res);
-                return res.json();
-            })
-            .then((parentData) => {
-                setParentTasks(parentData);
-                console.log(parentTasks);
-            });
-    };
+    // const reloadData = () => {
+    //     WeddingChecklistAPI.getAllParentTasks()
+    //         .then((res) => {
+    //             console.log(res);
+    //             return res.json();
+    //         })
+    //         .then((parentData) => {
+    //             setParentTasks(parentData);
+    //             console.log(parentTasks);
+    //         });
+    // };
 
     // const updateTaskStatus = (parentTask) => {
     //     console.log("called");
@@ -252,7 +252,7 @@ export default function WeddingChecklist() {
             console.log(subtasks);
             setDeleteSubtaskDialog(false);
             setSubtask(emptyParentTask.weddingSubtasks);
-            reloadData();
+            // reloadData();
             toast.current.show({
                 severity: "success",
                 summary: "Successful",
@@ -432,7 +432,7 @@ export default function WeddingChecklist() {
                                 setSubtasks(_subtasks);
                             })
                         );
-                        reloadData();
+                        // reloadData();
                     });
                     toast.current.show({
                         severity: "success",
@@ -440,10 +440,10 @@ export default function WeddingChecklist() {
                         detail: "Task Created",
                         life: 3000,
                     });
-                    reloadData();
+                    // reloadData();
                     setNewTaskDialog(false);
                 });
-                reloadData();
+                // reloadData();
             }
         );
     };
@@ -507,7 +507,7 @@ export default function WeddingChecklist() {
                 setSubtasks(_subtasks);
                 // updateTaskStatus(parentTask);
                 setSubtaskDialog(false);
-                reloadData();
+                // reloadData();
                 toast.current.show({
                     severity: "success",
                     summary: "Successful",
