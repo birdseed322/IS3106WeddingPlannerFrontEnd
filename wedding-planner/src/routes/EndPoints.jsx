@@ -39,6 +39,7 @@ import AdminSignUp from "../components/UnregisteredView/AdminSignUp.jsx";
 import VendorSignUp from "../components/UnregisteredView/VendorSignUp.jsx";
 import OrganiserSignUp from "../components/UnregisteredView/OrganiserSignUp.jsx";
 import WeddingOrganiserRequest from "../components/ProjectOverview/WeddingOrganiserRequest/WeddingOrganiserRequest.jsx";
+import MainTable from "../components/GuestManagement/MainTable.jsx";
 function EndPoints() {
     // for debugging, clear localStorage
     // localStorage.clear();
@@ -146,7 +147,7 @@ function EndPoints() {
                                     path="VendorSearchPage/Category/:vendorCategory"
                                     element={<CategoryDisplayPage />}
                                 />
-                                <Route path="tablelayout" element={<TableLayout />} />
+                                <Route path="tablelayout" element={<MainTable />} />
                                 <Route path="guestlist" element={<GuestList />} />
                                 <Route path="requests/:id" element={<SpecificRequestPage />} />
                             </Route>

@@ -54,7 +54,7 @@ function HeartyNavbar(props) {
         },
         {
           label: "Table Planner",
-          icon: "pi pi-fw pi-power-off",
+          icon: "pi pi-fw pi-circle",
           url: `/${projectId}/tablelayout`,
         },
       ],
