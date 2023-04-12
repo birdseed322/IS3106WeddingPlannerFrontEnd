@@ -49,7 +49,7 @@ function HeartyNavbar(props) {
       items: [
         {
           label: "Guest List",
-          icon: "pi pi-fw pi-cog",
+          icon: "pi pi-fw pi-users",
           url: `/${projectId}/guestlist`,
         },
         {
