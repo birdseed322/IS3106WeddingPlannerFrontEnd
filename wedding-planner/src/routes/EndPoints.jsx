@@ -139,7 +139,7 @@ function EndPoints() {
                                 />
                                 <Route path="VendorSearchPage" element={<SearchPage />} />
                                 <Route
-                                    path="VendorSearchPage/VendorName/:vendorName"
+                                    path="VendorSearchPage/VendorId/:vendorName"
                                     element={<VendorDetailpage />}
                                 />
                                 <Route

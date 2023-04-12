@@ -32,13 +32,13 @@ function VendorNavbar(props) {
     {
       label: 'Schedule',
       icon: 'pi pi-fw pi-calendar',
-      url: '/vendor/schedule',
+      url: '/schedule',
       className: 'menuItemStyle',
     },
     {
       label: 'Requests',
       icon: 'pi pi-fw pi-book',
-      url: '/vendor/requests',
+      url: '/',
       className: 'menuItemStyle',
     },
   ]
