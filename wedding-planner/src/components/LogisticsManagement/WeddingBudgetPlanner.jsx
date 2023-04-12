@@ -225,6 +225,13 @@ export default function WeddingBudgetPlanner() {
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
+        delete _budget.weddingBudgetItems;
+        const jsonified2 = JSON.stringify(_budget);
+        const parsedCopy2 = JSON.parse(jsonified2);
+
+        _budget = { ...budget };
+        console.log(_budget);
+
         if (budget.weddingBudgetListId != null) {
             // const index = findIndexById(budget.weddingBudgetListId);
             WeddingBudgetPlannerAPI.updateBudget(parsedCopy).then(() => {
@@ -239,7 +246,7 @@ export default function WeddingBudgetPlanner() {
                 });
             });
         } else {
-            WeddingBudgetPlannerAPI.createBudget(parsedCopy, projectId).then(
+            WeddingBudgetPlannerAPI.createBudget(parsedCopy2, projectId).then(
                 (response) => {
                     console.log(response.status);
                     response.json().then((idObject) => {
@@ -361,11 +368,20 @@ export default function WeddingBudgetPlanner() {
                 label="Cancel"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideBudgetDialog}
             />
             <Button
                 label="Save"
                 icon="pi pi-check"
+                style={{
+                    color: "#ffffff",
+                    backgroundColor: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={handleBudgetDialog}
             />
         </React.Fragment>
@@ -377,11 +393,20 @@ export default function WeddingBudgetPlanner() {
                 label="Cancel"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideItemDialog}
             />
             <Button
                 label="Save"
                 icon="pi pi-check"
+                style={{
+                    color: "#ffffff",
+                    backgroundColor: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={handleItemDialog}
             />
         </React.Fragment>
@@ -419,6 +444,7 @@ export default function WeddingBudgetPlanner() {
                 <Toast ref={toast} />
                 <HeartyNavbar></HeartyNavbar>
                 <Card className="flex justify-content-center">
+                    <h2>Wedding Budget</h2>
                     <h3>
                         Budget:{" "}
                         {budget.budget.toLocaleString("en-SG", {
@@ -426,7 +452,14 @@ export default function WeddingBudgetPlanner() {
                             currency: "SGD",
                         })}
                     </h3>
-                    <Button label="edit" onClick={showBudgetDialog} />
+                    <Button
+                        label="edit"
+                        onClick={showBudgetDialog}
+                        style={{
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
+                    />
                     <h3>
                         Total Cost:{" "}
                         {totalCost().toLocaleString("en-SG", {
@@ -445,6 +478,10 @@ export default function WeddingBudgetPlanner() {
                         label="Add Item"
                         icon="pi pi-plus"
                         onClick={newItemDialog}
+                        style={{
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
                     ></Button>
                 </Card>
             </div>
@@ -452,7 +489,6 @@ export default function WeddingBudgetPlanner() {
             <div>
                 <DataTable
                     value={items}
-                    header="Wedding Budget"
                     tableStyle={{ minWidth: "60rem" }}
                     // selection={selectedGuests}
                     // onSelectionChange={(e) => setSelectedGuests(e.value)}
@@ -579,6 +615,11 @@ export default function WeddingBudgetPlanner() {
                         onChange={(e) => onInputPaidChange(e, "isPaid")}
                         required
                         autoFocus
+                        style={{
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                            color: "#ffffff",
+                        }}
                     />
                 </div>
                 <div className="field">

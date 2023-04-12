@@ -283,69 +283,66 @@ export default function WeddingItinerary() {
             <Toast ref={toast} />
             <HeartyNavbar></HeartyNavbar>
             <Card>
-                <h4>
+                {/* <h4>
                     Date:{" "}
                     <Calendar
                         id="eventDate"
                         value={itinerary.eventDate}
                         showIcon
                     ></Calendar>
-                </h4>
+                </h4> */}
                 <Button
                     label="Add New Itinerary"
                     icon="pi pi-plus"
+                    style={{
+                        color: "#ffffff",
+                        backgroundColor: "#f561b0",
+                        border: "#f561b0",
+                    }}
                     onClick={showItineraryDialog}
                 ></Button>
-                <br />
-
-                <DataTable
-                    value={itineraries}
-                    header="Wedding Itineraries"
-                    tableStyle={{ minWidth: "60rem" }}
-                    dataKey="weddingItineraryId"
-                    sortMode="multiple"
-                    multiSortMeta={multiSortMeta}
-                    onSort={(e) => setMultiSortMeta(e.multiSortMeta)}
-                    paginator
-                    rows={10}
-                    rowsPerPageOptions={[5, 10, 25]}
-                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
-                >
-                    <Column
-                        sortable
-                        header="ID"
-                        field="weddingItineraryId"
-                    ></Column>
-                    <Column
-                        sortable
-                        header="Event Name"
-                        field="eventName"
-                    ></Column>
-                    <Column
-                        sortable
-                        header="Event Date"
-                        body={eventDateTemplate}
-                        field="eventDate"
-                    ></Column>
-                    <Column
-                        sortable
-                        header="Event Start Time"
-                        field="eventStartTime"
-                        body={eventStartTimeTemplate}
-                    ></Column>
-                    <Column
-                        sortable
-                        header="Event End Time"
-                        field="eventEndTime"
-                        body={eventEndTimeTemplate}
-                    ></Column>
-                    <Column
-                        body={actionBodyTemplate}
-                        exportable={false}
-                    ></Column>
-                </DataTable>
             </Card>
+
+            <DataTable
+                value={itineraries}
+                header="Wedding Itineraries"
+                tableStyle={{ minWidth: "60rem" }}
+                dataKey="weddingItineraryId"
+                sortMode="multiple"
+                multiSortMeta={multiSortMeta}
+                onSort={(e) => setMultiSortMeta(e.multiSortMeta)}
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25]}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+            >
+                {/* <Column
+                    sortable
+                    header="ID"
+                    field="weddingItineraryId"
+                ></Column> */}
+                <Column sortable header="Event Name" field="eventName"></Column>
+                <Column
+                    sortable
+                    header="Event Date"
+                    body={eventDateTemplate}
+                    field="eventDate"
+                ></Column>
+                <Column
+                    sortable
+                    header="Event Start Time"
+                    field="eventStartTime"
+                    body={eventStartTimeTemplate}
+                ></Column>
+                <Column
+                    sortable
+                    header="Event End Time"
+                    field="eventEndTime"
+                    body={eventEndTimeTemplate}
+                ></Column>
+                <Column body={actionBodyTemplate} exportable={false}></Column>
+            </DataTable>
 
             {/* <form onSubmit={handleItineraryDialog}> */}
             <Dialog
