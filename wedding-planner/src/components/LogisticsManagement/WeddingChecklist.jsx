@@ -59,7 +59,9 @@ export default function WeddingChecklist() {
 
     useEffect(() => {
         WeddingChecklistAPI.getWeddingChecklistByWeddingProjectId(projectId)
-            .then((res) => res.json())
+            .then((res) => {
+                return res.json();
+            })
             .then((weddingChecklistObject) => {
                 setParentTasks(weddingChecklistObject.weddingParentTasks);
                 console.log(weddingChecklistObject);
@@ -609,12 +611,17 @@ export default function WeddingChecklist() {
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <div className=" flex justify-content-center">
-                    <h4>WeddingChecklist</h4>
+                    <h4>Wedding Checklist</h4>
                 </div>
                 <div className=" flex justify-content-center">
                     <Button
                         label="Add New Task"
                         icon="pi pi-plus"
+                        style={{
+                            color: "#ffffff",
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
                         onClick={openNewTaskDialog}
                     ></Button>
                 </div>
@@ -722,6 +729,11 @@ export default function WeddingChecklist() {
                 <Button
                     label="Add Subtask"
                     icon="pi pi-plus"
+                    style={{
+                        color: "#ffffff",
+                        backgroundColor: "#f561b0",
+                        border: "#f561b0",
+                    }}
                     onClick={addNewSubtask}
                 ></Button>
             </Dialog>
