@@ -62,6 +62,7 @@ export default function WeddingChecklist() {
             .then((res) => res.json())
             .then((weddingChecklistObject) => {
                 setParentTasks(weddingChecklistObject.weddingParentTasks);
+                setChecklistId(weddingChecklistObject.weddingCheckListId);
                 console.log(weddingChecklistObject);
             })
             .catch((exception) => {

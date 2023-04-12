@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import WeddingProjectAPI from "./WeddingProjectAPI";
 import GuestListAPI from "../GuestManagement/GuestListAPI";
 import TableApi from "../GuestManagement/TableApi";
@@ -168,18 +168,17 @@ export default function ProjectOverview() {
         WeddingItineraryAPI.getItinerariesByWeddingProject(projectId)
             .then((res) => res.json())
             .then((itineraries) => {
-
                 const processedItineraries = itineraries.map((item) => {
                     return {
                         weddingItineraryId: item.weddingItineraryId,
                         eventName: item.eventName,
                         eventDate: dateProcessor(item.eventDate),
                         eventStartTime: dateProcessor(item.eventStartTime),
-                        eventEndTime: dateProcessor(item.eventEndTime)
-                    }
-                })
+                        eventEndTime: dateProcessor(item.eventEndTime),
+                    };
+                });
                 console.log("logging processed itineraries");
-                
+
                 processedItineraries.sort(itineraryComparator);
                 console.log(processedItineraries);
                 setProjectItineraryItems(processedItineraries);
@@ -231,14 +230,17 @@ export default function ProjectOverview() {
         return <Toolbar start={startContent} end={endContent} />;
     };
 
-    
     const timelineDateFormatter = (item) => (
         <p>
-            <b>{item.eventDate.toLocaleDateString(undefined, {day: 'numeric', month: 'long'})}</b><br/>
-            {item.eventStartTime.toLocaleTimeString(undefined, {hour: 'numeric', minute: 'numeric'})}
+            <b>{item.eventDate.toLocaleDateString(undefined, { day: "numeric", month: "long" })}</b>
+            <br />
+            {item.eventStartTime.toLocaleTimeString(undefined, {
+                hour: "numeric",
+                minute: "numeric",
+            })}
         </p>
-    )
-    
+    );
+
     return (
         <div id="appContainer">
             <HeartyNavbar />
@@ -310,9 +312,30 @@ export default function ProjectOverview() {
                                     />
 
                                     <br />
-                                    <p>Number of tables: {projectTables.length}</p>
+                                    <p>
+                                        Number of tables: <b>{projectTables.length}</b>
+                                    </p>
 
-                                    <p>maybe buttons that links to guestlist & tables</p>
+                                    <div className="grid grid-nogutter">
+                                        <Link className="flex justify-content-center col-6 noUnderline" to="guestlist">
+                                            <Button
+                                                // style={{ float: "right" }}
+                                                type="button"
+                                                label="Manage Guest List"
+                                                className="p-button-raised p-button-rounded"
+                                                // onClick={() => checkIfCanCreateReq()}
+                                            />
+                                        </Link>
+                                        <Link className="flex justify-content-center col-6 noUnderline" to="tablelayout">
+                                            <Button
+                                                // style={{ float: "right" }}
+                                                type="button"
+                                                label="Manage Tables"
+                                                className="p-button-raised p-button-rounded"
+                                                // onClick={() => checkIfCanCreateReq()}
+                                            />
+                                        </Link>
+                                    </div>
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Tasks & Budget">
                                     {/* check if the checklist parent tasks list is undefined , or if it exists, then check if it has any parent tasks*/}
@@ -391,7 +414,6 @@ export default function ProjectOverview() {
                                                     options={{ animation: true }}
                                                 />
                                             </Card>
-                                            <p>maybe buttons that link to vendors</p>
                                         </>
                                     )}
                                 </AccordionTab>
