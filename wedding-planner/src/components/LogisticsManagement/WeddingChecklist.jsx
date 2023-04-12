@@ -59,9 +59,12 @@ export default function WeddingChecklist() {
 
     useEffect(() => {
         WeddingChecklistAPI.getWeddingChecklistByWeddingProjectId(projectId)
-            .then((res) => res.json())
+            .then((res) => {
+                return res.json();
+            })
             .then((weddingChecklistObject) => {
                 setParentTasks(weddingChecklistObject.weddingParentTasks);
+                setChecklistId(weddingChecklistObject.weddingCheckListId);
                 console.log(weddingChecklistObject);
             })
             .catch((exception) => {
@@ -75,17 +78,17 @@ export default function WeddingChecklist() {
     //     updateTaskStatus(parentTask);
     // }, []);
 
-    const reloadData = () => {
-        WeddingChecklistAPI.getAllParentTasks()
-            .then((res) => {
-                console.log(res);
-                return res.json();
-            })
-            .then((parentData) => {
-                setParentTasks(parentData);
-                console.log(parentTasks);
-            });
-    };
+    // const reloadData = () => {
+    //     WeddingChecklistAPI.getAllParentTasks()
+    //         .then((res) => {
+    //             console.log(res);
+    //             return res.json();
+    //         })
+    //         .then((parentData) => {
+    //             setParentTasks(parentData);
+    //             console.log(parentTasks);
+    //         });
+    // };
 
     // const updateTaskStatus = (parentTask) => {
     //     console.log("called");
@@ -249,7 +252,7 @@ export default function WeddingChecklist() {
             console.log(subtasks);
             setDeleteSubtaskDialog(false);
             setSubtask(emptyParentTask.weddingSubtasks);
-            reloadData();
+            // reloadData();
             toast.current.show({
                 severity: "success",
                 summary: "Successful",
@@ -429,7 +432,7 @@ export default function WeddingChecklist() {
                                 setSubtasks(_subtasks);
                             })
                         );
-                        reloadData();
+                        // reloadData();
                     });
                     toast.current.show({
                         severity: "success",
@@ -437,10 +440,10 @@ export default function WeddingChecklist() {
                         detail: "Task Created",
                         life: 3000,
                     });
-                    reloadData();
+                    // reloadData();
                     setNewTaskDialog(false);
                 });
-                reloadData();
+                // reloadData();
             }
         );
     };
@@ -504,7 +507,7 @@ export default function WeddingChecklist() {
                 setSubtasks(_subtasks);
                 // updateTaskStatus(parentTask);
                 setSubtaskDialog(false);
-                reloadData();
+                // reloadData();
                 toast.current.show({
                     severity: "success",
                     summary: "Successful",
@@ -609,12 +612,17 @@ export default function WeddingChecklist() {
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <div className=" flex justify-content-center">
-                    <h4>WeddingChecklist</h4>
+                    <h4>Wedding Checklist</h4>
                 </div>
                 <div className=" flex justify-content-center">
                     <Button
                         label="Add New Task"
                         icon="pi pi-plus"
+                        style={{
+                            color: "#ffffff",
+                            backgroundColor: "#f561b0",
+                            border: "#f561b0",
+                        }}
                         onClick={openNewTaskDialog}
                     ></Button>
                 </div>
@@ -722,6 +730,11 @@ export default function WeddingChecklist() {
                 <Button
                     label="Add Subtask"
                     icon="pi pi-plus"
+                    style={{
+                        color: "#ffffff",
+                        backgroundColor: "#f561b0",
+                        border: "#f561b0",
+                    }}
                     onClick={addNewSubtask}
                 ></Button>
             </Dialog>

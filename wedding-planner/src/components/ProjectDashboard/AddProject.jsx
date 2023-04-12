@@ -18,16 +18,17 @@ function AddProject() {
   const orgId = token.userId
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [Completed, setCompleted] = useState(false)
+  const [completed, setCompleted] = useState(false)
 
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    // e.preventDefault()
+    // missing values: venue, weddingDate, weddingStartTime, weddingEndTime, weddingChecklist, weddingBudgetList
     WeddingProjectAPI.createWeddingProject(orgId, {
       name,
       description,
-      Completed,
+      completed,
     }).then((weddingProject) => {
       navigate('/')
     })

@@ -57,6 +57,7 @@ function EndPoints() {
                         <Route path="/signup">
                             <Route index element={<SignUp />} />
                             <Route path="adminsignup" element={<AdminSignUp />} />
+                            <Route path="weddingorganisersignup" element={<OrganiserSignUp />} />
                             <Route path="vendorsignup" element={<VendorSignUp />} />
                         </Route>
 
@@ -166,6 +167,7 @@ function EndPoints() {
                                 <Route exact path="/" element={<VendorRequest />} />
                                 <Route exact path="/schedule" element={<Schedule />} />
                                 <Route path="editprofile" element={<VendorEditProfile />} />
+                                <Route path="requests/:id" element={<SpecificRequestPage />} />
                             </Routes>
                         </BrowserRouter>
                     </LoginTokenContext.Provider>

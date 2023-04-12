@@ -140,8 +140,8 @@ function VendorEditProfile() {
   const [imageUrls, setImageUrls] = useState([])
   const [visible, setVisible] = useState(false)
   const [addPhoto, setAddPhoto] = useState(false)
-  const imageListRef = ref(storage, `vendors/${vId}/ProflePic/`)
-  const imagesListRef1 = ref(storage, `vendors/${vId}/Photos/`)
+  const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/`)
+  const imagesListRef1 = ref(storage, `Vendor/${vId}/Photos/`)
   const itemTemplate = (item) => {
     return (
       <img src={item} alt={item} style={{ width: '100%', display: 'block' }} />
@@ -177,7 +177,7 @@ function VendorEditProfile() {
 
   const uploadFile1 = () => {
     if (!imageUploads) return
-    const imageRef1 = ref(storage, `vendors/${vId}/Photos/${imageUploads.name}`) // obtain the place to store the image in firebase
+    const imageRef1 = ref(storage, `Vendor/${vId}/Photos/${imageUploads.name}`) // obtain the place to store the image in firebase
     uploadBytes(imageRef1, imageUploads)
       .then(() => {
         getDownloadURL(imageRef1).then((url) => {
@@ -194,7 +194,7 @@ function VendorEditProfile() {
     if (!imageUpload) return
     const imageRef = ref(
       storage,
-      `vendors/${vId}/ProfilePic/${imageUpload.name}`,
+      `Vendor/${vId}/ProfilePic/${imageUpload.name}`,
     ) // obtain the place to store the image in firebase
     uploadBytes(imageRef, imageUpload)
       .then(() => {
