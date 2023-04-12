@@ -17,6 +17,7 @@ import { Toast } from "primereact/toast";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import WeddingBudgetPlannerAPI from "./WeddingBudgetPlannerAPI";
+import WeddingItineraryAPI from "./WeddingItineraryAPI";
 
 export default function WeddingBudgetPlanner() {
     let emptyBudget = {
@@ -81,8 +82,22 @@ export default function WeddingBudgetPlanner() {
         const index = newItems.findIndex(
             (item) => item.weddingBudgetItemId === rowData.weddingBudgetItemId
         );
+        console.log(index);
         newItems[index].isPaid = e.checked;
         setItems(newItems);
+
+        const jsonified = JSON.stringify(newItems[index]);
+        const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
+
+        WeddingBudgetPlannerAPI.updateItem(parsedCopy).then(() => {
+            toast.current.show({
+                severity: "success",
+                summary: "Successful",
+                detail: "Item Successfully Updated",
+                life: 3000,
+            });
+        });
     };
 
     const itemPaidTemplate = (rowData) => {
