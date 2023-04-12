@@ -168,7 +168,8 @@ function EndPoints() {
               <Routes>
                 <Route exact path="/" element={<VendorRequest />} />
                 <Route exact path="/schedule" element={<Schedule />} />
-                <Route path="editprofile" element={<VendorEditProfile />} />
+                {/* <Route path="editprofile" element={<VendorEditProfile />} /> */}
+                <Route path="requests/:id" element={<SpecificRequestPage />} />
               </Routes>
             </BrowserRouter>
           </LoginTokenContext.Provider>

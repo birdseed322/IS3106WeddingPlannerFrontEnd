@@ -17,7 +17,7 @@ function RequestFooter(props) {
         severity="danger"
         className=""
       />
-      <Link className="no-underline" to={"/vendor/request/" + props.reqId}>
+      <Link className="no-underline" to={"/requests/" + props.reqId}>
         <Button label="View" severity="secondary" />
       </Link>
     </div>
