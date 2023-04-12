@@ -107,6 +107,7 @@ const CategoryDisplayPage = () => {
                         </div>
                     </div>
                     <Button
+                        size="large"
                         icon="pi pi-shopping-cart"
                         className="p-button-rounded"
                         onClick={() => redirectTo(vendors)}
