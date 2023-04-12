@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
@@ -7,9 +7,16 @@ import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
+import { Checkbox } from "primereact/checkbox";
+import { Toast } from "primereact/toast";
 
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 import WeddingChecklistAPI from "./WeddingChecklistAPI";
+
+import {
+    checkOffParentTask,
+    checkOffSubtask,
+} from "./WeddingChecklistHelperFunctions";
 
 export default function WeddingChecklist() {
     let emptyParentTask = {
@@ -25,14 +32,21 @@ export default function WeddingChecklist() {
         ],
     };
 
+    const emptyChecklist = {
+        weddingParentTasks: [],
+    };
+
+    const { projectId } = useParams();
+
     const [checklistId, setChecklistId] = useState(1);
-    const [parentTask, setParentTask] = useState(emptyParentTask);
     const [parentTasks, setParentTasks] = useState([]);
     const [taskDialog, setTaskDialog] = useState(false);
     const [subtaskDialog, setSubtaskDialog] = useState(false);
     const [newTaskDialog, setNewTaskDialog] = useState(false);
     const [subtask, setSubtask] = useState(emptyParentTask.weddingSubtasks[0]);
     const [subtasks, setSubtasks] = useState([]);
+    const [newParentTask, setNewParentTask] = useState(emptyParentTask);
+
     const [newSubtasks, setNewSubtasks] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const [expandedRows, setExpandedRows] = useState(null);
@@ -40,10 +54,26 @@ export default function WeddingChecklist() {
     const [deleteTaskDialog, setDeleteTaskDialog] = useState(false);
     const [deleteSubtaskDialog, setDeleteSubtaskDialog] = useState(false);
 
+    const toast = useRef(null);
+    // Get the WeddingChecklistObject according to WeddingProject id from path param
+
     useEffect(() => {
-        reloadData();
-        updateTaskStatus(parentTask);
+        WeddingChecklistAPI.getWeddingChecklistByWeddingProjectId(projectId)
+            .then((res) => res.json())
+            .then((weddingChecklistObject) => {
+                setParentTasks(weddingChecklistObject.weddingParentTasks);
+                console.log(weddingChecklistObject);
+            })
+            .catch((exception) => {
+                console.log("something went wrong with fetching checklist");
+                console.log(exception);
+            });
     }, []);
+
+    // useEffect(() => {
+    //     reloadData();
+    //     updateTaskStatus(parentTask);
+    // }, []);
 
     const reloadData = () => {
         WeddingChecklistAPI.getAllParentTasks()
@@ -57,51 +87,54 @@ export default function WeddingChecklist() {
             });
     };
 
-    const updateTaskStatus = (parentTask) => {
-        console.log("called");
-        let _parentTask = { ...parentTask };
-        console.log(parentTask);
-        let _parentTasks = [...parentTasks];
-        let allSubtaskDone = true;
+    // const updateTaskStatus = (parentTask) => {
+    //     console.log("called");
+    //     let _parentTask = { ...parentTask };
+    //     console.log(parentTask);
+    //     let _parentTasks = [...parentTasks];
+    //     let allSubtaskDone = true;
 
-        if (_parentTask.weddingSubtasks.length !== 0) {
-            for (let subtask of _parentTask.weddingSubtasks) {
-                if (!subtask.isDone) {
-                    allSubtaskDone = false;
-                    break;
-                }
-            }
-        }
+    //     if (_parentTask.weddingSubtasks.length !== 0) {
+    //         for (let subtask of _parentTask.weddingSubtasks) {
+    //             if (!subtask.isDone) {
+    //                 allSubtaskDone = false;
+    //                 break;
+    //             }
+    //         }
+    //     }
 
-        _parentTask.isDone = allSubtaskDone;
+    //     _parentTask.isDone = allSubtaskDone;
 
-        delete _parentTask.weddingSubtasks;
+    //     delete _parentTask.weddingSubtasks;
 
-        const jsonified = JSON.stringify(_parentTask);
-        const parsedCopy = JSON.parse(jsonified);
-        console.log(parsedCopy);
+    //     const jsonified = JSON.stringify(_parentTask);
+    //     const parsedCopy = JSON.parse(jsonified);
+    //     console.log(parsedCopy);
 
-        _parentTask = { ...parentTask };
+    //     _parentTask = { ...parentTask };
 
-        if (parentTask.weddingParentTaskId != null) {
-            const index = findIndexById(parentTask.weddingParentTaskId);
-            WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
-                _parentTasks[index] = _parentTask;
-                setParentTask(_parentTask);
-                setParentTasks(_parentTasks);
-                setTaskDialog(false);
-            });
-        }
-    };
+    //     if (parentTask.weddingParentTaskId != null) {
+    //         const index = findIndexById(parentTask.weddingParentTaskId);
+    //         WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
+    //             _parentTasks[index] = _parentTask;
+    //             setParentTask(_parentTask);
+    //             setParentTasks(_parentTasks);
+    //             setTaskDialog(false);
+    //         });
+    //     }
+    // };
 
     const rowExpansionTemplate = (data) => {
         return (
             <div className="p-3">
-                <DataTable value={data.weddingSubtasks}>
+                <DataTable value={data.weddingSubtasks} header={false}>
                     <Column field=""></Column>
                     <Column field=""></Column>
                     <Column field="subtaskDescription"></Column>
-                    <Column field="isDone"></Column>
+                    <Column
+                        field="isDone"
+                        body={isDoneTemplateForSubtask}
+                    ></Column>
                     <Column
                         body={actionSubtaskBodyTemplate}
                         exportable={false}
@@ -112,7 +145,11 @@ export default function WeddingChecklist() {
     };
 
     const allowExpansion = (rowData) => {
-        return rowData.weddingSubtasks.length > 0;
+        // have to check undefined because if it doesnt have subtask it might crash?
+        return (
+            rowData.weddingSubtasks != undefined &&
+            rowData.weddingSubtasks.length > 0
+        );
     };
 
     const actionBodyTemplate = (rowData) => {
@@ -158,7 +195,7 @@ export default function WeddingChecklist() {
     };
 
     const editTask = (task) => {
-        setParentTask({ ...task });
+        setNewParentTask({ ...task });
         setTaskDialog(true);
     };
 
@@ -168,7 +205,7 @@ export default function WeddingChecklist() {
     };
 
     const confirmDeleteTask = (task) => {
-        setParentTask(task);
+        setNewParentTask(task);
         setDeleteTaskDialog(true);
     };
 
@@ -179,23 +216,30 @@ export default function WeddingChecklist() {
 
     const deleteTask = () => {
         let _tasks = parentTasks.filter(
-            (val) => val.weddingParentTaskId !== parentTask.weddingParentTaskId
+            (val) =>
+                val.weddingParentTaskId !== newParentTask.weddingParentTaskId
         );
         WeddingChecklistAPI.deleteParentTask(
-            parentTask.weddingParentTaskId
+            newParentTask.weddingParentTaskId
         ).then(() => {
             setParentTasks(_tasks);
             setDeleteTaskDialog(false);
-            setParentTask(emptyParentTask);
+            setNewParentTask(emptyParentTask);
+            toast.current.show({
+                severity: "success",
+                summary: "Successful",
+                detail: "Task Deleted",
+                life: 3000,
+            });
         });
     };
 
     const deleteSubtask = () => {
         console.log(subtasks);
-        let _subtasks = parentTask.weddingSubtasks.filter(
+        let _subtasks = newParentTask.weddingSubtasks.filter(
             (val) =>
                 val.weddingSubtaskId !==
-                parentTask.weddingSubtasks.weddingSubtaskId
+                newParentTask.weddingSubtasks.weddingSubtaskId
         );
         console.log(_subtasks);
 
@@ -206,6 +250,12 @@ export default function WeddingChecklist() {
             setDeleteSubtaskDialog(false);
             setSubtask(emptyParentTask.weddingSubtasks);
             reloadData();
+            toast.current.show({
+                severity: "success",
+                summary: "Successful",
+                detail: "Subtask Deleted",
+                life: 3000,
+            });
         });
     };
 
@@ -277,13 +327,13 @@ export default function WeddingChecklist() {
         return index;
     };
 
-    const onInputChange = (e, name) => {
+    const onInputNewParentTaskChange = (e, name) => {
         const val = (e.target && e.target.value) || "";
-        let _parentTask = { ...parentTask };
+        let _parentTask = { ...newParentTask };
 
         _parentTask[`${name}`] = val;
 
-        setParentTask(_parentTask);
+        setNewParentTask(_parentTask);
     };
 
     const onInputNewSubtaskChange = (e, index) => {
@@ -311,7 +361,7 @@ export default function WeddingChecklist() {
     };
 
     const openNewTaskDialog = () => {
-        setParentTask(emptyParentTask);
+        setNewParentTask(emptyParentTask);
         setNewTaskDialog(true);
         setSubmitted(false);
     };
@@ -340,7 +390,7 @@ export default function WeddingChecklist() {
 
     const handleNewTaskDialog = () => {
         setSubmitted(true);
-        let _task = { ...parentTask };
+        let _task = { ...newParentTask };
         let _tasks = [...parentTasks];
 
         delete _task.weddingSubtasks;
@@ -349,7 +399,7 @@ export default function WeddingChecklist() {
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
-        _task = { ...parentTask };
+        _task = { ...newParentTask };
         console.log(_task);
 
         WeddingChecklistAPI.createParentTask(parsedCopy, checklistId).then(
@@ -357,7 +407,7 @@ export default function WeddingChecklist() {
                 response.json().then((idObject) => {
                     _task.weddingParentTaskId = idObject.WEDDINGPARENTTASKID;
                     _tasks.push(_task);
-                    setParentTask(_task);
+                    setNewParentTask(_task);
                     setParentTasks(_tasks);
 
                     newSubtasks.map((subtask) => {
@@ -381,16 +431,23 @@ export default function WeddingChecklist() {
                         );
                         reloadData();
                     });
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Task Created",
+                        life: 3000,
+                    });
                     reloadData();
                     setNewTaskDialog(false);
                 });
+                reloadData();
             }
         );
     };
 
     const handleTaskDialog = () => {
         setSubmitted(true);
-        let _parentTask = { ...parentTask };
+        let _parentTask = { ...newParentTask };
         let _parentTasks = [...parentTasks];
         console.log(_parentTask);
         console.log(_parentTasks);
@@ -399,13 +456,19 @@ export default function WeddingChecklist() {
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
-        if (parentTask.weddingParentTaskId != null) {
-            const index = findIndexById(parentTask.weddingParentTaskId);
+        if (newParentTask.weddingParentTaskId != null) {
+            const index = findIndexById(newParentTask.weddingParentTaskId);
             WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
                 _parentTasks[index] = _parentTask;
-                setParentTask(_parentTask);
+                setNewParentTask(_parentTask);
                 setParentTasks(_parentTasks);
                 setTaskDialog(false);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Task Updated",
+                    life: 3000,
+                });
             });
         }
         // } else {
@@ -439,9 +502,15 @@ export default function WeddingChecklist() {
             WeddingChecklistAPI.updateSubtask(parsedCopy).then(() => {
                 _subtasks[index] = _subtask;
                 setSubtasks(_subtasks);
-                updateTaskStatus(parentTask);
+                // updateTaskStatus(parentTask);
                 setSubtaskDialog(false);
                 reloadData();
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Subtask Updated",
+                    life: 3000,
+                });
             });
         } else {
             WeddingChecklistAPI.createSubtask(parsedCopy, checklistId).then(
@@ -451,6 +520,12 @@ export default function WeddingChecklist() {
                         _subtasks.push(_subtask);
                         setSubtasks(_subtasks);
                         setSubtaskDialog(false);
+                        toast.current.show({
+                            severity: "success",
+                            summary: "Successful",
+                            detail: "Subtask Created",
+                            life: 3000,
+                        });
                     });
                 }
             );
@@ -505,8 +580,32 @@ export default function WeddingChecklist() {
         </React.Fragment>
     );
 
+    const isDoneTemplateForParentTask = (rowData) => (
+        <Checkbox
+            id="isDone"
+            checked={rowData.isDone}
+            onChange={(e) =>
+                checkOffParentTask(e, rowData, parentTasks, setParentTasks)
+            }
+        />
+    );
+
+    const isDoneTemplateForSubtask = (rowData) => (
+        <Checkbox
+            id="isDone"
+            checked={rowData.isDone}
+            // inefficient algorithm, but it gets the job done
+            onChange={(e) =>
+                checkOffSubtask(e, rowData, parentTasks, setParentTasks)
+            }
+        />
+    );
+
+    const [testCheck, setTestCheck] = useState(true);
+
     return (
         <>
+            <Toast ref={toast} />
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <div className=" flex justify-content-center">
@@ -519,7 +618,21 @@ export default function WeddingChecklist() {
                         onClick={openNewTaskDialog}
                     ></Button>
                 </div>
-
+                {/* <div>
+                    <Checkbox
+                        id="foo"
+                        checked={testCheck}
+                        onChange={(e) => {
+                            setTestCheck(e.checked);
+                            console.log(testCheck);
+                            console.log(parentTasks);
+                        }}
+                        // autoFocus
+                        // className={classNames({
+                        //     "p-invalid": submitted && !item.isPaid,
+                        // })}
+                    />
+                </div> */}
                 <br />
                 <DataTable
                     value={parentTasks}
@@ -533,7 +646,11 @@ export default function WeddingChecklist() {
                         field="taskDescription"
                         header="Task Description"
                     ></Column>
-                    <Column field="isDone" header="Status"></Column>
+                    <Column
+                        field="isDone"
+                        body={isDoneTemplateForParentTask}
+                        header="Status"
+                    ></Column>
                     <Column
                         body={actionBodyTemplate}
                         exportable={false}
@@ -557,16 +674,18 @@ export default function WeddingChecklist() {
                     </label>
                     <InputText
                         id="taskDescription"
-                        value={parentTask.taskDescription}
-                        onChange={(e) => onInputChange(e, "taskDescription")}
+                        value={newParentTask.taskDescription}
+                        onChange={(e) =>
+                            onInputNewParentTaskChange(e, "taskDescription")
+                        }
                         required
                         autoFocus
                         className={classNames({
                             "p-invalid":
-                                submitted && !parentTask.taskDescription,
+                                submitted && !newParentTask.taskDescription,
                         })}
                     />
-                    {submitted && !parentTask.taskDescription && (
+                    {submitted && !newParentTask.taskDescription && (
                         <small className="p-error">
                             Task Description is required.
                         </small>
@@ -623,16 +742,18 @@ export default function WeddingChecklist() {
                     </label>
                     <InputText
                         id="taskDescription"
-                        value={parentTask.taskDescription}
-                        onChange={(e) => onInputChange(e, "taskDescription")}
+                        value={newParentTask.taskDescription}
+                        onChange={(e) =>
+                            onInputNewParentTaskChange(e, "taskDescription")
+                        }
                         required
                         autoFocus
                         className={classNames({
                             "p-invalid":
-                                submitted && !parentTask.taskDescription,
+                                submitted && !newParentTask.taskDescription,
                         })}
                     />
-                    {submitted && !parentTask.taskDescription && (
+                    {submitted && !newParentTask.taskDescription && (
                         <small className="p-error">
                             Task Description is required.
                         </small>
@@ -673,28 +794,6 @@ export default function WeddingChecklist() {
                         </small>
                     )}
                 </div>
-                <div className="field">
-                    <label htmlFor="status" className="font-bold">
-                        Status
-                    </label>
-                    <InputText
-                        id="isDone"
-                        value={subtask.isDone}
-                        onChange={(e) => {
-                            onInputSubtaskChange(e, "isDone");
-                        }}
-                        required
-                        autoFocus
-                        className={classNames({
-                            "p-invalid": submitted && !subtask.isDone,
-                        })}
-                    />
-                    {submitted && !subtask.isDone && (
-                        <small className="p-error">
-                            Subtask Status is required.
-                        </small>
-                    )}
-                </div>
             </Dialog>
 
             <Dialog
@@ -711,10 +810,10 @@ export default function WeddingChecklist() {
                         className="pi pi-exclamation-triangle mr-3"
                         style={{ fontSize: "2rem" }}
                     />
-                    {parentTask && (
+                    {newParentTask && (
                         <span>
                             Are you sure you want to delete{" "}
-                            <b>{parentTask.taskDescription}</b>?
+                            <b>{newParentTask.taskDescription}</b>?
                         </span>
                     )}
                 </div>

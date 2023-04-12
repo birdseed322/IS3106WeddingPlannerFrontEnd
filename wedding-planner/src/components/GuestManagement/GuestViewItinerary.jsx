@@ -17,6 +17,7 @@ export default function GuestViewItinerary() {
             return res.json();
         })
         .then(itineraries => {
+            console.log(itineraries);
             const list = [];
             for (const itinerary of itineraries) {
                 const {eventStartTime, eventEndTime, eventDate, eventName} = itinerary;
@@ -28,7 +29,8 @@ export default function GuestViewItinerary() {
                 list.push({
                     status : eventName,
                     date : d.toLocaleDateString() + " " + d.toLocaleTimeString(),
-                    color : "ff66cc"
+                    color : "#FFFFFF",
+                    dateNonString : d
                 });
             }
             setEvents(list);  

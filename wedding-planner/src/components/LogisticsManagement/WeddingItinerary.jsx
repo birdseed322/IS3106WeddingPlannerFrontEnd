@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router";
 
 import { Card } from "primereact/card";
 import { Calendar } from "primereact/calendar";
@@ -8,25 +9,29 @@ import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
+import { Toast } from "primereact/toast";
 
 import WeddingItineraryAPI from "./WeddingItineraryAPI";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar";
 
 export default function WeddingItinerary() {
     let emptyItinerary = {
-        eventDate: null,
-        eventEndTime: null,
+        eventDate: "",
+        eventEndTime: "",
         eventName: "",
-        eventStartTime: null,
+        eventStartTime: "",
         weddingItineraryId: null,
     };
 
-    const [weddingProjectId, setWeddingProjectId] = useState(1);
+    const { projectId } = useParams();
+
     const [itinerary, setItinerary] = useState(emptyItinerary);
     const [itineraries, setItineraries] = useState([]);
     const [itineraryDialog, setItineraryDialog] = useState(false);
     const [deleteItineraryDialog, setDeleteItineraryDialog] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+
+    const toast = useRef(null);
 
     const dateProcessor = (dateString) => {
         if (typeof dateString === "string") {
@@ -46,21 +51,24 @@ export default function WeddingItinerary() {
     }, []);
 
     const reloadData = () => {
-        WeddingItineraryAPI.getAllItineraries()
+        WeddingItineraryAPI.getItinerariesByWeddingProject(projectId)
             .then((res) => {
                 return res.json();
             })
+
+            // removed the toLocaleString() conversion of the dates
+            // we want to keep them as Date objects, then convert to string only when displaying.
+            // furthermore keeping them as Date objects also allows us
+            // to set them as default values when Editing the itinerary item
             .then((itineraries) => {
                 const updatedItineraries = itineraries.map((itinerary) => {
-                    const updatedEventDate = dateProcessor(
-                        itinerary.eventDate
-                    ).toLocaleDateString();
+                    const updatedEventDate = dateProcessor(itinerary.eventDate);
                     const updatedEventStartTime = dateProcessor(
                         itinerary.eventStartTime
-                    ).toLocaleTimeString();
+                    );
                     const updatedEventEndTime = dateProcessor(
                         itinerary.eventEndTime
-                    ).toLocaleTimeString();
+                    );
 
                     return {
                         ...itinerary,
@@ -71,6 +79,7 @@ export default function WeddingItinerary() {
                 });
 
                 setItineraries(updatedItineraries);
+                console.log(updatedItineraries);
             })
             .catch((error) => console.log(error));
     };
@@ -99,6 +108,7 @@ export default function WeddingItinerary() {
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || "";
         let _itinerary = { ...itinerary };
+        console.log(itinerary);
 
         _itinerary[`${name}`] = val;
 
@@ -128,7 +138,8 @@ export default function WeddingItinerary() {
 
         return index;
     };
-    const handleItineraryDialog = () => {
+    const handleItineraryDialog = (e) => {
+        e.preventDefault();
         setSubmitted(true);
         let _itinerary = { ...itinerary };
         let _itineraries = [...itineraries];
@@ -137,6 +148,7 @@ export default function WeddingItinerary() {
 
         const jsonified = JSON.stringify(_itinerary);
         const parsedCopy = JSON.parse(jsonified);
+        console.log(parsedCopy);
 
         if (itinerary.weddingItineraryId != null) {
             const index = findIndexById(itinerary.weddingItineraryId);
@@ -144,19 +156,32 @@ export default function WeddingItinerary() {
                 _itineraries[index] = _itinerary;
                 setItineraries(_itineraries);
                 setItineraryDialog(false);
-            });
-        } else {
-            WeddingItineraryAPI.createNewItinerary(
-                parsedCopy,
-                weddingProjectId
-            ).then((response) => {
-                response.json().then((idObject) => {
-                    _itinerary.weddingItineraryId = idObject.WEDDINGITINERARYID;
-                    _itineraries.push(_itinerary);
-                    setItineraries(_itineraries);
-                    setItineraryDialog(false);
+                reloadData();
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Itinerary Updated",
+                    life: 3000,
                 });
             });
+        } else {
+            WeddingItineraryAPI.createNewItinerary(parsedCopy, projectId).then(
+                (response) => {
+                    response.json().then((idObject) => {
+                        _itinerary.weddingItineraryId =
+                            idObject.WEDDINGITINERARYID;
+                        _itineraries.push(_itinerary);
+                        setItineraries(_itineraries);
+                        setItineraryDialog(false);
+                        toast.current.show({
+                            severity: "success",
+                            summary: "Successful",
+                            detail: "Itinerary Created",
+                            life: 3000,
+                        });
+                    });
+                }
+            );
         }
     };
 
@@ -179,6 +204,12 @@ export default function WeddingItinerary() {
                 setItineraries(_itineraries);
                 setDeleteItineraryDialog(false);
                 setItinerary(emptyItinerary);
+                toast.current.show({
+                    severity: "success",
+                    summary: "Successful",
+                    detail: "Itinerary Deleted",
+                    life: 3000,
+                });
             }
         );
     };
@@ -220,12 +251,45 @@ export default function WeddingItinerary() {
         </React.Fragment>
     );
 
+    const eventDateTemplate = (rowData) => (
+        <p>{rowData.eventDate.toLocaleDateString()}</p>
+    );
+
+    const eventStartTimeTemplate = (rowData) => (
+        <p>
+            {rowData.eventStartTime.toLocaleTimeString(undefined, {
+                hour: "2-digit",
+                minute: "2-digit",
+            })}
+        </p>
+    );
+
+    const eventEndTimeTemplate = (rowData) => (
+        <p>
+            {rowData.eventEndTime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            })}
+        </p>
+    );
+
+    const [multiSortMeta, setMultiSortMeta] = useState([
+        { field: "eventDate", order: -1 },
+        { field: "eventStartTime", order: -1 },
+    ]);
+
     return (
         <div>
+            <Toast ref={toast} />
             <HeartyNavbar></HeartyNavbar>
             <Card>
                 <h4>
-                    Date: <Calendar id="eventDate" showIcon></Calendar>
+                    Date:{" "}
+                    <Calendar
+                        id="eventDate"
+                        value={itinerary.eventDate}
+                        showIcon
+                    ></Calendar>
                 </h4>
                 <Button
                     label="Add New Itinerary"
@@ -238,25 +302,43 @@ export default function WeddingItinerary() {
                     value={itineraries}
                     header="Wedding Itineraries"
                     tableStyle={{ minWidth: "60rem" }}
-                    // selection={selectedGuests}
-                    // onSelectionChange={(e) => setSelectedGuests(e.value)}
                     dataKey="weddingItineraryId"
+                    sortMode="multiple"
+                    multiSortMeta={multiSortMeta}
+                    onSort={(e) => setMultiSortMeta(e.multiSortMeta)}
                     paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
                 >
-                    <Column header="ID" field="weddingItineraryId"></Column>
-                    <Column header="Event Name" field="eventName"></Column>
-                    <Column header="Event Date" field="eventDate"></Column>
                     <Column
-                        header="Event Start Time"
-                        field="eventStartTime"
+                        sortable
+                        header="ID"
+                        field="weddingItineraryId"
                     ></Column>
                     <Column
+                        sortable
+                        header="Event Name"
+                        field="eventName"
+                    ></Column>
+                    <Column
+                        sortable
+                        header="Event Date"
+                        body={eventDateTemplate}
+                        field="eventDate"
+                    ></Column>
+                    <Column
+                        sortable
+                        header="Event Start Time"
+                        field="eventStartTime"
+                        body={eventStartTimeTemplate}
+                    ></Column>
+                    <Column
+                        sortable
                         header="Event End Time"
                         field="eventEndTime"
+                        body={eventEndTimeTemplate}
                     ></Column>
                     <Column
                         body={actionBodyTemplate}
@@ -265,6 +347,7 @@ export default function WeddingItinerary() {
                 </DataTable>
             </Card>
 
+            {/* <form onSubmit={handleItineraryDialog}> */}
             <Dialog
                 visible={itineraryDialog}
                 style={{ width: "32rem" }}
@@ -305,6 +388,7 @@ export default function WeddingItinerary() {
                         onChange={(e) => onInputChange(e, "eventDate")}
                         required
                         autoFocus
+                        dateFormat="dd/mm/yy"
                         className={classNames({
                             "p-invalid": submitted && !itinerary.eventDate,
                         })}
@@ -358,6 +442,7 @@ export default function WeddingItinerary() {
                     )}
                 </div>
             </Dialog>
+            {/* </form> */}
 
             <Dialog
                 visible={deleteItineraryDialog}

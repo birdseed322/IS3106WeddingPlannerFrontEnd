@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import PublicHeartyNavbar from '../HeartyNavbar/PublicHeartyNavbar'
 import { Card } from 'primereact/card'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from 'primereact/button'
 import { classNames } from 'primereact/utils'
 import { InputText } from 'primereact/inputtext'
+import { Toast } from 'primereact/toast'
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
@@ -26,6 +27,7 @@ function AdminSignUp() {
   }
 
   const navigate = useNavigate()
+  const toast = useRef(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -33,9 +35,23 @@ function AdminSignUp() {
       username,
       email,
       password,
-    }).then((admin) => {
-      navigate('/login')
     })
+      .then((admin) => {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Account Created',
+        })
+        navigate('/login')
+      })
+      .catch((error) => {
+        console.log(error)
+        toast.current.show({
+          severity: 'error',
+          summary: 'Not Successful',
+          detail: 'Account Not Created',
+        })
+      })
   }
 
   const [username, setUsername] = useState('')

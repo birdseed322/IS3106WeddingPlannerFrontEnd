@@ -1,5 +1,5 @@
 import { Button } from 'primereact/button'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Card } from 'primereact/card'
 import { Dialog } from 'primereact/dialog'
@@ -12,9 +12,11 @@ import { classNames } from 'primereact/utils'
 import { InputText } from 'primereact/inputtext'
 import { InputTextarea } from 'primereact/inputtextarea'
 import moment from 'moment'
+import { Toast } from 'primereact/toast'
 
 function ProjectDashboard() {
   const [searchTerm, setSearchTerm] = useState('')
+  const toast = useRef(null)
 
   const handleSearch = (value) => {
     setSearchTerm(value)
@@ -68,6 +70,11 @@ function ProjectDashboard() {
       })
       .catch((error) => {
         console.log(error)
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error Message',
+          detail: 'Project was not found',
+        })
       })
     WeddingProjectAPI.getWeddingProjectsByWeddingOrganiserId(orgId)
       .then((res) => res.json()) //change format to response
@@ -82,6 +89,11 @@ function ProjectDashboard() {
       })
       .catch((error) => {
         console.log(error)
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error Message',
+          detail: 'Project was not found',
+        })
       })
   }
 
@@ -96,10 +108,24 @@ function ProjectDashboard() {
       WeddingProjectAPI.createWeddingProject(orgId, {
         name,
         description,
-      }).then((weddingProject) => {
-        setShowCard(false)
-        reloadData()
       })
+        .then((weddingProject) => {
+          setShowCard(false)
+          toast.current.show({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Project created',
+          })
+          reloadData()
+        })
+        .catch((error) => {
+          console.log(error)
+          toast.current.show({
+            severity: 'error',
+            summary: 'UnSuccessful',
+            detail: 'Project not created',
+          })
+        })
     }
 
     return (
@@ -186,10 +212,25 @@ function ProjectDashboard() {
         </div>
     );
 
+  const filteredData =
+    searchTerm === ''
+      ? completedProjects
+      : completedProjects.filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
+
+  const filteredData1 =
+    searchTerm === ''
+      ? uncompletedProjects
+      : uncompletedProjects.filter((item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
+
   return (
     <div>
-      <ProjectNavbar handleSearch={handleSearch} />
+      <ProjectNavbar searchTerm={searchTerm} onSearch={handleSearch} />
       <div id="bodyContainer" className="pt-5 px-3">
+        <Toast ref={toast} />
         <Button
           className="top-right-button"
           label="Add Project"
@@ -197,6 +238,7 @@ function ProjectDashboard() {
           style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
           onClick={handleShowCard}
         />
+
         <Dialog visible={showCard} onHide={() => setShowCard(false)}>
           <AddProject />
         </Dialog>
@@ -209,7 +251,7 @@ function ProjectDashboard() {
             className="px-2"
             responsiveLayout="scroll"
             header={header}
-            value={uncompletedProjects}
+            value={filteredData1}
           >
             <Column className="px-5" field="name" header=" Project Name" />
             <Column
@@ -238,7 +280,7 @@ function ProjectDashboard() {
             className="px-2"
             responsiveLayout="scroll"
             header={header2}
-            value={completedProjects}
+            value={filteredData}
           >
             <Column className="px-5" field="name" header=" Project Name" />
             <Column

@@ -11,9 +11,9 @@ import table from './src/table.png';
             <>
             <div className="inline-block text-center">
                 <img className="z-1" src={table} height="200px" width="200px"></img>
-                <h2 className="inline-block mt-8 z-5 absolute m-auto left-0 right-0">Table {data.tableNumber}</h2>
-                <h3 style={{marginTop:"7.5rem"}} className="absolute inline-block z-5 left-0 right-0">{data.currOccupancy} / {data.capacity}</h3>
-                <h3 style={{marginTop:"1rem"}}>YOUR TABLE</h3>
+                <h2 style={{fontFamily: "'Segoe UI', Arial, sans-serif"}} className="inline-block mt-8 z-5 absolute m-auto left-0 right-0">Table {data.tableNumber}</h2>
+                <h3 style={{marginTop:"7.5rem", fontFamily: "'Segoe UI', Arial, sans-serif"}} className="absolute inline-block z-5 left-0 right-0">{data.currOccupancy} / {data.capacity}</h3>
+                <h3 style={{marginTop:"1rem", fontFamily: "'Segoe UI', Arial, sans-serif"}}>YOUR TABLE</h3>
             </div>
             </>
         );
