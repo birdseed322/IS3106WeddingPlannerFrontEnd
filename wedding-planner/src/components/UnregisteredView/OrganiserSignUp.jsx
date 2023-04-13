@@ -29,6 +29,19 @@ function OrganiserSignUp() {
   const navigate = useNavigate()
   const toast = useRef(null)
 
+  const checkingPassword = (e) => {
+    e.preventDefault()
+    if (password1 === password2) {
+      setPassword(password1)
+      handleSubmit(e)
+    } else {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Not Successful',
+        detail: 'Passwords are not the same',
+      })
+    }
+  }
   const handleSubmit = (e) => {
     e.preventDefault()
     OrganiserAPI.createWeddingOrganiser({
@@ -37,26 +50,36 @@ function OrganiserSignUp() {
       password,
     })
       .then((weddingOrganiser) => {
-        toast.current.show({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Account Created',
-        })
-        navigate('/login')
+        if (weddingOrganiser.status === 200) {
+          toast.current.show({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Account Created',
+          })
+          navigate('/login')
+        } else {
+          toast.current.show({
+            severity: 'error',
+            summary: 'Not Successful',
+            detail: 'Username or email has been taken',
+          })
+        }
       })
       .catch((error) => {
-        console.log(error)
         toast.current.show({
           severity: 'error',
           summary: 'Not Successful',
           detail: 'Account Not Created',
         })
+        console.log(error)
       })
   }
 
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [password1, setPassword1] = useState('')
+  const [password2, setPassword2] = useState('')
   return (
     <div>
       <PublicHeartyNavbar />
@@ -72,17 +95,17 @@ function OrganiserSignUp() {
           <h3 className="flex justify-content-center">
             Wedding Organiser Sign Up
           </h3>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={checkingPassword}>
             <div className="field pt-1">
-              <span>
-                <label
-                  htmlFor="name"
-                  className={classNames({
-                    'px-3': true,
-                  })}
-                >
-                  Username
-                </label>
+              <label
+                htmlFor="name"
+                className={classNames({
+                  'px-3': true,
+                })}
+              >
+                Username
+              </label>
+              <span className="px-7">
                 <InputText
                   id="inputUsername"
                   required
@@ -91,11 +114,11 @@ function OrganiserSignUp() {
                 />
               </span>
             </div>
-            <div className="field pt-2">
-              <label htmlFor="email" className="pl-3">
+            <div className="field pt-2 px-3">
+              <label htmlFor="email" className="pr-5">
                 Email
               </label>
-              <span className="px-6">
+              <span className="px-8">
                 <InputText
                   id="inputEmail"
                   required
@@ -104,21 +127,37 @@ function OrganiserSignUp() {
                 />
               </span>
             </div>
+            <div className="field pt-2 px-3">
+              <label htmlFor="password" className="pr-1">
+                Password
+              </label>
+              <span className="px-8">
+                <InputText
+                  id="inputPassword"
+                  type="password"
+                  required
+                  value={password1}
+                  onChange={(e) => setPassword1(e.target.value)}
+                />
+              </span>
+            </div>
             <div className="field pt-2">
               <label htmlFor="password" className="pl-3">
-                Password
+                Confirm Password
               </label>
               <span className="px-4">
                 <InputText
                   id="inputPassword"
+                  type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
                 />
               </span>
             </div>
             <span>
               <div className="flex justify-content-center pt-4">
+                <Toast ref={toast} />
                 <Button
                   label="Sign Up"
                   style={{ backgroundColor: '#f561b0', border: '#f561b0' }}

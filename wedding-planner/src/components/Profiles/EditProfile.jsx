@@ -7,7 +7,13 @@ import { classNames } from 'primereact/utils'
 import { Avatar } from 'primereact/avatar'
 import { InputText } from 'primereact/inputtext'
 import { LoginTokenContext } from '../../context/LoginTokenContext'
-import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage'
+import {
+  deleteObject,
+  getDownloadURL,
+  listAll,
+  ref,
+  uploadBytes,
+} from 'firebase/storage'
 import { storage } from '../firebase'
 import { Dialog } from 'primereact/dialog'
 import { Toast } from 'primereact/toast'
@@ -43,7 +49,8 @@ function EditProfile() {
   const [imageUrl, setImageUrl] = useState([])
   const [visible, setVisible] = useState(false)
 
-  const imageListRef = ref(storage, `wedding-organisers/${wId}`)
+  const defaultImage = ref(storage, `testing/Default.jpeg`)
+  const imageListRef = ref(storage, `wedding-organisers/${wId}/ProfilePic.png`)
   useEffect(() => {
     OrganiserAPI.getWeddingOrganiser(wId).then((weddingOrganiser) => {
       const { username, email, password } = weddingOrganiser
@@ -55,27 +62,25 @@ function EditProfile() {
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    listAll(imageListRef).then((response) => {
-      response.items.forEach((item) => {
-        // console.log(item);
-        //setImageUrls((prev) => [...prev, item]);
-        getDownloadURL(item).then((url) => {
+    getDownloadURL(imageListRef)
+      .then((url) => {
+        setImageUrl(url)
+      })
+      .catch((error) => {
+        console.error(`Unable to retrieve default image: ${error.message}`)
+        getDownloadURL(defaultImage).then((url) => {
           setImageUrl(url)
         })
       })
-    })
   }, [])
 
   const uploadFile = () => {
     if (!imageUpload) return
-    const imageRef = ref(
-      storage,
-      `wedding-organisers/${wId}/${imageUpload.name}`,
-    ) // obtain the place to store the image in firebase
+    const imageRef = ref(storage, `wedding-organisers/${wId}/ProfilePic.png`) // obtain the place to store the image in firebase
     uploadBytes(imageRef, imageUpload)
       .then(() => {
         getDownloadURL(imageRef).then((url) => {
-          setImageUrl([...imageUrl, url])
+          setImageUrl(url)
           setVisible(false)
         })
       })

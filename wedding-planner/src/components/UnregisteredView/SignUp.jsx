@@ -3,51 +3,65 @@ import PublicHeartyNavbar from '../HeartyNavbar/PublicHeartyNavbar'
 import { Card } from 'primereact/card'
 import { Link } from 'react-router-dom'
 import { Button } from 'primereact/button'
+import backgroundImage from './Background/kinfolk-wedding-20.webp'
 
 function SignUp() {
+  /*const styles = {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
+    height: '100%',
+  }*/
   return (
+    //<div style={styles}>
     <div>
       <PublicHeartyNavbar />
-      <div className="flex justify-content-center pt-5 mt-8">
+      <div className="flex justify-content-center pt-8 mt-8">
         <Card
           style={{
-            minWidth: '200px',
-            maxWidth: '300px',
-            minHeight: '200px',
-            maxHeight: '300px',
+            minWidth: '400px',
+            maxWidth: '600px',
+            minHeight: '350px',
+            maxHeight: '600px',
           }}
         >
-          <h3 className="flex justify-content-center">Sign Up</h3>
-          <div className="flex justify-content-center">
+          <h1 className="flex justify-content-center">Sign Up</h1>
+          <div className="flex justify-content-center pt-5">
             <Link to="vendorsignup" className="noUnderline">
               <Button
-                className="px-7"
                 label="Vendor"
-                style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+                style={{
+                  width: '325px',
+                  height: '50px',
+                  backgroundColor: '#f561b0',
+                  border: '#f561b0',
+                }}
               />{' '}
             </Link>
           </div>
 
-          <div className="flex justify-content-center pt-3">
+          <div className="flex justify-content-center pt-5">
             <Link to="weddingorganisersignup" className="noUnderline">
               <Button
-                className="px-3 pt-2"
                 label="Wedding Organiser"
-                style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
-              />{' '}
-            </Link>
-          </div>
-          <div className="flex justify-content-center pt-3">
-            <Link to="adminsignup" className="noUnderline">
-              <Button
-                className="px-7"
-                label="Admin"
-                style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
+                style={{
+                  width: '325px',
+                  height: '50px',
+                  backgroundColor: '#f561b0',
+                  border: '#f561b0',
+                }}
               />{' '}
             </Link>
           </div>
         </Card>
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   )
 }

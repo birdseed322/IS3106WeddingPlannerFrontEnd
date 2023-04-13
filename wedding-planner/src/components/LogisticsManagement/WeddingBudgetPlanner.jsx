@@ -98,6 +98,8 @@ export default function WeddingBudgetPlanner() {
                 life: 3000,
             });
         });
+        setItem(newItems[index]);
+        console.log(item);
     };
 
     const itemPaidTemplate = (rowData) => {
@@ -229,6 +231,10 @@ export default function WeddingBudgetPlanner() {
         return index;
     };
 
+    const validateBudget = (budget) => {
+        return budget.budget > 0;
+    };
+
     const handleBudgetDialog = () => {
         setSubmitted(true);
         let _budget = { ...budget };
@@ -248,21 +254,33 @@ export default function WeddingBudgetPlanner() {
         console.log(_budget);
 
         if (budget.weddingBudgetListId != null) {
-            // const index = findIndexById(budget.weddingBudgetListId);
-            WeddingBudgetPlannerAPI.updateBudget(parsedCopy).then(() => {
-                // _budgets[index] = _budget;
-                setBudget(_budget);
-                setBudgetDialog(false);
+            if (validateBudget(budget)) {
+                // const index = findIndexById(budget.weddingBudgetListId);
+                WeddingBudgetPlannerAPI.updateBudget(parsedCopy).then(() => {
+                    // _budgets[index] = _budget;
+                    setBudget(_budget);
+                    setBudgetDialog(false);
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Budget Updated",
+                        life: 3000,
+                    });
+                });
+            } else {
                 toast.current.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: "Budget Updated",
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update budget",
                     life: 3000,
                 });
-            });
+            }
         } else {
-            WeddingBudgetPlannerAPI.createBudget(parsedCopy2, projectId).then(
-                (response) => {
+            if (validateBudget(budget)) {
+                WeddingBudgetPlannerAPI.createBudget(
+                    parsedCopy2,
+                    projectId
+                ).then((response) => {
                     console.log(response.status);
                     response.json().then((idObject) => {
                         _budget.weddingBudgetListId =
@@ -277,9 +295,24 @@ export default function WeddingBudgetPlanner() {
                             life: 3000,
                         });
                     });
-                }
-            );
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create budget",
+                    life: 3000,
+                });
+            }
         }
+    };
+
+    const validateItem = (item) => {
+        return (
+            item.name.trim().length > 0 &&
+            item.cost > 0 &&
+            item.category.trim().length > 0
+        );
     };
 
     const handleItemDialog = () => {
@@ -294,36 +327,55 @@ export default function WeddingBudgetPlanner() {
         console.log(parsedCopy);
 
         if (item.weddingBudgetItemId != null) {
-            const index = findItemIndexById(item.weddingBudgetItemId);
-            WeddingBudgetPlannerAPI.updateItem(parsedCopy).then(() => {
-                _items[index] = _item;
-                setItems(_items);
-                setItemDialog(false);
-                toast.current.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: "Item Successfuly Updated",
-                    life: 3000,
-                });
-            });
-        } else {
-            WeddingBudgetPlannerAPI.createItem(
-                parsedCopy,
-                budget.weddingBudgetListId
-            ).then((response) => {
-                response.json().then((idObject) => {
-                    _item.weddingBudgetItemId = idObject.WEDDINGBUDGETITEMID;
-                    _items.push(_item);
+            if (validateItem(item)) {
+                const index = findItemIndexById(item.weddingBudgetItemId);
+                WeddingBudgetPlannerAPI.updateItem(parsedCopy).then(() => {
+                    _items[index] = _item;
                     setItems(_items);
                     setItemDialog(false);
                     toast.current.show({
                         severity: "success",
                         summary: "Successful",
-                        detail: "Item Created",
+                        detail: "Item Successfuly Updated",
                         life: 3000,
                     });
                 });
-            });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update item",
+                    life: 3000,
+                });
+            }
+        } else {
+            if (validateItem(item)) {
+                WeddingBudgetPlannerAPI.createItem(
+                    parsedCopy,
+                    budget.weddingBudgetListId
+                ).then((response) => {
+                    response.json().then((idObject) => {
+                        _item.weddingBudgetItemId =
+                            idObject.WEDDINGBUDGETITEMID;
+                        _items.push(_item);
+                        setItems(_items);
+                        setItemDialog(false);
+                        toast.current.show({
+                            severity: "success",
+                            summary: "Successful",
+                            detail: "Item Created",
+                            life: 3000,
+                        });
+                    });
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create item",
+                    life: 3000,
+                });
+            }
         }
     };
 
@@ -366,6 +418,10 @@ export default function WeddingBudgetPlanner() {
                 label="No"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideDeleteItemDialog}
             />
             <Button
@@ -611,10 +667,10 @@ export default function WeddingBudgetPlanner() {
                         required
                         autoFocus
                         className={classNames({
-                            "p-invalid": submitted && item.cost < 0,
+                            "p-invalid": submitted && item.cost <= 0,
                         })}
                     />
-                    {submitted && item.cost < 0 && (
+                    {submitted && item.cost <= 0 && (
                         <small className="p-error">
                             Item Cost is required.
                         </small>

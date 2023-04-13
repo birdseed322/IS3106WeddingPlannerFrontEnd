@@ -72,11 +72,21 @@ export default function WeddingChecklist() {
                 console.log("something went wrong with fetching checklist");
                 console.log(exception);
             });
+
+        // WeddingChecklistAPI.getParentTaskByWeddingChecklist(checklistId)
+        //     .then((res) => {
+        //         console.log(res);
+        //         return res.json();
+        //     })
+        //     .then((parentData) => {
+        //         setParentTasks(parentData);
+        //         console.log(parentTasks);
+        //     });
     }, []);
 
     useEffect(() => {
         reloadData();
-    }, []);
+    }, [checklistId]);
 
     const reloadData = () => {
         WeddingChecklistAPI.getParentTaskByWeddingChecklist(checklistId)
@@ -276,6 +286,10 @@ export default function WeddingChecklist() {
                 label="No"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideDeleteTaskDialog}
             />
             <Button
@@ -293,6 +307,10 @@ export default function WeddingChecklist() {
                 label="No"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideDeleteSubtaskDialog}
             />
             <Button
@@ -449,6 +467,10 @@ export default function WeddingChecklist() {
         );
     };
 
+    const validateParentTask = (parentTask) => {
+        return parentTask.taskDescription.trim().length > 0;
+    };
+
     const handleTaskDialog = () => {
         setSubmitted(true);
         let _parentTask = { ...newParentTask };
@@ -461,19 +483,28 @@ export default function WeddingChecklist() {
         console.log(parsedCopy);
 
         if (newParentTask.weddingParentTaskId != null) {
-            const index = findIndexById(newParentTask.weddingParentTaskId);
-            WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
-                _parentTasks[index] = _parentTask;
-                setNewParentTask(_parentTask);
-                setParentTasks(_parentTasks);
-                setTaskDialog(false);
+            if (validateParentTask(newParentTask)) {
+                const index = findIndexById(newParentTask.weddingParentTaskId);
+                WeddingChecklistAPI.updateParentTask(parsedCopy).then(() => {
+                    _parentTasks[index] = _parentTask;
+                    setNewParentTask(_parentTask);
+                    setParentTasks(_parentTasks);
+                    setTaskDialog(false);
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Task Updated",
+                        life: 3000,
+                    });
+                });
+            } else {
                 toast.current.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: "Task Updated",
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update task",
                     life: 3000,
                 });
-            });
+            }
         }
         // } else {
         //     WeddingChecklistAPI.createParentTask(parsedCopy, checklistId).then(
@@ -490,6 +521,10 @@ export default function WeddingChecklist() {
         // }
     };
 
+    const validateSubtask = (subtask) => {
+        return subtask.subtaskDescription.trim().length > 0;
+    };
+
     const handleSubtaskDialog = () => {
         setSubmitted(true);
         let _subtask = { ...subtask };
@@ -502,37 +537,56 @@ export default function WeddingChecklist() {
         console.log(parsedCopy);
 
         if (subtask.weddingSubtaskId != null) {
-            const index = findIndexBySubtaskId(subtask.weddingSubtaskId);
-            WeddingChecklistAPI.updateSubtask(parsedCopy).then(() => {
-                _subtasks[index] = _subtask;
-                setSubtasks(_subtasks);
-                // updateTaskStatus(parentTask);
-                setSubtaskDialog(false);
-                // reloadData();
+            if (validateSubtask(subtask)) {
+                const index = findIndexBySubtaskId(subtask.weddingSubtaskId);
+                WeddingChecklistAPI.updateSubtask(parsedCopy).then(() => {
+                    _subtasks[index] = _subtask;
+                    setSubtasks(_subtasks);
+                    // updateTaskStatus(parentTask);
+                    setSubtaskDialog(false);
+                    // reloadData();
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Subtask Updated",
+                        life: 3000,
+                    });
+                });
+            } else {
                 toast.current.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: "Subtask Updated",
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update subtask",
                     life: 3000,
                 });
-            });
+            }
         } else {
-            WeddingChecklistAPI.createSubtask(parsedCopy, checklistId).then(
-                (response) => {
-                    response.json().then((idObject) => {
-                        _subtask.weddingSubtaskId = idObject.WEDDINGSUBTASKID;
-                        _subtasks.push(_subtask);
-                        setSubtasks(_subtasks);
-                        setSubtaskDialog(false);
-                        toast.current.show({
-                            severity: "success",
-                            summary: "Successful",
-                            detail: "Subtask Created",
-                            life: 3000,
+            if (validateSubtask(subtask)) {
+                WeddingChecklistAPI.createSubtask(parsedCopy, checklistId).then(
+                    (response) => {
+                        response.json().then((idObject) => {
+                            _subtask.weddingSubtaskId =
+                                idObject.WEDDINGSUBTASKID;
+                            _subtasks.push(_subtask);
+                            setSubtasks(_subtasks);
+                            setSubtaskDialog(false);
+                            toast.current.show({
+                                severity: "success",
+                                summary: "Successful",
+                                detail: "Subtask Created",
+                                life: 3000,
+                            });
                         });
-                    });
-                }
-            );
+                    }
+                );
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create subtask",
+                    life: 3000,
+                });
+            }
         }
     };
 
@@ -542,11 +596,20 @@ export default function WeddingChecklist() {
                 label="Cancel"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideNewTaskDialog}
             />
             <Button
                 label="Save"
                 icon="pi pi-check"
+                style={{
+                    color: "#ffffff",
+                    backgroundColor: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={handleNewTaskDialog}
             />
         </React.Fragment>
@@ -558,11 +621,20 @@ export default function WeddingChecklist() {
                 label="Cancel"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideTaskDialog}
             />
             <Button
                 label="Save"
                 icon="pi pi-check"
+                style={{
+                    color: "#ffffff",
+                    backgroundColor: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={handleTaskDialog}
             />
         </React.Fragment>
@@ -574,11 +646,20 @@ export default function WeddingChecklist() {
                 label="Cancel"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideSubtaskDialog}
             />
             <Button
                 label="Save"
                 icon="pi pi-check"
+                style={{
+                    color: "#ffffff",
+                    backgroundColor: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={handleSubtaskDialog}
             />
         </React.Fragment>
