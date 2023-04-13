@@ -22,9 +22,15 @@ const WeddingChecklistAPI = {
     },
 
     getWeddingChecklistByWeddingProjectId(projectId) {
-        return fetch(`${SERVER_PREFIX}/checklist/getByWeddingProject/${projectId}`);
+        return fetch(
+            `${SERVER_PREFIX}/checklist/getByWeddingProject/${projectId}`
+        );
     },
-    
+
+    getParentTaskByWeddingChecklist(checklistId) {
+        return fetch(`${SERVER_PREFIX}/tasks/${checklistId}`);
+    },
+
     createParentTask(data, checklistId) {
         return fetch(`${SERVER_PREFIX}/${checklistId}`, {
             headers: {
