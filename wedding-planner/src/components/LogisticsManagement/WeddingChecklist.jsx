@@ -47,7 +47,6 @@ export default function WeddingChecklist() {
     const [subtask, setSubtask] = useState(emptyParentTask.weddingSubtasks[0]);
     const [subtasks, setSubtasks] = useState([]);
     const [newParentTask, setNewParentTask] = useState(emptyParentTask);
-
     const [newSubtasks, setNewSubtasks] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const [expandedRows, setExpandedRows] = useState(null);
@@ -90,23 +89,6 @@ export default function WeddingChecklist() {
                 console.log(parentTasks);
             });
     };
-
-    // useEffect(() => {
-    //     reloadData();
-    //     updateTaskStatus(parentTask);
-    // }, []);
-
-    // const reloadData = () => {
-    //     WeddingChecklistAPI.getAllParentTasks()
-    //         .then((res) => {
-    //             console.log(res);
-    //             return res.json();
-    //         })
-    //         .then((parentData) => {
-    //             setParentTasks(parentData);
-    //             console.log(parentTasks);
-    //         });
-    // };
 
     // const updateTaskStatus = (parentTask) => {
     //     console.log("called");
@@ -383,6 +365,7 @@ export default function WeddingChecklist() {
 
     const openNewTaskDialog = () => {
         setNewParentTask(emptyParentTask);
+        setSubtask(emptyParentTask.weddingSubtasks);
         setNewTaskDialog(true);
         setSubmitted(false);
     };
