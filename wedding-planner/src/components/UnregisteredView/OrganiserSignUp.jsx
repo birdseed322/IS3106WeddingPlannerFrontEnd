@@ -33,7 +33,7 @@ function OrganiserSignUp() {
     e.preventDefault()
     if (password1 === password2) {
       setPassword(password1)
-      handleSubmit(e)
+      handleSubmit(e, password1)
     } else {
       toast.current.show({
         severity: 'error',
@@ -42,12 +42,12 @@ function OrganiserSignUp() {
       })
     }
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, password1) => {
     e.preventDefault()
     OrganiserAPI.createWeddingOrganiser({
       username,
       email,
-      password,
+      password: password1,
     })
       .then((weddingOrganiser) => {
         if (weddingOrganiser.status === 200) {
@@ -147,7 +147,7 @@ function OrganiserSignUp() {
               </label>
               <span className="px-4">
                 <InputText
-                  id="inputPassword"
+                  id="confirmInputPassword"
                   type="password"
                   required
                   value={password2}
