@@ -37,12 +37,20 @@ function OrganiserSignUp() {
       password,
     })
       .then((weddingOrganiser) => {
-        toast.current.show({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Account Created',
-        })
-        navigate('/login')
+        if (weddingOrganiser.status === 200) {
+          toast.current.show({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Account Created',
+          })
+          navigate('/login')
+        } else {
+          toast.current.show({
+            severity: 'error',
+            summary: 'Not Successful',
+            detail: 'Username or email has been taken',
+          })
+        }
       })
       .catch((error) => {
         toast.current.show({

@@ -50,7 +50,6 @@ function EditProfile() {
   const [visible, setVisible] = useState(false)
 
   const imageListRef = ref(storage, `wedding-organisers/${wId}/ProfilePic.png`)
-  const defaultImageUrl = ref(storage, `Default/Default.jpeg`)
   useEffect(() => {
     OrganiserAPI.getWeddingOrganiser(wId).then((weddingOrganiser) => {
       const { username, email, password } = weddingOrganiser

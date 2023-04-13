@@ -54,9 +54,6 @@ function ProjectDashboard() {
 
   useEffect(() => {
     reloadData()
-  }, [])
-
-  const reloadData = () => {
     WeddingProjectAPI.getWeddingProjectsByWeddingOrganiserId(orgId, true)
       .then((res) => res.json()) //change format to response
       .then((weddingProjects) => {
@@ -76,6 +73,9 @@ function ProjectDashboard() {
           detail: 'Project was not found',
         })
       })
+  }, [])
+
+  const reloadData = () => {
     WeddingProjectAPI.getWeddingProjectsByWeddingOrganiserId(orgId)
       .then((res) => res.json()) //change format to response
       .then((weddingProjects) => {
@@ -118,6 +118,7 @@ function ProjectDashboard() {
             summary: 'Successful',
             detail: 'Project created',
           })
+          reloadData()
         })
         .catch((error) => {
           console.log(error)
@@ -127,7 +128,6 @@ function ProjectDashboard() {
             detail: `Error creating project: ${error.message}`,
           })
         })
-      reloadData()
     }
 
     return (
