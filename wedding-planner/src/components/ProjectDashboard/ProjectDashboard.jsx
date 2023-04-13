@@ -73,7 +73,7 @@ function ProjectDashboard() {
           detail: 'Project was not found',
         })
       })
-  }, [])
+  }, [orgId])
 
   const reloadData = () => {
     WeddingProjectAPI.getWeddingProjectsByWeddingOrganiserId(orgId)

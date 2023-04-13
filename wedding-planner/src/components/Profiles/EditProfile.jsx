@@ -49,6 +49,7 @@ function EditProfile() {
   const [imageUrl, setImageUrl] = useState([])
   const [visible, setVisible] = useState(false)
 
+  const defaultImage = ref(storage, `testing/Default.jpeg`)
   const imageListRef = ref(storage, `wedding-organisers/${wId}/ProfilePic.png`)
   useEffect(() => {
     OrganiserAPI.getWeddingOrganiser(wId).then((weddingOrganiser) => {
@@ -61,9 +62,16 @@ function EditProfile() {
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    getDownloadURL(imageListRef).then((url) => {
-      setImageUrl(url)
-    })
+    getDownloadURL(imageListRef)
+      .then((url) => {
+        setImageUrl(url)
+      })
+      .catch((error) => {
+        console.error(`Unable to retrieve default image: ${error.message}`)
+        getDownloadURL(defaultImage).then((url) => {
+          setImageUrl(url)
+        })
+      })
   }, [])
 
   const uploadFile = () => {
@@ -72,7 +80,7 @@ function EditProfile() {
     uploadBytes(imageRef, imageUpload)
       .then(() => {
         getDownloadURL(imageRef).then((url) => {
-          setImageUrl([...imageUrl, url])
+          setImageUrl(url)
           setVisible(false)
         })
       })

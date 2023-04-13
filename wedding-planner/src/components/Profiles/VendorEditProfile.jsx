@@ -142,6 +142,7 @@ function VendorEditProfile() {
   const [addPhoto, setAddPhoto] = useState(false)
   const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/ProfilePic.png`)
   const imagesListRef1 = ref(storage, `Vendor/${vId}/Photos/`)
+  const defaultImage = ref(storage, `testing/Default.jpeg`)
   const itemTemplate = (item) => {
     return (
       <img src={item} alt={item} style={{ width: '100%', display: 'block' }} />
@@ -150,9 +151,16 @@ function VendorEditProfile() {
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    getDownloadURL(imageListRef).then((url) => {
-      setImageUrl(url)
-    })
+    getDownloadURL(imageListRef)
+      .then((url) => {
+        setImageUrl(url)
+      })
+      .catch((error) => {
+        console.error(`Unable to retrieve default image: ${error.message}`)
+        getDownloadURL(defaultImage).then((url) => {
+          setImageUrl(url)
+        })
+      })
   }, [])
 
   useEffect(() => {
@@ -190,7 +198,7 @@ function VendorEditProfile() {
     uploadBytes(imageRef, imageUpload)
       .then(() => {
         getDownloadURL(imageRef).then((url) => {
-          setImageUrl([...imageUrl, url])
+          setImageUrl(url)
           setVisible(false)
         })
       })

@@ -13,14 +13,22 @@ function VendorNavbar(props) {
   const [token, setToken] = useContext(LoginTokenContext)
   const vId = token.userId
   const [imageUrl, setImageUrl] = useState([])
+  const defaultImage = ref(storage, `testing/Default.jpeg`)
 
   const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/ProfilePic.png`)
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    getDownloadURL(imageListRef).then((url) => {
-      setImageUrl(url)
-    })
+    getDownloadURL(imageListRef)
+      .then((url) => {
+        setImageUrl(url)
+      })
+      .catch((error) => {
+        console.error(`Unable to retrieve default image: ${error.message}`)
+        getDownloadURL(defaultImage).then((url) => {
+          setImageUrl(url)
+        })
+      })
   }, [])
 
   const items = [

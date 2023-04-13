@@ -18,6 +18,7 @@ export default function ProjectNavbar(props) {
   const [token, setToken] = useContext(LoginTokenContext)
   const wId = token.userId
   const [imageUrl, setImageUrl] = useState([])
+  const defaultImage = ref(storage, `testing/Default.jpeg`)
 
   const imageListRef = ref(storage, `wedding-organisers/${wId}/ProfilePic.png`)
 
@@ -33,7 +34,10 @@ export default function ProjectNavbar(props) {
         setImageUrl(url)
       })
       .catch((error) => {
-        console.log(error)
+        console.error(`Unable to retrieve default image: ${error.message}`)
+        getDownloadURL(defaultImage).then((url) => {
+          setImageUrl(url)
+        })
       })
   }, [])
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
