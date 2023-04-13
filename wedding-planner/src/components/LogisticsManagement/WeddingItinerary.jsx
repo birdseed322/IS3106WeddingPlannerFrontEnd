@@ -138,6 +138,11 @@ export default function WeddingItinerary() {
 
         return index;
     };
+
+    const validateItinerary = (itinerary) => {
+        return itinerary.eventName.trim().length > 0;
+    };
+
     const handleItineraryDialog = (e) => {
         e.preventDefault();
         setSubmitted(true);
@@ -150,23 +155,26 @@ export default function WeddingItinerary() {
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
-        if (itinerary.weddingItineraryId != null) {
-            const index = findIndexById(itinerary.weddingItineraryId);
-            WeddingItineraryAPI.updateItinerary(parsedCopy).then(() => {
-                _itineraries[index] = _itinerary;
-                setItineraries(_itineraries);
-                setItineraryDialog(false);
-                reloadData();
-                toast.current.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: "Itinerary Updated",
-                    life: 3000,
+        if (validateItinerary(itinerary)) {
+            if (itinerary.weddingItineraryId != null) {
+                const index = findIndexById(itinerary.weddingItineraryId);
+                WeddingItineraryAPI.updateItinerary(parsedCopy).then(() => {
+                    _itineraries[index] = _itinerary;
+                    setItineraries(_itineraries);
+                    setItineraryDialog(false);
+                    reloadData();
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Successful",
+                        detail: "Itinerary Updated",
+                        life: 3000,
+                    });
                 });
-            });
-        } else {
-            WeddingItineraryAPI.createNewItinerary(parsedCopy, projectId).then(
-                (response) => {
+            } else {
+                WeddingItineraryAPI.createNewItinerary(
+                    parsedCopy,
+                    projectId
+                ).then((response) => {
                     response.json().then((idObject) => {
                         _itinerary.weddingItineraryId =
                             idObject.WEDDINGITINERARYID;
@@ -180,8 +188,8 @@ export default function WeddingItinerary() {
                             life: 3000,
                         });
                     });
-                }
-            );
+                });
+            }
         }
     };
 
@@ -224,6 +232,10 @@ export default function WeddingItinerary() {
                 label="No"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideDeleteItineraryDialog}
             />
             <Button
@@ -241,11 +253,20 @@ export default function WeddingItinerary() {
                 label="Cancel"
                 icon="pi pi-times"
                 outlined
+                style={{
+                    color: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={hideItineraryDialog}
             />
             <Button
                 label="Save"
                 icon="pi pi-check"
+                style={{
+                    color: "#ffffff",
+                    backgroundColor: "#f561b0",
+                    border: "#f561b0",
+                }}
                 onClick={handleItineraryDialog}
             />
         </React.Fragment>
@@ -349,7 +370,7 @@ export default function WeddingItinerary() {
                 visible={itineraryDialog}
                 style={{ width: "32rem" }}
                 breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-                header="itinerary Details"
+                header="Itinerary Details"
                 modal
                 className="p-fluid"
                 footer={itineraryDialogFooter}
