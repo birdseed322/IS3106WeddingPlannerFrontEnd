@@ -9,50 +9,46 @@ import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
 import { useParams } from "react-router-dom";
+import heartyLogo from "../../images/favicon-heart-3.png";
 
 export default function GuestViewNavbar() {
-    // array of MenuItems
-    // see https://www.primefaces.org/primereact-v8/menumodel/
-    const { weddingId, guestId } = useParams();
-    const items = [
-        {
-            label: "Seating Plan",
-            icon: "pi pi-fw pi-file",
-            url: "/guestview/" + weddingId + "/seatplan",
-            className: "menuItemStyle",
-        },
-        {
-            label: "Wedding Itinerary",
-            icon: "pi pi-fw pi-file",
-            url: "/guestview/" + weddingId + "/itinerary",
-            className: "menuItemStyle",
-        },
-    ];
-    const end = (
-        // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
-        <></>
-    );
-    const start = (
-        <>
-            <Link to="/" className="noUnderline">
-                <span>
-                    <Button
-                        icon="pi pi-heart"
-                        rounded
-                        size="large"
-                        style={{
-                            backgroundColor: "#f561b0",
-                            border: "#f561b0",
-                        }}
-                    />
-                </span>
-            </Link>
-        </>
-    );
-    // height="40" className="mr-2"
-    //console.log(items)
-    // since we're only returning Menubar anyway, no need to wrap around a div or <>
-    return <Menubar id="navbar" model={items} start={start} end={end} />;
+  // array of MenuItems
+  // see https://www.primefaces.org/primereact-v8/menumodel/
+  const { weddingId, guestId } = useParams();
+  const items = [
+    {
+      label: "Seating Plan",
+      icon: "pi pi-fw pi-file",
+      url: "/guestview/" + weddingId + "/seatplan",
+      className: "menuItemStyle",
+    },
+    {
+      label: "Wedding Itinerary",
+      icon: "pi pi-fw pi-file",
+      url: "/guestview/" + weddingId + "/itinerary",
+      className: "menuItemStyle",
+    },
+  ];
+  const end = (
+    // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
+    <></>
+  );
+  const start = (
+    <>
+      <>
+        <Link to="/" className="noUnderline">
+          <span className="flex my-1 mx-4 align-items-center">
+            <img src={heartyLogo} className="mr-2" alt="hearty logo" />
+            <h1 className="inline h-min text-3xl">Hearty</h1>
+          </span>
+        </Link>
+      </>
+    </>
+  );
+  // height="40" className="mr-2"
+  //console.log(items)
+  // since we're only returning Menubar anyway, no need to wrap around a div or <>
+  return <Menubar id="navbar" model={items} start={start} end={end} />;
 }
 
 // example items

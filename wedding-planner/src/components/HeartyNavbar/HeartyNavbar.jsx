@@ -8,6 +8,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Link, useParams } from "react-router-dom";
 import { LoginTokenContext } from "../../context/LoginTokenContext";
+import heartyLogo from "../../images/favicon-heart-3.png";
 
 function HeartyNavbar(props) {
   // array of MenuItems
@@ -118,20 +119,13 @@ function HeartyNavbar(props) {
   );
   const start = (
     <>
-      <Link to="/" className="noUnderline">
-        <span>
-          <Button
-            icon="pi pi-heart"
-            rounded
-            size="large"
-            style={{
-              backgroundColor: "#f561b0",
-              border: "#f561b0",
-            }}
-          />
-        </span>
-      </Link>
-    </>
+    <Link to="/" className="noUnderline">
+      <span className="flex my-1 mx-4 align-items-center">
+        <img src={heartyLogo} className="mr-2" alt="hearty logo" />
+        <h1 className="inline h-min text-3xl">Hearty</h1>
+      </span>
+    </Link>
+  </>
   );
   // height="40" className="mr-2"
   //console.log(items)
