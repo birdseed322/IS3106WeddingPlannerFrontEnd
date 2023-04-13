@@ -417,7 +417,7 @@ export default function ProjectOverview() {
                                                     {" / "}${projectVendorsPaidCostAndTotalCost[1]}
                                                 </b>
                                             </p>
-                                            <Card
+                                            {projectVendorsPaidCostAndTotalCost[1] != 0 && (<Card
                                                 className="flex justify-content-center"
                                                 title="Cost Breakdown By Vendor"
                                             >
@@ -426,7 +426,8 @@ export default function ProjectOverview() {
                                                     data={vendorsCostPieChartData}
                                                     options={{ animation: true }}
                                                 />
-                                            </Card>
+                                            </Card>)}
+                                            
                                     <div className="grid grid-nogutter">
                                         <Link className="flex justify-content-center col-12 noUnderline" to="requests">
                                             <Button
