@@ -44,14 +44,17 @@ function SpecificRequestPage() {
     fetch(apiUrl).then((res) => {
       res.json().then((data) => {
         const wedDate = new Date(Date.parse(data.requestDate));
-        const start = new Date(Date.parse(data.requestStart));
-        data.requestStart = new Date(
-          wedDate.getFullYear(),
-          wedDate.getMonth(),
-          wedDate.getDate(),
-          start.getHours(),
-          start.getMinutes()
-        ).toLocaleString("en-SG", { hour: "2-digit", minute: "2-digit" });
+        if (data.requestStart) {
+          const start = new Date(Date.parse(data.requestStart));
+          data.requestStart = new Date(
+            wedDate.getFullYear(),
+            wedDate.getMonth(),
+            wedDate.getDate(),
+            start.getHours(),
+            start.getMinutes()
+          ).toLocaleString("en-SG", { hour: "2-digit", minute: "2-digit" });
+        }
+
         if (data.requestEnd) {
           const end = new Date(Date.parse(data.requestEnd));
           data.requestEnd = new Date(
@@ -276,11 +279,15 @@ function SpecificRequestPage() {
                   <i className="pi pi-calendar mr-2"></i>
                   {request.requestDate}
                 </p>
-                <h3>Start Time</h3>
-                <p>
-                  <i className="pi pi-clock mr-2"></i>
-                  {request.requestStart}
-                </p>
+                {request.requestStart ? (
+                  <>
+                    <h3>Start Time</h3>
+                    <p>
+                      <i className="pi pi-clock mr-2"></i>
+                      {request.requestStart}
+                    </p>
+                  </>
+                ) : null}
                 {request.requestEnd ? (
                   <>
                     <h3>End Time</h3>
@@ -290,11 +297,15 @@ function SpecificRequestPage() {
                     </p>
                   </>
                 ) : null}
-                <h3>Venue</h3>
-                <p>
-                  <i className="pi pi-map-marker mr-2"></i>
-                  {request.venue}
-                </p>
+                {request.venue ? (
+                  <>
+                    <h3>Venue</h3>
+                    <p>
+                      <i className="pi pi-map-marker mr-2"></i>
+                      {request.venue}
+                    </p>
+                  </>
+                ) : null}
               </TabPanel>
               <TabPanel header="Actions">
                 {<h3>Status: {actionToBeTaken}</h3>}

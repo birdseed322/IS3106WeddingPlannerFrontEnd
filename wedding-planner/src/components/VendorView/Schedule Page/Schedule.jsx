@@ -83,7 +83,8 @@ function Schedule() {
       <VendorNavbar />
       <>
         <h3
-          className="text-center text-2xl m-1 w-2 m-auto cursor-pointer"
+          className="text-center text-2xl my-3 w-2 m-auto cursor-pointer"
+          style={{fontFamily:"Tahoma"}}
           onClick={() => setCalendarVisible(true)}
         >
           {startDate.toLocaleString("default", {
