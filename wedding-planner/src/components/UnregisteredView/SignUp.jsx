@@ -6,15 +6,16 @@ import { Button } from 'primereact/button'
 import backgroundImage from './Background/kinfolk-wedding-20.webp'
 
 function SignUp() {
-  const styles = {
+  /*const styles = {
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat',
     height: '100%',
-  }
+  }*/
   return (
-    <div style={styles}>
+    //<div style={styles}>
+    <div>
       <PublicHeartyNavbar />
       <div className="flex justify-content-center pt-8 mt-8">
         <Card
@@ -55,8 +56,6 @@ function SignUp() {
           </div>
         </Card>
       </div>
-      <br />
-      <br />
       <br />
       <br />
       <br />

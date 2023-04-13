@@ -39,6 +39,20 @@ function VendorSignUp() {
   const navigate = useNavigate()
   const toast = useRef(null)
 
+  const checkingPassword = (e) => {
+    e.preventDefault()
+    if (password1 === password2) {
+      setPassword(password1)
+      handleSubmit(e)
+    } else {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Not Successful',
+        detail: 'Passwords are not the same',
+      })
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     vendorAPI
@@ -88,6 +102,8 @@ function VendorSignUp() {
   const [instagramUrl, setInstagramUrl] = useState('')
   const [facebookUrl, setFacebookUrl] = useState('')
   const [whatsappUrl, setWhatsappUrl] = useState('')
+  const [password1, setPassword1] = useState('')
+  const [password2, setPassword2] = useState('')
   return (
     <div>
       <PublicHeartyNavbar />
@@ -95,13 +111,13 @@ function VendorSignUp() {
         <Card
           style={{
             minWidth: '300px',
-            maxWidth: '500px',
+            maxWidth: '700px',
             minHeight: '500px',
             maxHeight: '900px',
           }}
         >
           <h3 className="flex justify-content-center">Vendor Sign Up</h3>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={checkingPassword}>
             <div className="field pt-1 pr-5">
               <label
                 htmlFor="name"
@@ -111,7 +127,7 @@ function VendorSignUp() {
               >
                 Username
               </label>
-              <span className="px-5">
+              <span className="px-7">
                 <InputText
                   className="px-5"
                   id="inputUsername"
@@ -122,10 +138,10 @@ function VendorSignUp() {
               </span>
             </div>
             <div className="field pt-2">
-              <label htmlFor="email" className="pl-3 pr-8">
+              <label htmlFor="email" className="pl-3 pr-5">
                 Email
               </label>
-              <span>
+              <span className="px-8">
                 <InputText
                   className="px-5"
                   id="inputEmail"
@@ -135,17 +151,33 @@ function VendorSignUp() {
                 />
               </span>
             </div>
-            <div className="field pt-2">
-              <label htmlFor="password" className="pl-3 ">
+            <div className="field pt-2 px-3">
+              <label htmlFor="password" className="pr-4">
                 Password
               </label>
-              <span className="px-6">
+              <span className="px-7">
                 <InputText
                   className="px-5"
                   id="inputPassword"
+                  type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={password1}
+                  onChange={(e) => setPassword1(e.target.value)}
+                />
+              </span>
+            </div>
+            <div className="field pt-2">
+              <label htmlFor="password" className="pl-3">
+                Confirm Password
+              </label>
+              <span className="px-4">
+                <InputText
+                  className="px-5"
+                  id="inputPassword"
+                  type="password"
+                  required
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
                 />
               </span>
             </div>
@@ -153,7 +185,7 @@ function VendorSignUp() {
               <label htmlFor="description" className="pl-3 pr-1">
                 Description
               </label>
-              <span className="px-5">
+              <span className="px-7">
                 <InputText
                   className="px-5"
                   id="inputDescription"
@@ -167,7 +199,7 @@ function VendorSignUp() {
               <label htmlFor="websiteUrl" className="pl-3 pr-1">
                 Website Url
               </label>
-              <span className="px-5">
+              <span className="px-7">
                 <InputText
                   className="px-5"
                   id="inputWebsiteUrl"
@@ -181,7 +213,7 @@ function VendorSignUp() {
               <label htmlFor="instagramUrl" className="pl-3 pr-1">
                 Instagram Url
               </label>
-              <span className="px-3">
+              <span className="px-6">
                 <InputText
                   className="px-5"
                   id="inputInstagram"
@@ -195,7 +227,7 @@ function VendorSignUp() {
               <label htmlFor="facebook" className="pl-3 pr-2">
                 Facebook Url
               </label>
-              <span className="px-3">
+              <span className="px-6">
                 <InputText
                   className="px-5"
                   id="inputFacebook"
@@ -209,7 +241,7 @@ function VendorSignUp() {
               <label htmlFor="whatsapp" className="pl-3 pr-1">
                 WhatsApp Url
               </label>
-              <span className="px-3">
+              <span className="px-6">
                 <InputText
                   className="px-5"
                   id="inputWhatsapp"
@@ -221,7 +253,7 @@ function VendorSignUp() {
             </div>
             <div className="flex px-3 pt-2">
               <p style={{ lineHeight: '2.5em' }}>Category Type </p>
-              <div className="px-3">
+              <div className="px-6">
                 <Dropdown
                   label="categoryType"
                   options={categoryTypeItems}
