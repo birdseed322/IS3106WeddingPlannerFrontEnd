@@ -17,19 +17,22 @@ export default function ProjectNavbar(props) {
   const wId = token.userId
   const [imageUrl, setImageUrl] = useState([])
 
-  const imageListRef = ref(storage, `wedding-organisers/${wId}`)
+  const imageListRef = ref(storage, `wedding-organisers/${wId}/ProfilePic.png`)
+
+  function handleSearch() {
+    props.onSearch(searchTerm)
+    setSearchTerm('')
+  }
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    listAll(imageListRef).then((response) => {
-      response.items.forEach((item) => {
-        // console.log(item);
-        //setImageUrls((prev) => [...prev, item]);
-        getDownloadURL(item).then((url) => {
-          setImageUrl(url)
-        })
+    getDownloadURL(imageListRef)
+      .then((url) => {
+        setImageUrl(url)
       })
-    })
+      .catch((error) => {
+        console.log(error)
+      })
   }, [])
   // since we're only returning Menubar anyway, no need to wrap around a div or <>
   return (
@@ -51,7 +54,7 @@ export default function ProjectNavbar(props) {
         <span className="p-input  px-2.5">
           <InputText
             value={searchTerm}
-            onChange={(e) => props.onSearch(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <Button
             icon="pi pi-search"
@@ -59,6 +62,7 @@ export default function ProjectNavbar(props) {
               color: '#f561b0',
             }}
             className="p-button-text"
+            onClick={handleSearch}
           />
         </span>
       </div>

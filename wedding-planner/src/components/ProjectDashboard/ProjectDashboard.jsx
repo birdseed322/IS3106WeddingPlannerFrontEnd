@@ -13,6 +13,7 @@ import { InputText } from 'primereact/inputtext'
 import { InputTextarea } from 'primereact/inputtextarea'
 import moment from 'moment'
 import { Toast } from 'primereact/toast'
+import { Calendar } from 'primereact/calendar'
 
 function ProjectDashboard() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,7 +26,6 @@ function ProjectDashboard() {
   const [token, setToken] = useContext(LoginTokenContext)
   const orgId = token.userId
   const [showCard, setShowCard] = useState(false)
-
   const [uncompletedProjects, setUncompletedProjects] = useState([])
   const [completedProjects, setCompletedProjects] = useState([])
   const dateProcessor = (dateString) => {
@@ -100,6 +100,7 @@ function ProjectDashboard() {
   function AddProject() {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
+    const [weddingDate, setWeddingDate] = useState('')
 
     const navigate = useNavigate()
 
@@ -108,6 +109,7 @@ function ProjectDashboard() {
       WeddingProjectAPI.createWeddingProject(orgId, {
         name,
         description,
+        weddingDate,
       })
         .then((weddingProject) => {
           setShowCard(false)
@@ -116,16 +118,16 @@ function ProjectDashboard() {
             summary: 'Successful',
             detail: 'Project created',
           })
-          reloadData()
         })
         .catch((error) => {
           console.log(error)
           toast.current.show({
             severity: 'error',
             summary: 'UnSuccessful',
-            detail: 'Project not created',
+            detail: `Error creating project: ${error.message}`,
           })
         })
+      reloadData()
     }
 
     return (
@@ -165,10 +167,22 @@ function ProjectDashboard() {
               <InputTextarea
                 className="px-2"
                 id="inputDescription"
+                required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
             </span>
+          </div>
+          <div className="field">
+            <label htmlFor="weddingDate" className="px-3">
+              Wedding Date
+            </label>
+            <Calendar
+              dateFormat="dd/mm/yy"
+              required
+              value={weddingDate}
+              onChange={(e) => setWeddingDate(e.target.value)}
+            />
           </div>
           <span className="flex justify-content-center pb-3">
             <Button
@@ -181,36 +195,36 @@ function ProjectDashboard() {
     )
   }
 
-    function handleShowCard() {
-        setShowCard(true);
-    }
+  function handleShowCard() {
+    setShowCard(true)
+  }
 
-    const header = (
-        <div
-            className="table-header"
-            style={{
-                backgroundColor: "#f561b0",
-                color: "#ffffff",
-                borderColor: "#f561b0",
-                padding: "15px",
-            }}
-        >
-            Current Projects
-        </div>
-    );
-    const header2 = (
-        <div
-            className="table-header"
-            style={{
-                backgroundColor: "#f561b0",
-                color: "#ffffff",
-                borderColor: "#f561b0",
-                padding: "15px",
-            }}
-        >
-            Completed Projects
-        </div>
-    );
+  const header = (
+    <div
+      className="table-header"
+      style={{
+        backgroundColor: '#f561b0',
+        color: '#ffffff',
+        borderColor: '#f561b0',
+        padding: '15px',
+      }}
+    >
+      Current Projects
+    </div>
+  )
+  const header2 = (
+    <div
+      className="table-header"
+      style={{
+        backgroundColor: '#f561b0',
+        color: '#ffffff',
+        borderColor: '#f561b0',
+        padding: '15px',
+      }}
+    >
+      Completed Projects
+    </div>
+  )
 
   const filteredData =
     searchTerm === ''

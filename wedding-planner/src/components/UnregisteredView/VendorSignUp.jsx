@@ -63,11 +63,6 @@ function VendorSignUp() {
       })
       .catch((error) => {
         console.log(error)
-        toast.current.show({
-          severity: 'error',
-          summary: 'Not Successful',
-          detail: 'Account Not Created',
-        })
       })
   }
 
@@ -226,6 +221,7 @@ function VendorSignUp() {
             </div>
             <span>
               <div className="flex justify-content-center pt-4">
+                <Toast ref={toast} />
                 <Button
                   label="Sign Up"
                   style={{ backgroundColor: '#f561b0', border: '#f561b0' }}

@@ -5,6 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Button } from 'primereact/button'
 import { Card } from 'primereact/card'
 import { Toast } from 'primereact/toast'
+import backgroundImage from './Background/kinfolk-wedding-20.webp'
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
@@ -16,6 +17,15 @@ function Contact() {
   const onCopyText1 = () => {
     setTimeout(() => {}, 100)
   }
+
+  /*const styles = {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
+    height: '100%',
+  }
+  */
 
   const toast = useRef(null)
 
@@ -156,6 +166,8 @@ function Contact() {
           </div>
         </Card>
       </div>
+      <br />
+      <br />
     </div>
   )
 }
