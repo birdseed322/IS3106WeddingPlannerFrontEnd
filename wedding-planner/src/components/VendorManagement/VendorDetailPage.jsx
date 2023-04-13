@@ -111,8 +111,9 @@ const VendorDetailPage = () => {
         .then((data) => {
           const request = {
             quotationURL: "testing",
-            quotedPrice: 0,
-            requestDate: data.weddingDate,
+            // quotedPrice: 0,
+            // requestDate: data.weddingDate,
+            requestDate: new Date(),
             requestDetails: details,
           };
           VendorAPI.createRequest(request, projectId, vendor.userId);

@@ -59,7 +59,7 @@ function WeddingOrganiserRequest() {
   const quotedPriceTemplate = (rowData) => {
     if (!rowData.isAccepted) {
       return null;
-   } else if (rowData.quotedPrice) {
+    } else if (rowData.quotedPrice) {
       return rowData.quotedPrice.toLocaleString("en-US", {
         style: "currency",
         currency: "SGD",
@@ -79,12 +79,13 @@ function WeddingOrganiserRequest() {
     }
   };
   const approvalStatus = (rowData) => {
-    if (rowData.isAccepted) {
-      return <Tag value="Approved" severity="success" />;
+    console.log(rowData.isAccepted);
+    if (rowData.isAccepted == null) {
+      return <Tag value="Pending" severity="info" />;
     } else if (!rowData.isAccepted) {
       return <Tag value="Rejected" severity="danger" />;
     } else {
-      return "Pending";
+      return <Tag value="Approved" severity="success" />;
     }
   };
 
@@ -124,7 +125,7 @@ function WeddingOrganiserRequest() {
         placeholder="Select One"
         className="p-column-filter"
         showClear
-        style={{ minWidth: "12rem" }}
+        style={{ minWidth: "6rem" }}
       />
     );
   };
@@ -132,7 +133,9 @@ function WeddingOrganiserRequest() {
   const approvalStatusRowFilterTemplate = (options) => {
     return (
       <Dropdown
-        value={options.value ? "Approved" : options.value === null ? "" : "Rejected"}
+        value={
+          options.value ? "Approved" : options.value === null ? "" : "Rejected"
+        }
         options={["Approved", "Rejected"]}
         onChange={(e) =>
           options.filterApplyCallback(e.value === "Approved" ? true : false)
@@ -141,17 +144,19 @@ function WeddingOrganiserRequest() {
         placeholder="Select One"
         className="p-column-filter"
         showClear
-        style={{ minWidth: "12rem" }}
+        style={{ minWidth: "6rem" }}
       />
     );
   };
 
   const approvalStatusItemTemplate = (option) => {
     return (
-      <Tag value={option} severity={option === "Approved" ? "success" : "danger" } />
+      <Tag
+        value={option}
+        severity={option === "Approved" ? "success" : "danger"}
+      />
     );
   };
-
 
   const vendorUsernameRowFilterTemplate = (options) => {
     return (
@@ -160,7 +165,7 @@ function WeddingOrganiserRequest() {
         onChange={(e) => options.filterApplyCallback(e.value)}
         placeholder="Search name"
         className="p-column-filter"
-        style={{ minWidth: "12rem" }}
+        style={{ minWidth: "14rem" }}
       />
     );
   };
@@ -193,7 +198,7 @@ function WeddingOrganiserRequest() {
         placeholder="Any"
         className="p-column-filter"
         maxSelectedLabels={0}
-        style={{ minWidth: "14rem" }}
+        style={{ minWidth: "10rem" }}
       />
     );
   };
@@ -203,9 +208,9 @@ function WeddingOrganiserRequest() {
       <InputNumber
         value={options.value}
         onChange={(e) => options.filterApplyCallback(e.value)}
-        placeholder="Search requestId"
+        placeholder="Id"
         className="p-column-filter"
-        style={{ minWidth: "12rem" }}
+        style={{ minWidth: "3rem" }}
       />
     );
   };
@@ -236,7 +241,7 @@ function WeddingOrganiserRequest() {
           field="requestId"
           header="Request ID"
           sortable
-          style={{ width: "14%" }}
+          style={{width:"10%"}}
           filter
           filterElement={requestIdRowFilterTemplate}
           filterPlaceholder="Search by request Id"
@@ -246,7 +251,7 @@ function WeddingOrganiserRequest() {
           header="Approval Status"
           body={approvalStatus}
           sortable
-          style={{ width: "14%" }}
+          style={{ width: "10%" }}
           filter
           filterField="isAccepted"
           filterElement={approvalStatusRowFilterTemplate}
@@ -256,7 +261,7 @@ function WeddingOrganiserRequest() {
           header="Quoted Price"
           body={quotedPriceTemplate}
           sortable
-          style={{ width: "14%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="transaction.isPaid"
@@ -267,14 +272,14 @@ function WeddingOrganiserRequest() {
           filter
           filterElement={paymentRowFilterTemplate}
           showFilterMenu={false}
-          style={{ width: "14%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="requestDate"
           header="Creation Date"
           sortable
           body={dateBodyTemplate}
-          style={{ width: "14%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field="category"
@@ -285,12 +290,12 @@ function WeddingOrganiserRequest() {
           filter
           showFilterMenu={false}
           filterElement={categoryRowFilterTemplate}
-          style={{ width: "14%" }}
+          style={{ width: "10%" }}
         ></Column>
         <Column
           field=""
           header="Action"
-          style={{ width: "20%" }}
+          style={{ width: "10%" }}
           body={pendingActionTemplate}
         ></Column>
       </DataTable>

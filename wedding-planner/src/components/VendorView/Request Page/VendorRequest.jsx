@@ -35,6 +35,9 @@ function VendorRequest() {
       token.userId;
     fetch(apiUrl).then((res) => {
       res.json().then((data) => {
+        data = data.filter((e) => {
+          return (new Date(e.weddingProject.weddingDate.replace("[UTC]", "")) > new Date());
+        });
         let pendingReq = [];
         let acceptedReq = [];
         for (let req in data) {
