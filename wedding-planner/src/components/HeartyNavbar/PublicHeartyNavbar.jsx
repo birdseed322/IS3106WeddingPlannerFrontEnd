@@ -2,35 +2,36 @@
 // import Nav from "react-bootstrap/Nav";
 // import Navbar from "react-bootstrap/Navbar";
 // import NavDropdown from "react-bootstrap/NavDropdown";
-import React from 'react'
-import { Menubar } from 'primereact/menubar'
-import { InputText } from 'primereact/inputtext'
-import { Button } from 'primereact/button'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Menubar } from "primereact/menubar";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Link } from "react-router-dom";
+import heartyLogo from "../../images/favicon-heart-3.png";
 
 export default function PublicHeartyNavbar(props) {
   // array of MenuItems
   // see https://www.primefaces.org/primereact-v8/menumodel/
   const items = [
     {
-      label: 'Home',
-      icon: 'pi pi-home',
-      url: '/',
-      className: 'menuItemStyle',
+      label: "Home",
+      icon: "pi pi-home",
+      url: "/",
+      className: "menuItemStyle",
     },
     {
-      label: 'About Us',
-      icon: 'pi pi-fw pi-users',
-      url: '/aboutuspage',
-      className: 'menuItemStyle',
+      label: "About Us",
+      icon: "pi pi-fw pi-users",
+      url: "/aboutuspage",
+      className: "menuItemStyle",
     },
     {
-      label: 'Contact',
-      icon: 'pi pi-phone',
-      url: '/contactpage',
-      className: 'menuItemStyle',
+      label: "Contact",
+      icon: "pi pi-phone",
+      url: "/contactpage",
+      className: "menuItemStyle",
     },
-  ]
+  ];
   const end = (
     // for border attribute, need to specify pixel, pattern  & colour(eg. border: 1px solid black)
     <>
@@ -38,34 +39,30 @@ export default function PublicHeartyNavbar(props) {
         <Button
           label="Sign Up"
           style={{
-            backgroundColor: '#ffffff',
-            border: '#ffffff',
-            color: '#000000',
+            backgroundColor: "#ffffff",
+            border: "#ffffff",
+            color: "#000000",
           }}
-        />{' '}
+        />{" "}
       </Link>
 
       <Link to="/login" className="p-2 noUnderline">
         <Button
           label="Login"
-          style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
-        />{' '}
+          style={{ backgroundColor: "#f561b0", border: "#f561b0" }}
+        />{" "}
       </Link>
     </>
-  )
+  );
   const start = (
     <>
       <Link to="/login" className="noUnderline">
-        <span>
-          <Button
-            icon="pi pi-heart"
-            rounded
-            size="large"
-            style={{ backgroundColor: '#f561b0', border: '#f561b0' }}
-          />
+        <span className="flex my-1 mx-4 align-items-center">
+          <img src={heartyLogo} className="mr-2" alt="hearty logo" />
+          <h1 className="inline h-min text-3xl">Hearty</h1>
         </span>
       </Link>
     </>
-  )
-  return <Menubar id="navbar" model={items} start={start} end={end} />
+  );
+  return <Menubar id="navbar" model={items} start={start} end={end} />;
 }
