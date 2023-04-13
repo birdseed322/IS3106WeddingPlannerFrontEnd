@@ -1,13 +1,13 @@
-import React, { useRef, useContext, useState, useEffect } from 'react'
-import { Menubar } from 'primereact/menubar'
-import heartyLogo from '../../../images/favicon-heart-3.png'
-import { InputText } from 'primereact/inputtext'
-import { Button } from 'primereact/button'
-import { Link } from 'react-router-dom'
-import { LoginTokenContext } from '../../../context/LoginTokenContext'
-import { getDownloadURL, listAll, ref } from 'firebase/storage'
-import { storage } from '../../firebase'
-import { Avatar } from 'primereact/avatar'
+import React, { useRef, useContext, useState, useEffect } from 'react';
+import { Menubar } from 'primereact/menubar';
+import heartyLogo from '../../../images/favicon-heart-3.png';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Link } from 'react-router-dom';
+import { LoginTokenContext } from '../../../context/LoginTokenContext';
+import { getDownloadURL, listAll, ref } from 'firebase/storage';
+import { storage } from '../../firebase';
+import { Avatar } from 'primereact/avatar';
 
 function VendorNavbar(props) {
   const [token, setToken] = useContext(LoginTokenContext)
