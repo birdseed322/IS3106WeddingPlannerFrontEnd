@@ -7,6 +7,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { classNames } from "primereact/utils";
 import { useForm, Controller } from "react-hook-form";
 import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
 
 //This is a sample of the component that is called by the Route component in EndPoints.jsx. This is almost like the page.
 //When you want to create a new page, just create a new folder in the components directory and add the components related to that page into that folder, before adding the Route component in EndPoints.jsx.
@@ -39,6 +40,7 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
         weddingDate: dateProcessor(currentProject.weddingDate), // we use ? here to avoid error from calling a method of undefined
         weddingStartTime: dateProcessor(currentProject.weddingStartTime),
         weddingEndTime: dateProcessor(currentProject.weddingEndTime),
+        completed: currentProject.completed
     };
     const {
         control,
@@ -219,6 +221,23 @@ function EditProject({ currentProject, setCurrentProject, weddingProjectAPI }) {
                                 render={({ field, fieldState }) => <Calendar {...field} timeOnly />}
                             />
                     </div>
+                    
+                    <div className="field col-6">
+                        <label htmlFor="description" className="px-3">
+                            Wedding Completed?{" "}
+                        </label>
+                    </div>
+                    <div className="field col-6">
+                            <Controller
+                                name="completed"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Checkbox checked={field.value} id={field.name}
+                                    onChange={(e) => field.onChange(e.target.checked)} {...field} />
+                                )}
+                            />
+                    </div>
+                    
                     <div className="field col-4">
                     </div>
                     <div className="field col-4">

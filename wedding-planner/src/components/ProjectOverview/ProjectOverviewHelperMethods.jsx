@@ -154,10 +154,14 @@ export const fetchAndSetVendoTransObjectList = async (requestsList, setVendoTran
 export const computeAndSetVendorsPaidAndTotalCost = (vendoTransObjectData, setData) => {
     const paidAndTotalCost = [0, 0];
 
-    vendoTransObjectData.forEach(({ vendor, transaction }) => {
-        paidAndTotalCost[1] += transaction.totalPrice;
-        if (transaction.isPaid) {
-            paidAndTotalCost[0] += transaction.totalPrice;
+    vendoTransObjectData.forEach(({ transaction }) => {
+        // console.log('logging transaction')
+        // console.log(transaction);
+        if (transaction?.totalPrice != undefined) {
+            paidAndTotalCost[1] += transaction.totalPrice;
+            if (transaction.isPaid) {
+                paidAndTotalCost[0] += transaction.totalPrice;
+            }
         }
     });
 
@@ -169,8 +173,12 @@ export const generateVendorCostPieChartData = (vendoTransObjectData, setPieChart
     const transactionCostArray = [];
 
     vendoTransObjectData.forEach((pairObject) => {
-        vendorUsernameArray.push(pairObject.vendor.username);
-        transactionCostArray.push(pairObject.transaction.totalPrice);
+        if (
+            pairObject.transaction?.totalPrice != undefined
+        ) {
+            vendorUsernameArray.push(pairObject.vendor.username);
+            transactionCostArray.push(pairObject.transaction.totalPrice);
+        }
     });
 
     const pieChartData = {
