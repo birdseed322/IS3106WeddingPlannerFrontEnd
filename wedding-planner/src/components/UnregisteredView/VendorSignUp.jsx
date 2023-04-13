@@ -39,20 +39,6 @@ function VendorSignUp() {
   const navigate = useNavigate()
   const toast = useRef(null)
 
-  const checkingPassword = (e) => {
-    e.preventDefault()
-    if (password1 === password2) {
-      setPassword(password1)
-      handleSubmit(e)
-    } else {
-      toast.current.show({
-        severity: 'error',
-        summary: 'Not Successful',
-        detail: 'Passwords are not the same',
-      })
-    }
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault()
     vendorAPI
@@ -102,8 +88,7 @@ function VendorSignUp() {
   const [instagramUrl, setInstagramUrl] = useState('')
   const [facebookUrl, setFacebookUrl] = useState('')
   const [whatsappUrl, setWhatsappUrl] = useState('')
-  const [password1, setPassword1] = useState('')
-  const [password2, setPassword2] = useState('')
+
   return (
     <div>
       <PublicHeartyNavbar />
@@ -117,7 +102,7 @@ function VendorSignUp() {
           }}
         >
           <h3 className="flex justify-content-center">Vendor Sign Up</h3>
-          <form onSubmit={checkingPassword}>
+          <form onSubmit={handleSubmit}>
             <div className="field pt-1 pr-5">
               <label
                 htmlFor="name"
@@ -161,23 +146,8 @@ function VendorSignUp() {
                   id="inputPassword"
                   type="password"
                   required
-                  value={password1}
-                  onChange={(e) => setPassword1(e.target.value)}
-                />
-              </span>
-            </div>
-            <div className="field pt-2">
-              <label htmlFor="password" className="pl-3">
-                Confirm Password
-              </label>
-              <span className="px-4">
-                <InputText
-                  className="px-5"
-                  id="inputPassword"
-                  type="password"
-                  required
-                  value={password2}
-                  onChange={(e) => setPassword2(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </span>
             </div>
