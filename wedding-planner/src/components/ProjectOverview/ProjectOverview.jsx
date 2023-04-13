@@ -319,20 +319,16 @@ export default function ProjectOverview() {
                                     <div className="grid grid-nogutter">
                                         <Link className="flex justify-content-center col-6 noUnderline" to="guestlist">
                                             <Button
-                                                // style={{ float: "right" }}
                                                 type="button"
                                                 label="Manage Guest List"
                                                 className="p-button-raised p-button-rounded"
-                                                // onClick={() => checkIfCanCreateReq()}
                                             />
                                         </Link>
                                         <Link className="flex justify-content-center col-6 noUnderline" to="tablelayout">
                                             <Button
-                                                // style={{ float: "right" }}
                                                 type="button"
                                                 label="Manage Tables"
                                                 className="p-button-raised p-button-rounded"
-                                                // onClick={() => checkIfCanCreateReq()}
                                             />
                                         </Link>
                                     </div>
@@ -383,6 +379,23 @@ export default function ProjectOverview() {
                                             )}
                                         </b>
                                     </p>
+
+                                    <div className="grid grid-nogutter">
+                                        <Link className="flex justify-content-center col-6 noUnderline" to="LogisticsManagement/WeddingChecklist">
+                                            <Button
+                                                type="button"
+                                                label="Manage Checklist"
+                                                className="p-button-raised p-button-rounded"
+                                            />
+                                        </Link>
+                                        <Link className="flex justify-content-center col-6 noUnderline" to="LogisticsManagement/WeddingBudgetPlanner">
+                                            <Button
+                                                type="button"
+                                                label="Manage Budget"
+                                                className="p-button-raised p-button-rounded"
+                                            />
+                                        </Link>
+                                    </div>
                                 </AccordionTab>
                             </Accordion>
                         </div>
@@ -395,7 +408,7 @@ export default function ProjectOverview() {
                                     {projectHiredVendors.length != 0 && (
                                         <>
                                             <p>
-                                                Vendors hired: <b>{projectHiredVendors.length}</b>
+                                                Vendors hired (accepted Requests): <b>{projectHiredVendors.length}</b>
                                             </p>
                                             <p>
                                                 Paid/Total cost of vendors:{" "}
@@ -414,12 +427,29 @@ export default function ProjectOverview() {
                                                     options={{ animation: true }}
                                                 />
                                             </Card>
+                                    <div className="grid grid-nogutter">
+                                        <Link className="flex justify-content-center col-12 noUnderline" to="requests">
+                                            <Button
+                                                type="button"
+                                                label="Manage Requests"
+                                                className="p-button-raised p-button-rounded"
+                                            />
+                                        </Link>
+                                    </div>
                                         </>
                                     )}
                                 </AccordionTab>
                                 <AccordionTab className="m-1" header="Requests Overview">
                                     <RequestsDataTable requestsInfo={projectRequestsInfo} />
-                                    <p>maybe buttons that link to requests</p>
+                                    <div className="grid grid-nogutter">
+                                        <Link className="flex justify-content-center col-12 noUnderline" to="requests">
+                                            <Button
+                                                type="button"
+                                                label="Manage Requests"
+                                                className="p-button-raised p-button-rounded"
+                                            />
+                                        </Link>
+                                    </div>
                                 </AccordionTab>
                             </Accordion>
                         </div>

@@ -86,7 +86,7 @@ export default function WeddingChecklist() {
 
     useEffect(() => {
         reloadData();
-    }, []);
+    }, [checklistId]);
 
     const reloadData = () => {
         WeddingChecklistAPI.getParentTaskByWeddingChecklist(checklistId)
