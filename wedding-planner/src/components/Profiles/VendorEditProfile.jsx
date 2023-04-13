@@ -140,7 +140,7 @@ function VendorEditProfile() {
   const [imageUrls, setImageUrls] = useState([])
   const [visible, setVisible] = useState(false)
   const [addPhoto, setAddPhoto] = useState(false)
-  const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/`)
+  const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/ProfilePic.png`)
   const imagesListRef1 = ref(storage, `Vendor/${vId}/Photos/`)
   const itemTemplate = (item) => {
     return (
@@ -150,14 +150,8 @@ function VendorEditProfile() {
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    listAll(imageListRef).then((response) => {
-      response.items.forEach((item) => {
-        // console.log(item);
-        //setImageUrls((prev) => [...prev, item]);
-        getDownloadURL(item).then((url) => {
-          setImageUrl(url)
-        })
-      })
+    getDownloadURL(imageListRef).then((url) => {
+      setImageUrl(url)
     })
   }, [])
 
@@ -192,10 +186,7 @@ function VendorEditProfile() {
 
   const uploadFile = () => {
     if (!imageUpload) return
-    const imageRef = ref(
-      storage,
-      `Vendor/${vId}/ProfilePic/${imageUpload.name}`,
-    ) // obtain the place to store the image in firebase
+    const imageRef = ref(storage, `Vendor/${vId}/ProfilePic/ProfilePic.png`) // obtain the place to store the image in firebase
     uploadBytes(imageRef, imageUpload)
       .then(() => {
         getDownloadURL(imageRef).then((url) => {
@@ -205,7 +196,7 @@ function VendorEditProfile() {
       })
       .catch((error) => {
         console.error(`Unable to upload image: ${error.message}`)
-      }) //appends the image to the imageURLs list to display image once you upload
+      })
   }
 
   const handleImageUpload = (event) => {

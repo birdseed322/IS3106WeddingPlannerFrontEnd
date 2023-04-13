@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo, FC} from "react";
 import HeartyNavbar from "../HeartyNavbar/HeartyNavbar.jsx";
-import ReactFlow, { MiniMap, Background, Controls, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useReactFlow} from "reactflow";
+import ReactFlow, { MiniMap, Background, Controls, applyEdgeChanges, applyNodeChanges, ReactFlowProvider, useStoreApi, useReactFlow} from "reactflow";
 import 'reactflow/dist/style.css';
 import Table from './Table.jsx';
 import OptionsPanel from "./OptionsPanel.jsx";
@@ -12,6 +12,7 @@ import Stage from './Stage.jsx';
 import { Routes, Route, useParams } from 'react-router-dom';
 
 export default function TableLayout() {
+    const zoom = 1.85;
     const renderCount = useRef(0);
     const countRender = useRef(0);
     useEffect(() => {
@@ -179,14 +180,28 @@ export default function TableLayout() {
         if (selectedNode != null && toDelete != null) {
             let _guests = [...selectedNode.data.guests];
             _guests = _guests.filter((guest) => guest.id !== toDelete.id);
+            /*
             let _tables = [...nodes];
             _tables = _tables.filter(table => table.id != selectedNode.id);
             let newUpdatedTable = {...selectedNode};
             newUpdatedTable.data.guests = newUpdatedTable.data.guests.filter(guest => guest.id != toDelete.id);
             newUpdatedTable.data.currOccupancy = newUpdatedTable.data.currOccupancy - toDelete.numPax;
-            setNodes(tables => _tables.concat(newUpdatedTable));
+            newUpdatedTable.selected = false;
+
+            */
+            setNodes(tables => {
+                return tables.map(table =>  {
+                    if (table.id == selectedNode.id) {
+                        table.data = {
+                            ...table.data,
+                            guests : table.data.guests.filter(guest => guest.id != toDelete.id),
+                            currOccupancy : table.data.currOccupancy - toDelete.numPax
+                        }
+                    }
+                    return table;
+                });
+            });
             setGuestsInSelectedNode((guests) => _guests);
-            setSelectedNode(newUpdatedTable);
             setFullGuests(fg => fg.concat(toDelete));
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
         } else {
@@ -202,18 +217,32 @@ export default function TableLayout() {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: 'Over capacity' , life: 3000 });
                 
             } else {
+                
                 const updatedTable = {... selectedNode};
+                /*
                 const tempNode = nodes.filter(x => x.id === selectedNode.id);
                 if (tempNode.length > 0) {
                     updatedTable.position.x = tempNode[0].position.x;
                     updatedTable.position.y = tempNode[0].position.y;
                 }
+                */
                 updatedTable.data.guests = updatedTable.data.guests.concat(selectedGuests);
                 updatedTable.data.currOccupancy = (updatedTable.data.guests.length > 0) ? updatedTable.data.guests.map(g => g.numPax).reduce((x,y) => x + y) : 0;
+                /*
                 let _tables = [...nodes];
                 _tables = _tables.filter(x => x.id != selectedNode.id).concat(updatedTable);
+                */
                 setNodes((tables) => {
-                    return _tables;
+                    return tables.map(table => {
+                        if (table.id == selectedNode.id) {
+                            table.data = {
+                                ...table.data,
+                                guests : updatedTable.data.guests, 
+                                currOccupancy : updatedTable.data.currOccupancy
+                            }
+                        }
+                        return table;
+                    });
                 });
                 for (const guest of selectedGuests) {
                     for (const g of fullGuests) {
@@ -222,9 +251,7 @@ export default function TableLayout() {
                         }
                     }
                 }
-                setGuestsInSelectedNode(g => updatedTable.data.guests);
-                console.log(guestsInSelectedNode);
-                setSelectedNode(updatedTable);
+                setGuestsInSelectedNode(g => selectedNode.data.guests);
                 if (temp.length > 0) {
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guests Added' , life: 3000 });
                 }
@@ -281,9 +308,11 @@ export default function TableLayout() {
         } else {
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to Create Table: Invalid Capacity ', life: 3000 });  
         }
+
     }, [addTableFlag]);
 
     const handleAddStage = useCallback(() => {
+
         let max = 0;
         for (const node of nodes) {
             //console.log(table.data.tableNumber);

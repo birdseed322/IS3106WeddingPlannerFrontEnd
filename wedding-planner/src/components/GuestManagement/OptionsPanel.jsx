@@ -80,8 +80,8 @@ function OptionsPanel({addStageFlag, setAddStageFlag, addTableFlag, setAddTableF
                 </div>
             </Sidebar>
         </div>
-                <Button className="pinkButton"  label="Options" icon="pi pi-plus" onClick={() => setVisible(true)  } style={{ minWidth: '7rem'}} />
-                <Button className="pinkButton"  label="Save" icon="pi pi-save" onClick={saveTables} style={{ minWidth: '7rem', marginLeft : '1rem'}} />
+                <Button className="pinkButton m-2" rounded icon="pi pi-plus" onClick={() => setVisible(true) }/>
+                <Button className="pinkButton m-2"  label="Save" icon="pi pi-save" onClick={saveTables} style={{ minWidth: '7rem', marginLeft : '1rem'}} />
 
         </>
     )

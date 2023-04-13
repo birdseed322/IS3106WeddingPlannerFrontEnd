@@ -302,7 +302,7 @@ export default function GuestList() {
         return (
         <div className="flex flex-wrap gap-2">
         <Button label="Send Invite" icon="pi pi-send" style={{ backgroundColor: "#f561b0", border: "#f561b0"}} onClick={confirmSendInvites} />
-        <Button label="Export" icon="pi pi-upload"  onClick={exportCSV} />;
+        <Button label="Export" icon="pi pi-upload"  onClick={exportCSV} />
         </div> );
         
 

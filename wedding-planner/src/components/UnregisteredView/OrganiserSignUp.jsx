@@ -45,12 +45,12 @@ function OrganiserSignUp() {
         navigate('/login')
       })
       .catch((error) => {
-        console.log(error)
         toast.current.show({
           severity: 'error',
           summary: 'Not Successful',
           detail: 'Account Not Created',
         })
+        console.log(error)
       })
   }
 
@@ -119,6 +119,7 @@ function OrganiserSignUp() {
             </div>
             <span>
               <div className="flex justify-content-center pt-4">
+                <Toast ref={toast} />
                 <Button
                   label="Sign Up"
                   style={{ backgroundColor: '#f561b0', border: '#f561b0' }}

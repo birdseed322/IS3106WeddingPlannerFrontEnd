@@ -14,20 +14,15 @@ function VendorNavbar(props) {
   const vId = token.userId
   const [imageUrl, setImageUrl] = useState([])
 
-  const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/`)
+  const imageListRef = ref(storage, `Vendor/${vId}/ProfilePic/ProfilePic.png`)
 
   useEffect(() => {
     console.log('triggering image retreival from firebase')
-    listAll(imageListRef).then((response) => {
-      response.items.forEach((item) => {
-        // console.log(item);
-        //setImageUrls((prev) => [...prev, item]);
-        getDownloadURL(item).then((url) => {
-          setImageUrl(url)
-        })
-      })
+    getDownloadURL(imageListRef).then((url) => {
+      setImageUrl(url)
     })
   }, [])
+
   const items = [
     {
       label: 'Schedule',

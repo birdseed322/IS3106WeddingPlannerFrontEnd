@@ -38,7 +38,7 @@ function Schedule() {
           const weddingDate = new Date(
             event.weddingProject.weddingDate.slice(0, -5)
           );
-          //Meant to be march 4th
+          
           if (event.weddingProject.weddingEndTime) {
             const endTime = new Date(
               event.weddingProject.weddingEndTime.slice(0, -5)

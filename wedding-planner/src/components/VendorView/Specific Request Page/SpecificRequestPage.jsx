@@ -69,7 +69,7 @@ function SpecificRequestPage() {
           month: "2-digit",
           day: "2-digit",
         });
-
+        console.log(data);
         setRequest(data);
 
         if (searchParams.get("successfulPayment") == 1) {
@@ -146,6 +146,7 @@ function SpecificRequestPage() {
             statusEventName: "Event pending completion",
             color: "#929695",
           });
+          actionToBeTaken = "Event Pending Completion";
         }
       } else {
         statuses.push({

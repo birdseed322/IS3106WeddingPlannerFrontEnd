@@ -28,7 +28,6 @@ function GuestListPanel({fullGuests, guestsInSelectedTable, selectedNode, delete
             setDeleteGuestDialog(false);
     };
     const handleAddToTable = () => {
-        console.log(selectedGuests);
         setUpdateGuest(!updateGuest);
         setVisible(false);
     }
@@ -126,6 +125,8 @@ function GuestListPanel({fullGuests, guestsInSelectedTable, selectedNode, delete
         <Toast ref={toast} />
         <Panel headerTemplate={template} style={{maxWidth:"60%", float:"right"}} toggleable>
             <Button label="Add Guest" onClick={doGuestSelection} style={{ backgroundColor: "#f561b0", border: "#f561b0", marginBottom:"1rem"}} />{" "}
+            <p className="m-1 text-xs">*Select table and press backspace to delete table</p>
+
             <DataTable value={selectedNode === null ? [] : guestsInSelectedTable} showGridlines tableStyle={{ minWidth: '50rem' }}>
                 <Column field="name" header="Name"></Column>
                 <Column field="numPax" header="Number of Pax."></Column>
