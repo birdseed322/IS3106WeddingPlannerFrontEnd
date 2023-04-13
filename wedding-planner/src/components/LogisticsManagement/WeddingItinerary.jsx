@@ -155,8 +155,8 @@ export default function WeddingItinerary() {
         const parsedCopy = JSON.parse(jsonified);
         console.log(parsedCopy);
 
-        if (validateItinerary(itinerary)) {
-            if (itinerary.weddingItineraryId != null) {
+        if (itinerary.weddingItineraryId != null) {
+            if (validateItinerary(itinerary)) {
                 const index = findIndexById(itinerary.weddingItineraryId);
                 WeddingItineraryAPI.updateItinerary(parsedCopy).then(() => {
                     _itineraries[index] = _itinerary;
@@ -171,6 +171,15 @@ export default function WeddingItinerary() {
                     });
                 });
             } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update Itinerary",
+                    life: 3000,
+                });
+            }
+        } else {
+            if (validateItinerary(itinerary)) {
                 WeddingItineraryAPI.createNewItinerary(
                     parsedCopy,
                     projectId
@@ -188,6 +197,13 @@ export default function WeddingItinerary() {
                             life: 3000,
                         });
                     });
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create itinerary",
+                    life: 3000,
                 });
             }
         }
@@ -407,6 +423,7 @@ export default function WeddingItinerary() {
                         required
                         autoFocus
                         dateFormat="dd/mm/yy"
+                        minDate={new Date()}
                         className={classNames({
                             "p-invalid": submitted && !itinerary.eventDate,
                         })}

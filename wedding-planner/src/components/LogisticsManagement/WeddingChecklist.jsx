@@ -497,6 +497,13 @@ export default function WeddingChecklist() {
                         life: 3000,
                     });
                 });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update task",
+                    life: 3000,
+                });
             }
         }
         // } else {
@@ -545,6 +552,13 @@ export default function WeddingChecklist() {
                         life: 3000,
                     });
                 });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update subtask",
+                    life: 3000,
+                });
             }
         } else {
             if (validateSubtask(subtask)) {
@@ -565,6 +579,13 @@ export default function WeddingChecklist() {
                         });
                     }
                 );
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create subtask",
+                    life: 3000,
+                });
             }
         }
     };

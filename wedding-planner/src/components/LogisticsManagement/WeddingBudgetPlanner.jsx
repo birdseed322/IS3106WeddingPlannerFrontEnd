@@ -267,6 +267,13 @@ export default function WeddingBudgetPlanner() {
                         life: 3000,
                     });
                 });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update budget",
+                    life: 3000,
+                });
             }
         } else {
             if (validateBudget(budget)) {
@@ -288,6 +295,13 @@ export default function WeddingBudgetPlanner() {
                             life: 3000,
                         });
                     });
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create budget",
+                    life: 3000,
                 });
             }
         }
@@ -326,6 +340,13 @@ export default function WeddingBudgetPlanner() {
                         life: 3000,
                     });
                 });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to update item",
+                    life: 3000,
+                });
             }
         } else {
             if (validateItem(item)) {
@@ -346,6 +367,13 @@ export default function WeddingBudgetPlanner() {
                             life: 3000,
                         });
                     });
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Unable to create item",
+                    life: 3000,
                 });
             }
         }
