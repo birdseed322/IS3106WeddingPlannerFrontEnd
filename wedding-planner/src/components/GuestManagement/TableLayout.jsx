@@ -242,6 +242,7 @@ export default function TableLayout() {
                                 guests : updatedTable.data.guests, 
                                 currOccupancy : updatedTable.data.currOccupancy
                             }
+                            setSelectedNode(table);
                         }
                         return table;
                     });
