@@ -199,7 +199,6 @@ export default function TableLayout() {
                             currOccupancy : table.data.currOccupancy - toDelete.numPax
                         }
                     }
-                    setSelectedNode(table);
                     return table;
                 });
             });
