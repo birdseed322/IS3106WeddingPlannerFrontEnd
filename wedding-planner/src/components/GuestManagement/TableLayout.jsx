@@ -179,7 +179,8 @@ export default function TableLayout() {
     const deleteGuest = useCallback((toDelete) => {
         if (selectedNode != null && toDelete != null) {
             let _guests = [...selectedNode.data.guests];
-            _guests = _guests.filter((guest) => guest.id !== toDelete.id);
+            _guests = _guests.filter((guest) => guest.id != toDelete.id);
+            console.log("NEW GUESTS " + _guests.length);
             /*
             let _tables = [...nodes];
             _tables = _tables.filter(table => table.id != selectedNode.id);
@@ -194,15 +195,17 @@ export default function TableLayout() {
                     if (table.id == selectedNode.id) {
                         table.data = {
                             ...table.data,
-                            guests : table.data.guests.filter(guest => guest.id != toDelete.id),
+                            guests : _guests,
                             currOccupancy : table.data.currOccupancy - toDelete.numPax
                         }
                     }
+                    setSelectedNode(table);
                     return table;
                 });
             });
             setGuestsInSelectedNode((guests) => _guests);
             setFullGuests(fg => fg.concat(toDelete));
+            
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guest Removed', life: 3000 });
         } else {
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'Guest Cannot be Removed', life: 3000 });
@@ -217,7 +220,7 @@ export default function TableLayout() {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: 'Over capacity' , life: 3000 });
                 
             } else {
-                
+                console.log("SELECTED NODE GUESTS" + selectedNode.data.guests);
                 const updatedTable = {... selectedNode};
                 /*
                 const tempNode = nodes.filter(x => x.id === selectedNode.id);
@@ -255,6 +258,7 @@ export default function TableLayout() {
                 if (temp.length > 0) {
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Guests Added' , life: 3000 });
                 }
+                
             }
         }
     }, [updateGuest]);
