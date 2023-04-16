@@ -1,8 +1,9 @@
 # IS3106WeddingPlannerFrontEnd
 
-pre-requisites: 
+## pre-requisites: 
 1) Node js 
 
+## Launching the frontend
 1) Clone the repo
 2) cd into IS3106Group13WeddingPlanner/projectFrontend/IS3106WeddingPlannerFrontEnd/wedding-planner
 3) run "npm install"
